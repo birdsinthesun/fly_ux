@@ -18,18 +18,7 @@ $GLOBALS['TL_DCA']['tl_content']['config']['switchToEdit']                = true
 $GLOBALS['TL_DCA']['tl_content']['config']['enableVersioning']            = true;
 $GLOBALS['TL_DCA']['tl_content']['config']['markAsCopy']                  = 'headline';
 
-'ptable'                      => 'tl_page',
-		'ctable'                      => array('tl_content'),
-		'dynamicPtable'               => true,
-        'switchToEdit'                => true,
-		'enableVersioning'            => true,
-		'markAsCopy'                  => 'title',
-		'onload_callback'             => array
-		(
-			array('tl_content', 'adjustDcaByType'),
-			array('tl_content', 'showJsLibraryHint'),
-            array('tl_page', 'addBreadcrumb')
-		),
+
 
 $GLOBALS['TL_DCA']['tl_content']['list']['sorting']['mode'] = DataContainer::MODE_TREE_EXTENDED;
 $GLOBALS['TL_DCA']['tl_content']['list']['label']['fields'] =  ['headline', 'type', 'inColumn'];
