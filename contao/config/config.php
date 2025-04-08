@@ -1,8 +1,14 @@
 <?php
 use Contao\CoreBundle\ContaoCoreBundle;
 
+unset($GLOBALS['BE_MOD']['content']['article']);
+$GLOBALS['BE_MOD']['content']['content'] = [
+    'tables' => ['tl_page', 'tl_content'],
+    'icon'   => 'vendor/birdsinthesun/fly_ux/assets/icon.svg', // optional
+  //  'stylesheet' => 'bundles/deinmodul/backend.css', // optional
+   // 'javascript' => 'bundles/deinmodul/backend.js',  // optional
+];
 
-unset($GLOBALS['TL_DCA']['tl_article']);
 
 return [
    
