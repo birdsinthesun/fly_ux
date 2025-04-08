@@ -1,7 +1,7 @@
 {
     "name": "birdsinthesun/fly_ux",
     "type": "contao-bundle",
-    "description": "Entfernt die Artikel-Ebene in Contao CMS und verbessert die UX. Achtung: Noch in der Entwicklung",
+    "description": "Entfernt die Artikel-Ebene in Contao CMS und optimiert die UX. Achtung: Noch in der Entwicklung",
     "license": "MIT",
     "authors": [
         {
