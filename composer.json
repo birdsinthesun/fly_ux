@@ -1,0 +1,24 @@
+{
+    "name": "birdsinthesun/fly_ux",
+    "type": "contao-bundle",
+    "description": "Entfernt die Artikel-Ebene in Contao CMS und verbessert die UX. Achtung: Noch in der Entwicklung",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Monique Hahnefeld",
+            "email": "hello@bits-design.de"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "contao/core-bundle": "5.5.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Bits\\FlyUxBundle\\": "src/"
+        }
+    },
+  "extra": {
+        "contao-manager-plugin": "Bits\\FlyUxBundle\\ContaoManager\\Plugin"
+    }
+}
