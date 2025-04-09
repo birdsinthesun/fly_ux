@@ -1,5 +1,7 @@
 
 
-<?php $this->block('content'); ?>
-      <?php= $this->elements ?>
-    <?php $this->endblock(); ?>
+<?php
+
+echo $this->elements;
+
+?> 

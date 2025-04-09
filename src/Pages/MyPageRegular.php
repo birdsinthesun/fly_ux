@@ -320,21 +320,30 @@ class MyPageRegular extends Frontend
         
         $objTemplate->id = 'page-content-' . $objPageId;
 
-		$arrElements = array();
+		$arrElements = [];
 		$objCte = ContentModel::findPublishedByPidAndTable($objPageId, 'tl_page');
-//var_dump($objCte);
-		if ($objCte !== null)
-		{
-			while ($objCte->next())
-			{
-				$arrElements[] = $objCte->current()->row();
-			}
-		}
 
-		$objTemplate->elements = $arrElements;
-        
-        return $objTemplate->parse();
-		
+		 if ($objCte !== null) {
+        while ($objCte->next()) {
+            $row = $objCte->current();
+
+            // Optional: nur wenn Spalte passt
+            if ($row->type && $row->inColumn === $strColumn) {
+                $strClass = 'Contao\\Content' . ucfirst($row->type);
+
+                if (class_exists($strClass)) {
+                    /** @var \Contao\ContentElement $objElement */
+                    $objElement = new $strClass($row);
+                    $arrElements[$row->id] = $objElement->generate();
+                    //var_dump($objElement->generate());
+                }
+            }
+            
+        }
+    }
+
+    $objTemplate->elements = implode('',$arrElements);
+    return $objTemplate->parse();
 	
         
         

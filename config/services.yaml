@@ -7,14 +7,12 @@ services:
     Contao\PageRegular:
         class: Bits\FlyUxBundle\Pages\MyPageRegular
         public: true
-        autowire: true
-        autoconfigure: true
         tags: ['kernel.event_listener']
         arguments:
             $container: '@service_container'
       
     # Registriert alle Module in /src/Modules
-    Bits\FlyUx\Modules\:
+    Bits\FlyUxBundle\Modules\:
         resource: '../src/Modules/*'
         public: true
         tags: ['contao.frontend_module']

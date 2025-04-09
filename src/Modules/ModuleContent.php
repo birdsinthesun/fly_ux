@@ -1,6 +1,6 @@
 <?php
 
-namespace Bits\FlyUx\Modules;
+namespace Bits\FlyUxBundle\Modules;
 
 
 
