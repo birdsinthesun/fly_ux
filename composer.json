@@ -11,7 +11,8 @@
     ],
     "require": {
         "php": ">=7.4",
-        "contao/core-bundle": "5.5.*"
+        "contao/core-bundle": "5.5.*",
+        "contao/calendar-bundle": "5.5.*"
     },
     "autoload": {
         "psr-4": {

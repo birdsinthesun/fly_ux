@@ -1,5 +1,6 @@
 <?php
 use Contao\CoreBundle\ContaoCoreBundle;
+use Contao\CoreBundle\ContaoCalendarBundle;
 use Bits\FlyUxBundle\Widgets\ModuleWizard;
 
 $GLOBALS['TL_PTY']['regular'] = 'Bits\FlyUxBundle\Pages\MyPageRegular';
@@ -10,7 +11,7 @@ unset($GLOBALS['FE_MOD']['navigationMenu']['articlenavigation']);
 
 $GLOBALS['BE_MOD']['content']['content'] = [
     'tables' => ['tl_content'],
-    'icon'   => 'vendor/birdsinthesun/fly_ux/assets/icon.svg', // optional
+    'icon'   => 'vendor/birdsinthesun/fly_ux/assets/icon.svg' // optional
   //  'stylesheet' => 'bundles/deinmodul/backend.css', // optional
    // 'javascript' => 'bundles/deinmodul/backend.js',  // optional
 ];
@@ -19,7 +20,8 @@ $GLOBALS['BE_MOD']['content']['content'] = [
 
 return [
    
-    ContaoCoreBundle::class => ['all' => true]
+    ContaoCoreBundle::class => ['all' => true],
+    ContaoCalendarBundle::class => ['all' => true]
    
    
 ];
