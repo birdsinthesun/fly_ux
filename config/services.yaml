@@ -10,12 +10,6 @@ services:
         tags: ['kernel.event_listener']
         arguments:
             $container: '@service_container'
-      
-    # Registriert alle Module in /src/Modules
-    Bits\FlyUxBundle\Modules\:
-        resource: '../src/Modules/*'
-        public: true
-        tags: ['contao.frontend_module']
     
     # Registriert den Custom ModuleWizard
     Bits\FlyUxBundle\Widgets\ModuleWizard:
