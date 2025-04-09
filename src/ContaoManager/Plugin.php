@@ -2,7 +2,6 @@
 namespace Bits\FlyUxBundle\ContaoManager;
 
 use Contao\CoreBundle\ContaoCoreBundle;
-use Contao\CoreBundle\ContaoCalendarBundle;
 use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
@@ -15,8 +14,7 @@ class Plugin implements BundlePluginInterface
         return [
             BundleConfig::create(FlyUxBundle::class)
                 ->setLoadAfter([
-                    ContaoCoreBundle::class,
-                    ContaoCalendarBundle::class
+                    ContaoCoreBundle::class
                 ]),
         ];
     }
