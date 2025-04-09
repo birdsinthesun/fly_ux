@@ -3,6 +3,29 @@ services:
         autowire: true
         autoconfigure: true
 
+    # Registriert den Service für PageRegular
+    Contao\PageRegular:
+        class: Bits\FlyUxBundle\Pages\MyPageRegular
+        public: true
+        autowire: true
+        autoconfigure: true
+        tags: ['kernel.event_listener']
+        arguments:
+            $container: '@service_container'
+      
+    # Registriert alle Module in /src/Modules
+    Bits\FlyUx\Modules\:
+        resource: '../src/Modules/*'
+        public: true
+        tags: ['contao.frontend_module']
+    
+    # Registriert den Custom ModuleWizard
+    Bits\FlyUxBundle\Widgets\ModuleWizard:
+        tags:
+            - { name: 'contao.backend.widget', inputType: 'flyWizard' }
+        arguments: []
+
+    # Registriert das gesamte Bundle (außer bestimmte Ordner)
     Bits\FlyUxBundle\:
         resource: '../src/*'
         exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'

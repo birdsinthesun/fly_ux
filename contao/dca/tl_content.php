@@ -13,18 +13,21 @@ $this->loadDataContainer('tl_page');
 $GLOBALS['TL_DCA']['tl_content']['config']['ptable'] = 'tl_page';
 $GLOBALS['TL_DCA']['tl_content']['config']['ctable'] = ['tl_content'];
 $GLOBALS['TL_DCA']['tl_content']['config']['dynamicPtable'] = true;
-$GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][]['tl_page'] = 'addBreadcrumb';
+$GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][] = ['tl_page','addBreadcrumb'];
 $GLOBALS['TL_DCA']['tl_content']['config']['switchToEdit']                = true;
 $GLOBALS['TL_DCA']['tl_content']['config']['enableVersioning']            = true;
 $GLOBALS['TL_DCA']['tl_content']['config']['markAsCopy']                  = 'headline';
 
-
-
 $GLOBALS['TL_DCA']['tl_content']['list']['sorting']['mode'] = DataContainer::MODE_TREE_EXTENDED;
 $GLOBALS['TL_DCA']['tl_content']['list']['label']['fields'] =  ['headline', 'type', 'inColumn'];
 $GLOBALS['TL_DCA']['tl_content']['list']['label']['format'] =   '%s <span class="label-info">[%s]</span><span class="label-column"> %s </span>';
+//$GLOBALS['TL_DCA']['tl_content']['list']['label']['label_callback'] =   array('tl_content', 'addIcon');
+
+
 foreach ($GLOBALS['TL_DCA']['tl_content']['palettes'] as $paletteKey => $paletteValue) {
-   
+   if ($paletteKey === '__selector__') {
+    continue;
+}
     if (is_string($paletteValue)) {
       
         if (strpos($paletteValue, '{layout_legend},inColumn;') !== 0) {
@@ -32,7 +35,10 @@ foreach ($GLOBALS['TL_DCA']['tl_content']['palettes'] as $paletteKey => $palette
         }
     }
 }
-
+$GLOBALS['TL_DCA']['tl_content']['fields']['ptable'] = array
+		(
+			'sql'                     => "varchar(64) COLLATE ascii_bin NOT NULL default 'tl_content'"
+		);
 $GLOBALS['TL_DCA']['tl_content']['fields']['inColumn'] = array
 		(
 			'filter'                  => true,

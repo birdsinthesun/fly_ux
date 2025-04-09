@@ -1,6 +1,6 @@
 <?php
 
-namespace Bits\EventListener;
+namespace Bits\FlyUxBundle\EventListener;
 
 use Contao\CoreBundle\ServiceAnnotation\Hook;
 
