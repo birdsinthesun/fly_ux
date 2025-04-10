@@ -1,6 +1,7 @@
 <?php
 use Contao\CoreBundle\ContaoCoreBundle;
 use Contao\CoreBundle\ContaoCalendarBundle;
+use Contao\Input;
 use Bits\FlyUxBundle\Widgets\ModuleWizard;
 
 $GLOBALS['TL_PTY']['regular'] = 'Bits\FlyUxBundle\Pages\MyPageRegular';
@@ -19,8 +20,6 @@ $GLOBALS['BE_MOD']['content']['content'] = [
   //  'stylesheet' => 'bundles/deinmodul/backend.css', // optional
    // 'javascript' => 'bundles/deinmodul/backend.js',  // optional
 ];
-
-
 
 return [
    

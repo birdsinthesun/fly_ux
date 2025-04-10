@@ -3,6 +3,11 @@ services:
         autowire: true
         autoconfigure: true
 
+    Bits\FlyUxBundle\Driver\DC_Media:
+        class: Bits\FlyUxBundle\Driver\DC_Media
+        arguments: ['@service_container']  # Beispiel: Füge hier andere benötigte Services hinzu, falls erforderlich
+        public: true
+        
     # Registriert den Service für PageRegular
     Contao\PageRegular:
         class: Bits\FlyUxBundle\Pages\MyPageRegular
