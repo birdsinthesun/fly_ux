@@ -40,19 +40,19 @@ class DC_Media extends DC_Folder
         
         return $this->renderMediaView($arrFiles);
     }
-    public function edit($intId = null, $ajax = false)
-    {
-        if ($this->mode === 'media') {
-            return $this->renderMediaView();
-        }
-
-        return parent::edit($intId, $ajax);
-    }
 
     protected function renderMediaView($arrFiles = array())
     {
         // Hier deine Bildanzeige wie vorher beschrieben
         // z. B. Galerie mit "edit"-Button pro Bild
-        return '<div class="media-view">[Dein HTML hier]</div>';
+        // $objTemplate->src_preview = $imageResizer->resizeAndCacheImage("/isotope/".$isotopeSubFolder."/".$arrImages[0]['src'], 300,null);
+        $container = System::getContainer();
+
+		return $container->get('twig')->render(
+			'@Contao/media_view.html.twig',
+			array(
+				'files' => $arrFiles
+			)
+		);
     }
 }

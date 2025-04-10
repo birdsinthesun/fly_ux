@@ -1,0 +1,11 @@
+{% for file in files %}
+  <div class="media-tile">
+    <img src="{{ file.path }}" alt="{{ file.name }}">
+    <div class="media-info">
+      <a href="?do=files&act=edit&id={{ file.id }}">Edit</a>
+<a href="?do=files&act=info&id={{ file.id }}">Info</a>
+    </div>
+  </div>
+{% endfor %}
+
+
