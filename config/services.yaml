@@ -5,28 +5,36 @@ services:
 
     Bits\FlyUxBundle\Driver\DC_Media:
         class: Bits\FlyUxBundle\Driver\DC_Media
-        arguments: ['@service_container']  # Beispiel: Füge hier andere benötigte Services hinzu, falls erforderlich
+        arguments: ['@service_container']
         public: true
-    
+        
+    Symfony\Component\Routing\Matcher\UrlMatcher: ~
+    Contao\CoreBundle\Routing\ScopeMatcher:
+        arguments:
+            - '@service_container'
+
+    Bits\FlyUxBundle\EventListener\AddBackendAssetsListener:
+        arguments:
+            $scopeMatcher: '@Contao\CoreBundle\Routing\ScopeMatcher'  # Sicherstellen, dass der Service korrekt injiziert wird
+        tags:
+            - { name: 'kernel.event_listener', event: 'kernel.request', priority: 15 }
+      
     Bits\FlyUxBundle\Service\ImageResizer:
         arguments:
             $imageFactory: '@contao.image.factory'
         
-    # Registriert den Service für PageRegular
     Contao\PageRegular:
         class: Bits\FlyUxBundle\Pages\MyPageRegular
         public: true
         tags: ['kernel.event_listener']
         arguments:
             $container: '@service_container'
-    
-    # Registriert den Custom ModuleWizard
+
     Bits\FlyUxBundle\Widgets\ModuleWizard:
         tags:
             - { name: 'contao.backend.widget', inputType: 'flyWizard' }
         arguments: []
 
-    # Registriert das gesamte Bundle (außer bestimmte Ordner)
     Bits\FlyUxBundle\:
         resource: '../src/*'
         exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
