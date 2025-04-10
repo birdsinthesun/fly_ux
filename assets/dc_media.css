@@ -1,0 +1,25 @@
+/* Beispielhafte Anpassungen für die Media-Ansicht */
+
+body{
+    background-color:#9f3 !important;
+    }
+
+#tl_listing .media-tile {
+    display: inline-block;
+    margin: 10px;
+    width: 20%;
+    height: auto;
+    background-color: #f5f5f5;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+#tl_listing .media-tile img {
+    width: 100%;
+    height: auto;
+}
+
+tl_listing .media-info {
+    margin-top: 10px;
+    text-align: center;
+}

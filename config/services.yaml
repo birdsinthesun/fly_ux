@@ -7,6 +7,10 @@ services:
         class: Bits\FlyUxBundle\Driver\DC_Media
         arguments: ['@service_container']  # Beispiel: Füge hier andere benötigte Services hinzu, falls erforderlich
         public: true
+    
+    Bits\FlyUxBundle\Service\ImageResizer:
+        arguments:
+            $imageFactory: '@contao.image.factory'
         
     # Registriert den Service für PageRegular
     Contao\PageRegular:
