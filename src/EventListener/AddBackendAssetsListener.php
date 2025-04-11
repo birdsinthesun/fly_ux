@@ -27,7 +27,7 @@ class AddBackendAssetsListener
        
         if ($event->getRequest()->get('do') === 'files' && $event->getRequest()->get('view') === 'media') {
            
-            $GLOBALS['TL_CSS'][] = 'bundles/flyuxbundle/css/dc_media.css';
+            $GLOBALS['TL_CSS'][] = 'bundles/flyux/css/dc_media.css';
         }
     }
 }

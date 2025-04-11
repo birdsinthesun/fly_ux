@@ -16,9 +16,6 @@ class FlyUxBundle extends Bundle
     {
         parent::build($container);
         
-        // Hier registrierst du explizit die services.yaml-Datei
-      //  $loader = new PhpFileLoader($container, new FileLocator(__DIR__.'/Resources/config'));
-        //$loader->load('bundles.php');
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/config'));
         $loader->load('services.yaml');
     }
