@@ -18,6 +18,12 @@
             "Bits\\FlyUxBundle\\": "src/"
         }
     },
+    "config": {
+        "allow-plugins": {
+            "contao-components/installer": true,
+            "contao/manager-plugin": true
+        }
+    },
   "extra": {
         "contao-manager-plugin": "Bits\\FlyUxBundle\\ContaoManager\\Plugin"
     },
