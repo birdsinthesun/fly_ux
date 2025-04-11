@@ -1,13 +1,23 @@
-/* Beispielhafte Anpassungen für die Media-Ansicht */
 
-body{
-    background-color:#9f3 !important;
+    
+#tl_buttons{
+     margin-top:20px;
     }
-
+#tl_buttons .header_media_view,
+#tl_buttons .header_list_view{
+   
+    margin-left:20px;
+    padding:10px;
+    background-color:#666;
+    color:#fff;
+    border-radius:5px;
+    }
 #tl_listing .media-tile {
-    display: inline-block;
-    margin: 10px;
-    width: 20%;
+    display: block;
+    float:left;
+    box-sizing:border-box;
+    margin: 0px;
+    width: calc(100% / 6);
     height: auto;
     background-color: #f5f5f5;
     padding: 10px;
@@ -19,7 +29,11 @@ body{
     height: auto;
 }
 
-tl_listing .media-info {
+#tl_listing .media-info {
     margin-top: 10px;
     text-align: center;
+}
+#tl_listing .media-info img {
+     width: 32px;
+    height: auto;
 }

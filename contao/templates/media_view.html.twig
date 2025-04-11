@@ -2,7 +2,13 @@
   <div class="media-tile">
     <a href="?do=files&act=edit&id={{ file.path }}&rt={{ token }}" title="Klicken zum Bearbeiten"><img src="{{ file.preview_path }}" alt="{{ file.name }}"></a>
     <div class="media-info">
-<a href="?do=files&act=info&id={{ file.id }}">Info</a>
+    
+<a href="/contao/popup?src={{ baseUrl }}/popup?src={{ file.info_src }}" 
+class="show" onclick="Backend.openModalIframe({'title':'{{ file.name }}.{{ file.extension }}',
+'url':{{ baseUrl }}/popup?src={{ file.info_src }}});return false"><img src="/system/themes/flexible/icons/show.svg" 
+width="16" height="16" 
+alt="Details der Datei anzeigen" data-contao--tooltips-target="tooltip"></a>
+    
     </div>
   </div>
 {% endfor %}

@@ -12,3 +12,9 @@ $GLOBALS['TL_DCA']['tl_files']['list']['global_operations']['media_view'] = [
     'label' => ['Medienansicht', 'Nur Bilder anzeigen'],
     //'button_callback'     => array('tl_files_fly_ux', 'switchView')
 ];
+$GLOBALS['TL_DCA']['tl_files']['list']['global_operations']['list_view'] = [
+    'href'  => 'do=files&view=list',
+    'class' => 'header_list_view',
+    'label' => ['Listenansicht', 'Alle Dateien anzeigen'],
+    //'button_callback'     => array('tl_files_fly_ux', 'switchView')
+];
