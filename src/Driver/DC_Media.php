@@ -63,7 +63,7 @@ class DC_Media extends DC_Folder
                         if (isset($file['path'])) {
                             $objImage = new Image($file['path']);
                             $file['preview_path'] = $this->imageResizer->resizeAndCacheImage($file['path'], 300,300);
-;                           $file['info_src'] = $this->urlEncode($strBaseUrl.'/'.$file['path']);
+;                           $file['info_src'] = base64_encode($file['path']);
 ;
                         }
                     }
