@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Bits\FlyUx\EventListener;
+namespace Bits\FlyUxBundle\EventListener;
 
 use Contao\ContentModel;
 use Contao\PageModel;
