@@ -20,5 +20,15 @@
     },
   "extra": {
         "contao-manager-plugin": "Bits\\FlyUxBundle\\ContaoManager\\Plugin"
-    }
+    },
+    "scripts": {
+    "post-install-cmd": [
+      "php bin/console asset:install --relative"
+    ],
+    "post-update-cmd": [
+      "php bin/console asset:install --relative"
+    ]
+  }
+    
+    
 }

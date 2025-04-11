@@ -1,0 +1,30 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        
+    Bits\FlyUxBundle\EventListener\AddBackendAssetsListener:
+        arguments:
+            $scopeMatcher: '@contao.routing.scope_matcher'
+        tags:
+            - { name: 'kernel.event_listener', event: 'kernel.request', priority: 1 }
+        
+    Bits\FlyUxBundle\Driver\DC_Media:
+        class: Bits\FlyUxBundle\Driver\DC_Media
+        arguments: ['@service_container']
+        public: true
+
+    Bits\FlyUxBundle\Service\ImageResizer:
+        arguments:
+            $imageFactory: '@contao.image.factory'
+
+    Bits\FlyUxBundle\Widgets\ModuleWizard:
+        tags:
+            - { name: 'contao.backend.widget', inputType: 'flyWizard' }
+        arguments: []
+        
+    Bits\FlyUxBundle\:
+        resource: '../*'
+        exclude: '../{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+
+   

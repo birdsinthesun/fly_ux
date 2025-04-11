@@ -1,6 +1,6 @@
 {% for file in files %}
   <div class="media-tile">
-    <a href="?do=files&act=edit&id={{ file.path }}&rt={{ token }}"><img src="{{ file.preview_path }}" alt="{{ file.name }}"></a>
+    <a href="?do=files&act=edit&id={{ file.path }}&rt={{ token }}" title="Klicken zum Bearbeiten"><img src="{{ file.preview_path }}" alt="{{ file.name }}"></a>
     <div class="media-info">
 <a href="?do=files&act=info&id={{ file.id }}">Info</a>
     </div>
