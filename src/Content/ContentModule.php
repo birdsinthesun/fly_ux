@@ -47,15 +47,27 @@ class ContentModule extends ContentElement
 			return '';
 		}
         
-		$objModule = ModuleModel::findById($this->id);
+        
+        if(Input::get('do')){
+            $id = $this->module;
+            $objModule = ModuleModel::findById( $id);
+            }else{
+              $id = $this->id; 
+              $objModule = ModuleModel::findById( $id);
+                $cssID = StringUtil::deserialize($this->cssID, true);
+                $objModule->cssID = $cssID;
+                }
+		
 
 		// Clone the model, so we do not modify the shared model in the registry
 		//$objModel = ContentModel::findById($this->id);
        // var_dump($this->id,$this->__get('module'));exit;
-		$cssID = StringUtil::deserialize($this->cssID, true);
+		
+        
+        
 
 
-		$objModule->cssID = $cssID;
+		
 
 		// Tag the content element (see #2137)
 		if ($this->objModel !== null)
