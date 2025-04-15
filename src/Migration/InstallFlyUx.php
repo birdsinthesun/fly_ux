@@ -79,7 +79,7 @@ class InstallFlyUx extends AbstractMigration
                     'tl_content',
                     [
                         'pid' => $pageId,
-                        'ptable' => 'tl_page',
+                        'ptable' => 'tl_content',
                         'inColumn' => $column,
                     ],
                     ['id' => (int) $item['id']]

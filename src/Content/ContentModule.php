@@ -38,8 +38,8 @@ class ContentModule extends ContentElement
        
        // $path = $kernel->getCacheDir().'/contao/config/config.php';
       //$config = $path ;
-              $framework = System::getContainer()->get('contao.framework');
-    $framework->initialize();
+         //     $framework = System::getContainer()->get('contao.framework');
+   // $framework->initialize();
           //  return '⚙️ Modulansicht im Backend (custom)';
         
         if ($this->isHidden())
