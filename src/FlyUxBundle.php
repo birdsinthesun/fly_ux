@@ -4,19 +4,22 @@ namespace Bits\FlyUxBundle;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
-class FlyUxBundle extends Bundle
+class FlyUxBundle extends AbstractBundle
 {
-      public function getPath(): string
+    public function loadExtension(
+        array $config, 
+        ContainerConfigurator $containerConfigurator, 
+        ContainerBuilder $containerBuilder,
+    ): void
     {
-        return \dirname(__DIR__);
+        $containerConfigurator->import('../config/bundles.php');
+        $containerConfigurator->import('../config/services.yaml');
+        //$containerConfigurator->import('../config/routes.yaml');
     }
-    public function build(ContainerBuilder $container)
-    {
-        parent::build($container);
-        
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/config'));
-        $loader->load('services.yaml');
-    }
+
 }

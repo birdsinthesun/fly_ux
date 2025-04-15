@@ -29,5 +29,17 @@ class AddBackendAssetsListener
            
             $GLOBALS['TL_CSS'][] = 'bundles/flyux/css/dc_media.css';
         }
+        
+        if ($event->getRequest()->get('do') === 'content') {
+           
+            $GLOBALS['TL_CSS'][] = 'bundles/flyux/css/dc_content.css';
+            $GLOBALS['TL_CSS'][] = 'bundles/flyux/css/grid.css';
+        }
+        
+        if ($event->getRequest()->get('op_add') === 'add_content_element' || $event->getRequest()->get('op_dd') === 'drag_drop_mode') {
+           $GLOBALS['TL_JAVASCRIPT'][] = 'bundles/flyux/js/sortablejs.js';
+            $GLOBALS['TL_JAVASCRIPT'][] = 'bundles/flyux/js/drag.js';
+            $GLOBALS['TL_CSS'][] = 'bundles/flyux/css/drag.css';
+        }
     }
 }

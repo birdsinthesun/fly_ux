@@ -3,6 +3,10 @@ services:
         autowire: true
         autoconfigure: true
         
+    fly_ux_bundle:
+        class: 'Bits\FlyUxBundle\FlyUxBundle'
+        public: true
+        
     Bits\FlyUxBundle\EventListener\AddBackendAssetsListener:
         arguments:
             $scopeMatcher: '@contao.routing.scope_matcher'
@@ -13,10 +17,18 @@ services:
         class: Bits\FlyUxBundle\Driver\DC_Media
         arguments: ['@service_container']
         public: true
-
-    Bits\FlyUxBundle\Service\ImageResizer:
-        arguments:
-            $imageFactory: '@contao.image.factory'
+        
+    Bits\FlyUxBundle\Controller\:
+        resource: '../src/Controller' # Pfad relativ zur services.yaml
+        tags: ['controller.service_arguments']
+        autowire: true
+        autoconfigure: true
+  
+    
+    Bits\FlyUxBundle\Driver\DC_Content:
+        class: Bits\FlyUxBundle\Driver\DC_Content
+        arguments: ['@service_container']
+        public: true
 
     Bits\FlyUxBundle\Widgets\ModuleWizard:
         tags:
@@ -24,7 +36,7 @@ services:
         arguments: []
         
     Bits\FlyUxBundle\:
-        resource: '../*'
-        exclude: '../{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+        resource: '../src/*'
+        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
 
    

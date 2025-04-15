@@ -1,0 +1,31 @@
+.drag-item {
+  padding: 1rem;
+  background: white;
+  border: 1px solid #ccc;
+  margin-bottom: 0.5rem;
+  cursor: grab;
+  transition: transform 0.2s ease;
+}
+
+.drag-item.dragging {
+  opacity: 0.5;
+  transform: rotate(2deg);
+}
+
+.sortable-ghost {
+  opacity: 0.3;
+}
+
+.sortable-chosen {
+  background: #e0f0ff;
+}
+
+.dropzone.highlight {
+  border: 2px dashed #007bff;
+  background-color: #f0f8ff;
+}
+
+.fix-wrapper.drag-over {
+  border-color: #007bff;
+  background-color: #f0f8ff;
+}

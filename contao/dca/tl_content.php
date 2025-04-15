@@ -8,8 +8,14 @@ use Contao\DC_Table;
 use Contao\LayoutModel;
 use Contao\PageModel;
 use Contao\StringUtil;
+use Bits\FlyUxBundle\Driver\DC_Content;
 
+
+
+unset($GLOBALS['TL_DCA']['tl_content']['global_operations']['new']);
+unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['create']);
 $this->loadDataContainer('tl_page');
+$GLOBALS['TL_DCA']['tl_content']['config']['dataContainer']  = DC_Content::class;
 $GLOBALS['TL_DCA']['tl_content']['config']['ptable'] = 'tl_page';
 $GLOBALS['TL_DCA']['tl_content']['config']['ctable'] = ['tl_content'];
 $GLOBALS['TL_DCA']['tl_content']['config']['dynamicPtable'] = true;
@@ -48,6 +54,28 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['inColumn'] = array
 			'reference'               => &$GLOBALS['TL_LANG']['COLS'],
 			'sql'                     => "varchar(32) NOT NULL default 'main'"
 		);
+        
+$GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['add_content_element'] = [
+    'label'      => ['Neues Element einfügen', ''],
+    'href'       => 'op_add=add_content_element&act=create',
+    'class'      => 'header_new_element',
+    'button_callback' => ['\Bits\FlyUxBundle\Driver\DC_ContentOperations', 'addElementButton'],
+];
+
+$GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['drag_drop_mode'] = [
+    'label'      => ['Drag & Drop Modus', ''],
+    'href'       => 'op_dd=drag_drop_mode',
+    'class'      => 'header_drag_drop',
+    'button_callback' => ['\Bits\FlyUxBundle\Driver\DC_ContentOperations', 'dragDropButton'],
+];
+
+$GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['drag_drop_disable'] = [
+    'label'      => ['Drag & Drop Deaktivieren', ''],
+    'href'       => '',
+    'class'      => 'header_drag_drop_disable',
+    'button_callback' => ['\Bits\FlyUxBundle\Driver\DC_ContentOperations', 'dragDropDeaktivateButton'],
+];
+
 /**
  * Provide miscellaneous methods that are used by the data configuration array.
  *

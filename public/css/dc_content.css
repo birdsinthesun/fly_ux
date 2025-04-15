@@ -1,0 +1,39 @@
+#tl_buttons{
+     margin-top:20px;
+    }
+#tl_buttons .header_new_element,
+#tl_buttons .header_drag_drop,
+#tl_buttons .header_drag_drop_disable{
+   
+    margin-left:20px;
+    padding:10px;
+    background-color:#666;
+    color:#fff;
+    border-radius:5px;
+    }
+
+
+
+#fly_ux_content img{
+    max-width:100%;
+    height:auto;
+}
+
+.fix-wrapper{
+    padding:20px;
+    box-sizing:border-box;
+    border:1px solid #999;
+    
+    }
+.fix-wrapper h3{
+    display:inline-block;
+    box-sizing:border-box;
+    width:100%;
+    font-size:18px;
+    line-height:1.2;
+    background-color:#ddd;
+    border-left:1px solid #999;
+    border-top:1px solid #999;
+    border-right:1px solid #999;
+    
+    }
