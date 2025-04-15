@@ -1,6 +1,6 @@
 {
     "name": "birdsinthesun/fly_ux",
-    "type": "contao-module",
+    "type": "contao-bundle",
     "description": "Bindet einen Media-Kachel-Ansicht für Bilder ein zum schnellen Editieren von Bildern. Integriert eine Layout-Ansicht im Inhalts-Bereich mit Drag&Drop-Funktion. Ein individuelles Backend-Grid kann eingebunden werden. Entfernt die Artikel-Ebene in Contao CMS und optimiert die UX. Doku und Readme kommen noch. Ein kleines kostenfreies Themeist auch in Entwicklung.",
     "license": "MIT",
     "version":"dev-main",
