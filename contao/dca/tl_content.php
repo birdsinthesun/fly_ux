@@ -51,7 +51,7 @@ foreach ($GLOBALS['TL_DCA']['tl_content']['palettes'] as $paletteKey => $palette
 }
 $GLOBALS['TL_DCA']['tl_content']['fields']['ptable'] = array
 		(
-			'sql'                     => "varchar(64) COLLATE ascii_bin NOT NULL default 'tl_content'"
+			'sql'                     => "varchar(64) COLLATE ascii_bin NOT NULL default 'tl_page'"
 		);
 $GLOBALS['TL_DCA']['tl_content']['fields']['inColumn'] = array
 		(
