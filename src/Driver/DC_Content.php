@@ -74,23 +74,9 @@ class DC_Content extends DC_Table
 			$this->set = array_merge($this->set, $set);
 		}
 
-		// Get the new position
-		//$this->getNewPosition('new', Input::get('pid'), Input::get('mode') == self::PASTE_INTO);
-
-		// Dynamically set the parent table
-		//if ($GLOBALS['TL_DCA'][$this->strTable]['config']['dynamicPtable'] ?? null)
-		//{
-		//	$this->set['ptable'] = $this->ptable;
-		//}
-
 		$objSession = System::getContainer()->get('request_stack')->getSession();
 
-		// Empty the clipboard
-		//System::getContainer()->get('contao.data_container.clipboard_manager')->clear($this->strTable);
-
 		$this->set['tstamp'] = 0;// time();
-
-		//$this->denyAccessUnlessGranted(ContaoCorePermissions::DC_PREFIX . $this->strTable, new CreateAction($this->strTable, $this->set));
 
 		// Insert the record if the table is not closed and switch to edit mode
 		if (!($GLOBALS['TL_DCA'][$this->strTable]['config']['closed'] ?? null))
@@ -134,7 +120,7 @@ class DC_Content extends DC_Table
     {
        
         
-      // var_dump(Input::get('pid'));exit;
+      
               if(Input::get('pid')===Null){
         
                 $arrPages = array();
@@ -149,7 +135,7 @@ class DC_Content extends DC_Table
                 {
                   $arrPages = $this->buildTree($dbPages); 
                   
-                 // var_dump($arrPages);exit;
+                 
                 }
              return $this->renderListView($arrPages);
              }else{
@@ -162,41 +148,56 @@ class DC_Content extends DC_Table
                  $layoutModel = new LayoutModel;
                  $objLayout = $layoutModel::findById($layoutId);
                  // find layout sections within sections and modules
-                 //var_dump(unserialize($objLayout->sections));exit;
+                
                  // make an assoc array about the posibilities to include a section
                  $attrBlock = ['position'=>'default'];
                  
                  $htmlBlocks = array();
                  $htmlBlocks['container'] = $attrBlock;
                  
-                 //var_dump(unserialize($objLayout->modules));exit;
+                 
                     foreach(unserialize($objLayout->modules) as $module){
                          if($module['mod'] !== '0'){
                             continue;
                              }
-                        $htmlBlocks['container'][$module['col']] = $attrBlock;
+                             
+                  
+                       //var_dump(unserialize($objLayout->sections));exit;
+                         foreach(unserialize($objLayout->sections) as $section){
+                             
+                         //  var_dump($module['col'] === $section['id'],$section['id'],$module['col']);  
+                             if($section['position'] === 'top'
+                             &&$module['col'] === $section['id']){
+                                 $htmlBlocks[$section['id']] = ['position'=>'top'];
+                                 }
+                             elseif($section['position'] === 'before'
+                             &&$module['col'] === $section['id']){
+                                     
+                                 $htmlBlocks['container'][$section['id']] = ['position'=>'before'];  
+                                $htmlBlocks['container'][$module['col']] = $attrBlock;
+                                
+                            }elseif($section['position'] === $module['col']
+                            &&$module['col'] === $section['id']){
+                                     
+                                 $htmlBlocks['container'][$module['col']][$section['id']] = ['position'=>'main'];    
+                            }elseif($section['position'] === 'after'
+                            &&$module['col'] === $section['id']){
+                                
+                                $htmlBlocks['container'][$module['col']] = $attrBlock;
+                                 $htmlBlocks['container'][$section['id']] = ['position'=>'after'];    
+                            }elseif($section['position'] === 'bottom'
+                            &&$module['col'] === $section['id']){
+                                     
+                                 $htmlBlocks[$section['id']] = ['position'=>'bottom'];    
+                            }else{
+                                 $htmlBlocks['container'][$module['col']] = $attrBlock;
+                                
+                                }
+                             
+                        }
                         
-                    }
-                 
-                 foreach(unserialize($objLayout->sections) as $section){
-                     if($section['position'] === 'top'){
-                         $htmlBlocks[$section['id']] = ['position'=>'top'];
-                         }
-                     elseif($section['position'] === 'before'){
-                             
-                         $htmlBlocks['container'][$section['id']] = ['position'=>'before'];    
-                    }elseif($section['position'] === 'main'){
-                             
-                         $htmlBlocks['container']['main'][$section['id']] = ['position'=>'main'];    
-                    }elseif($section['position'] === 'after'){
-                             
-                         $htmlBlocks['container'][$section['id']] = ['position'=>'after'];    
-                    }elseif($section['position'] === 'bottom'){
-                             
-                         $htmlBlocks[$section['id']] = ['position'=>'bottom'];    
-                    }
-                     
-                }
+                       // var_dump($htmlBlocks);exit;
+                  }
                 
                  
                  
