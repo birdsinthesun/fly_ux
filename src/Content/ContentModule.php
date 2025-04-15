@@ -179,7 +179,7 @@ class ContentModule extends ContentElement
             }
         }
 
-        return null;
+        return '';
     }
 
 }

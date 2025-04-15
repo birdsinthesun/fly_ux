@@ -35,6 +35,8 @@
     {% endfor %}
 {% endmacro %}
 {% import _self as layout %}
+
 <div id="fly_ux_content" class="drag-drop-wrapper" >
+<h2 >{{ pageName }}</h2>
 {{ layout.renderBlocks(htmlBlocks, elementsByBlock) }}
 </div>

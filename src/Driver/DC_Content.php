@@ -225,7 +225,7 @@ class DC_Content extends DC_Table
                  
                  
             
-               return $this->renderDetailView($htmlBlocks,$arrElements);  
+               return $this->renderDetailView($htmlBlocks,$arrElements,$objPage );  
             } 
             
        
@@ -252,7 +252,7 @@ class DC_Content extends DC_Table
 		);
     
     }
-    protected function renderDetailView($htmlBlocks = array(),$arrElements = array())
+    protected function renderDetailView($htmlBlocks = array(),$arrElements = array(),$objPage )
     {
         
         $requestStack = $this->container->get('request_stack');
@@ -266,7 +266,7 @@ class DC_Content extends DC_Table
 			'@Contao/be_content_details.html.twig',
 			array(
                 'baseUrl' => $request->getSchemeAndHttpHost() . $request->getBaseUrl(),
-                
+                'pageName' => $objPage->__get('title'),
                 'htmlBlocks' =>$htmlBlocks,
                 'elementsByBlock' => $arrElements
 			)

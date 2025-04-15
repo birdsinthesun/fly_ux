@@ -18,6 +18,15 @@
     max-width:100%;
     height:auto;
 }
+#fly_ux_content > h2{
+     padding:0 20px;
+    font-size:24px;
+    line-height:1.6;
+    display:inline-block;
+    box-sizing:border-box;
+    width:100%;
+    background-color:#eeeeef;
+    }
 
 .fix-wrapper{
     padding:20px;
