@@ -35,6 +35,12 @@ services:
             - { name: 'contao.backend.widget', inputType: 'flyWizard' }
         arguments: []
         
+    Bits\FlyUxBundle\Migration\InstallFlyUx:
+    arguments:
+        $connection: '@database_connection'
+    tags:
+        - { name: contao.migration }
+        
     Bits\FlyUxBundle\:
         resource: '../src/*'
         exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
