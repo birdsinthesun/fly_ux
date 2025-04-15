@@ -9,7 +9,9 @@
     "authors": [
         {
             "name": "Monique Hahnefeld",
-            "email": "hello@bits-design.de"
+            "email": "hello@bits-design.de",
+            "homepage":"https://birdsinthesun.de",
+            "role":"Developer"
         }
     ],
     "require": {
