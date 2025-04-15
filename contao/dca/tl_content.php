@@ -4,6 +4,8 @@
 use Contao\Backend;
 use Contao\Database;
 use Contao\DataContainer;
+use Contao\Input;
+use Contao\System;
 use Contao\DC_Table;
 use Contao\LayoutModel;
 use Contao\PageModel;
@@ -100,12 +102,19 @@ class tl_content_fly_ux extends Backend
 	 */
 	public function getActiveLayoutSections(DataContainer $dc)
 	{
-		// Show only active sections
-		if ($dc->activeRecord->pid ?? null)
-		{
-			$arrSections = array();
-			$objPage = PageModel::findWithDetails($dc->activeRecord->pid);
+		$arrSections = array();
+        $session = System::getContainer()->get('request_stack')->getSession();
+        $pid = $session->getBag('contao_backend')->get('OP_ADD_PID');
 
+        // Show only active sections
+		if ($pid ?? null)
+		{
+			
+			$objPage = PageModel::findWithDetails($pid);
+        }elseif(Input::get('pid') ?? null){
+            $objPage = PageModel::findWithDetails(Input::get('pid'));
+            
+        }
 			// Get the layout sections
 			if ($objPage->layout)
 			{
@@ -132,31 +141,9 @@ class tl_content_fly_ux extends Backend
 					}
 				}
 			}
-		}
+		
 
-		// Show all sections (e.g. "override all" mode)
-		else
-		{
-			$arrSections = array('header', 'left', 'right', 'main', 'footer');
-			$objLayout = Database::getInstance()->query("SELECT sections FROM tl_layout WHERE sections!=''");
-
-			while ($objLayout->next())
-			{
-				$arrCustom = StringUtil::deserialize($objLayout->sections);
-
-				// Add the custom layout sections
-				if (!empty($arrCustom) && is_array($arrCustom))
-				{
-					foreach ($arrCustom as $v)
-					{
-						if (!empty($v['id']))
-						{
-							$arrSections[] = $v['id'];
-						}
-					}
-				}
-			}
-		}
+		
 
 		return Backend::convertLayoutSectionIdsToAssociativeArray($arrSections);
 	}
