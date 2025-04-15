@@ -25,10 +25,17 @@ $GLOBALS['TL_DCA']['tl_content']['config']['enableVersioning']            = true
 $GLOBALS['TL_DCA']['tl_content']['config']['markAsCopy']                  = 'headline';
 
 $GLOBALS['TL_DCA']['tl_content']['list']['sorting']['mode'] = DataContainer::MODE_TREE_EXTENDED;
+
 $GLOBALS['TL_DCA']['tl_content']['list']['label']['fields'] =  ['headline', 'type', 'inColumn'];
 $GLOBALS['TL_DCA']['tl_content']['list']['label']['format'] =   '%s <span class="label-info">[%s]</span><span class="label-column"> %s </span>';
 //$GLOBALS['TL_DCA']['tl_content']['list']['label']['label_callback'] =   array('tl_content', 'addIcon');
-
+unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['fields']);
+unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['panelLayout']);
+unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['defaultSearchField']);
+unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['headerFields']);
+unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['child_record_callback']);
+           
+			
 
 foreach ($GLOBALS['TL_DCA']['tl_content']['palettes'] as $paletteKey => $paletteValue) {
    if ($paletteKey === '__selector__') {
