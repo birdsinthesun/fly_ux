@@ -27,6 +27,14 @@ class InstallFlyUx extends AbstractMigration
             ? $this->connection->createSchemaManager()
             : $this->connection->getSchemaManager();
 
+
+        $columns = $schemaManager->listTableColumns('tl_layout');
+        if (!array_key_exists('be_grid', $columns)) {
+            $this->connection->executeStatement(
+                "ALTER TABLE tl_layout ADD be_grid blob NULL"
+            );
+        }
+
         $columns = $schemaManager->listTableColumns('tl_content');
 
         if (!array_key_exists('ptable', $columns)) {
@@ -98,6 +106,6 @@ class InstallFlyUx extends AbstractMigration
 
     public function shouldRun(): bool
     {
-        return $this->tableExists('tl_article');
+        return !empty($this->connection->fetchAllAssociative('SELECT id FROM tl_article'));
     }
 }
