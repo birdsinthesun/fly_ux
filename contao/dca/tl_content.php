@@ -14,8 +14,7 @@ use Bits\FlyUxBundle\Driver\DC_Content;
 
 
 
-unset($GLOBALS['TL_DCA']['tl_content']['global_operations']['new']);
-unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['create']);
+
 $this->loadDataContainer('tl_page');
 $GLOBALS['TL_DCA']['tl_content']['config']['dataContainer']  = DC_Content::class;
 $GLOBALS['TL_DCA']['tl_content']['config']['ptable'] = 'tl_page';
@@ -52,7 +51,7 @@ foreach ($GLOBALS['TL_DCA']['tl_content']['palettes'] as $paletteKey => $palette
 }
 $GLOBALS['TL_DCA']['tl_content']['fields']['ptable'] = array
 		(
-			'sql'                     => "varchar(64) COLLATE ascii_bin NOT NULL default 'tl_content'"
+			'sql'                     => "varchar(64) COLLATE ascii_bin NOT NULL default 'tl_page'"
 		);
 $GLOBALS['TL_DCA']['tl_content']['fields']['inColumn'] = array
 		(

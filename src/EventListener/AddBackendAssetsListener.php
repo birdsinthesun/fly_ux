@@ -46,7 +46,8 @@ class AddBackendAssetsListener
              $layout = LayoutModel::findOneBy('id',$page->loadDetails()->layout);
 
             if ($layout === null) {
-                return;
+                $GLOBALS['TL_CSS'][] = 'bundles/flyux/css/grid.css';
+              
             }
 
             $uuid = $layout->be_grid;
@@ -76,7 +77,34 @@ class AddBackendAssetsListener
         if ($event->getRequest()->get('op_dd') === 'drag_drop_mode') {
            /// $GLOBALS['TL_JAVASCRIPT'][] = 'bundles/flyux/js/sortablejs.js';
             $GLOBALS['TL_JAVASCRIPT'][] = 'bundles/flyux/js/drag.js';
+            $page = PageModel::findOneBy('id',$event->getRequest()->get('pid'));
+            
+             $layout = LayoutModel::findOneBy('id',$page->loadDetails()->layout);
+
+            if ($layout === null) {
+                $GLOBALS['TL_CSS'][] = 'bundles/flyux/css/grid.css';
+                
+            }
+
+            $uuid = $layout->be_grid;
+///var_dump($uuid);exit;
+            // Falls kein Wert vorhanden, abbrechen
+            if (!$uuid) {
+                $GLOBALS['TL_CSS'][] = 'bundles/flyux/css/grid.css';
+               
+            }
+
+            // UUID in Pfad auflösen
+            $file = FilesModel::findByUuid($uuid);
+
+            if ($file === null) {
+                $GLOBALS['TL_CSS'][] = 'bundles/flyux/css/grid.css';
+                
+            }else{
+                 $GLOBALS['TL_CSS'][] = $file->path;
+                }
             $GLOBALS['TL_CSS'][] = 'bundles/flyux/css/drag.css';
+            
         }
         
         
