@@ -111,8 +111,14 @@ class tl_content_fly_ux extends Backend
 		{
 			
 			$objPage = PageModel::findWithDetails($pid);
+            
+            
         }elseif(Input::get('pid') ?? null){
             $objPage = PageModel::findWithDetails(Input::get('pid'));
+            
+        
+        }elseif($dc->activeRecord->get('pid') ?? null){
+            $objPage = PageModel::findWithDetails($dc->activeRecord->get('pid'));
             
         }
 			// Get the layout sections

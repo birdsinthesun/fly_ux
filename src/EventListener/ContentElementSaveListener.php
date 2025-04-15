@@ -21,7 +21,6 @@ class ContentElementSaveListener
             $session = System::getContainer()->get('request_stack')->getSession();
             $pid = $session->getBag('contao_backend')->get('OP_ADD_PID');
 
-            
             $dc->activeRecord->pid = $pid;
             $Values['pid'] = $pid;
            return $Values;
