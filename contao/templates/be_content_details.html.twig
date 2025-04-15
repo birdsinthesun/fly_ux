@@ -15,7 +15,7 @@
                     {% for element in elementsByBlock[id] %}
                     <div  class="drag-item {{ element.css_class }}" data-element-id='{{ element.id }}'>
                         <h4>
-                            <a class="btn_edit" href="{{ element.href_act_edit }}" title="{{ element.type }} bearbeiten">{{ element.type }} bearbeiten</a>
+                            <a class="btn_edit" href="{{ element.href_act_edit }}" title="{{ element.type }} bearbeiten">{{ element.type }}</a>
                             <a class="btn_delete" href="{{ element.href_act_delete }}" title="{{ element.id }} löschen">Löschen</a>
                         </h4>
                         {{ element.content_element|raw }}

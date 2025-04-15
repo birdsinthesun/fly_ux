@@ -298,7 +298,7 @@ class DC_Content extends DC_Table
             if ((int)$element['pid'] === $parentId) {
                 $children = $this->buildTree($elements, (int)$element['id']);
                 $element['content_element'] = $this->getElement($element);
-                $element['css_class'] = '';//unserialize($element['cssId'])[1];
+                $element['css_class'] = (is_array($element['cssId'])) ? '' : unserialize($element['cssId'])[1];
                 $element['href_act_edit'] = 'contao?do=content&id='.$element['id'].'&table=tl_content&act=edit';
                $element['href_act_delete'] = 'contao?do=content&id='.$element['id'].'&table=tl_content&act=delete&rt='.$token;
                
