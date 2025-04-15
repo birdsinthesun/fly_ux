@@ -11,8 +11,7 @@ class DC_ContentOperations extends Backend
         public function addElementButton($href, $label, $title,$class, $icon, $attributes)
     {
         if(Input::get('pid')!==Null){
-            return '<a class="'.$class.'" href="' . $this->getCurrentUrl().'/contao?do=content&pid='.
-            Input::get('pid').'&table=tl_content&'.$href . '&rt='.Input::get('rt').'" title="' . $title . '"' . $attributes . '>' . $label . '</a>';
+            return '<a class="'.$class.'" href="' . $this->getCurrentUrl().'/contao?do=content&'.$href . '&rt='.Input::get('rt').'" title="' . $title . '"' . $attributes . '>' . $label . '</a>';
         }
     }
 

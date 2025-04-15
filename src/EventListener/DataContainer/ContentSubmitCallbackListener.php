@@ -6,24 +6,30 @@ use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
 use Contao\DataContainer;
 use Contao\System;
 use Contao\Input;
-use Doctrine\DBAL\Connection;
 
-#[AsCallback(table: 'tl_content', target: 'config.onsubmit')]
+
+#[AsCallback(table: 'tl_content', target: 'config.oncreate')]
 class ContentSubmitCallbackListener
 {
-    private $db;
 
-    public function __construct(Connection $db)
+    public function __invoke(
+    $Table,
+ $InsertID,
+$Fields,
+    DataContainer $dc): void
     {
-        $this->db = $db;
-    }
-
-    public function __invoke(DataContainer $dc): void
-    {
-        $this->dc = $dc;
-        if(Input::get('act') !== 'edit'){
-        //     $session = System::getContainer()->get('request_stack')->getSession();
-       // $session->getBag('contao_backend')->remove('OP_ADD_PID');
+       
+        if(Input::get('act') !== 'create' ||Input::get('act') !== 'edit'){
+            
+             $session = System::getContainer()->get('request_stack')->getSession();
+       
+             $dc->activeRecord->pid = $session->getBag('contao_backend')->get('OP_ADD_PID');
+               $Fields['pid']= $session->getBag('contao_backend')->get('OP_ADD_PID');
+             $dc->activeRecord->ptable = 'tl_page';
+             $Fields['ptable']= 'tl_page';
+         // $this->dc = $dc ;
+            
+           
             }
        
     }

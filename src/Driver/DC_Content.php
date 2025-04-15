@@ -31,10 +31,7 @@ class DC_Content extends DC_Table
             
             $this->strTable = $strTable;
              $this->arrModule = $arrModule;
-           // $this->container->get('contao.theme')->addCssFile('vendor/flyux/assets/css/dc_media.css');
-            
-           // $this->imageResizer = new ImageResizer( $this->container );
-           parent::__construct($strTable, $arrModule); 
+             parent::__construct($strTable, $arrModule); 
        
     }
     
@@ -50,7 +47,7 @@ class DC_Content extends DC_Table
 		
         $db = Database::getInstance();
 		$databaseFields = $db->getFieldNames($this->strTable);
-
+        $objSession = System::getContainer()->get('request_stack')->getSession();
 		// Get all default values for the new entry
 		foreach ($GLOBALS['TL_DCA'][$this->strTable]['fields'] as $k=>$v)
 		{
@@ -63,9 +60,24 @@ class DC_Content extends DC_Table
 				{
 					$default = $default($this);
 				}
-
+                
 				$this->set[$k] = \is_array($default) ? serialize($default) : $default;
 			}
+            if($k ==='pid'){
+                  
+                    $this->set[$k] =   $objSession->getBag('contao_backend')->get('OP_ADD_PID');
+                    
+                    }
+                    if($k ==='ptable'){
+                  
+                    $this->set[$k] = 'tl_page';
+                    
+                    }
+                    if($k ==='inColumn'){
+                  
+                    $this->set[$k] = 'main';
+                    
+                    }
 		}
 
 		// Set passed values
@@ -74,7 +86,7 @@ class DC_Content extends DC_Table
 			$this->set = array_merge($this->set, $set);
 		}
 
-		$objSession = System::getContainer()->get('request_stack')->getSession();
+		//var_dump( $this->set);exit;
 
 		$this->set['tstamp'] = 0;// time();
 
@@ -92,7 +104,7 @@ class DC_Content extends DC_Table
 				
                 
                 $insertID = $objInsertStmt->insertId;
-                $insertPID = $objInsertStmt->insertPid;
+                ;
 
 				$objSessionBag = $objSession->getBag('contao_backend');
 
@@ -298,7 +310,14 @@ class DC_Content extends DC_Table
             if ((int)$element['pid'] === $parentId) {
                 $children = $this->buildTree($elements, (int)$element['id']);
                 $element['content_element'] = $this->getElement($element);
-                $element['css_class'] = (is_array($element['cssId'])) ? '' : unserialize($element['cssId'])[1];
+                
+                if(is_array( unserialize($element['cssId']))){
+                     $cssId = unserialize($element['cssId'])[1];
+                    }else{
+                        $cssId = $this->cssId;
+                        }
+               
+                $element['css_class'] = $cssId;
                 $element['href_act_edit'] = 'contao?do=content&id='.$element['id'].'&table=tl_content&act=edit';
                $element['href_act_delete'] = 'contao?do=content&id='.$element['id'].'&table=tl_content&act=delete&rt='.$token;
                
