@@ -159,7 +159,7 @@ class ContentModule extends ContentElement
 		return $strBuffer;
 	}
     
-   public function findFrontendModuleKey(string $targetKey): ?array
+   public function findFrontendModuleKey(string $targetKey):string
     {
         foreach ($GLOBALS['FE_MOD'] as $scope => $modules) {
             if (array_key_exists($targetKey, $modules)) {
