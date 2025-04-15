@@ -28,7 +28,7 @@ class InstallFlyUx extends AbstractMigration
         }
 
         // Hol alle Artikel
-        $articles = $this->connection->fetchAllAssociative('SELECT id, pid FROM tl_article');
+        $articles = $this->connection->fetchAllAssociative('SELECT id, pid, inColumn FROM tl_article');
 
         if (empty($articles)) {
             return $this->createResult(false, 'Keine Datensätze in tl_article gefunden.');
@@ -39,6 +39,7 @@ class InstallFlyUx extends AbstractMigration
         foreach ($articles as $article) {
             $articleId = (int) $article['id'];
             $pageId = (int) $article['pid'];
+            $articleColumn = $article['inColumn'];
 
             // tl_content mit pid = article.id finden
             $contentItems = $this->connection->fetchAllAssociative(
@@ -49,6 +50,7 @@ class InstallFlyUx extends AbstractMigration
             foreach ($contentItems as $item) {
                 $this->connection->update(
                     'tl_content',
+                    ['inColumn' => $articleColumn],
                     ['pid' => $pageId],
                     ['id' => (int) $item['id']]
                 );
@@ -68,4 +70,10 @@ class InstallFlyUx extends AbstractMigration
 
         return $schemaManager->tablesExist([$table]);
     }
+    
+    public function shouldRun(): bool
+        {
+            // Oder z. B. nur ausführen, wenn Tabelle nicht existiert
+            return $this->tableExists('tl_article');
+        }
 }

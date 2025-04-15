@@ -36,10 +36,10 @@ services:
         arguments: []
         
     Bits\FlyUxBundle\Migration\InstallFlyUx:
-    arguments:
-        $connection: '@database_connection'
-    tags:
-        - { name: contao.migration }
+        arguments:
+            $connection: '@database_connection'
+        tags:
+            - { name: contao.migration }
         
     Bits\FlyUxBundle\:
         resource: '../src/*'
