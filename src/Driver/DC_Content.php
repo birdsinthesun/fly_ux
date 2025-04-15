@@ -230,12 +230,7 @@ class DC_Content extends DC_Table
                   $arrElements = $this->buildElements($dbElements,Input::get('pid')); 
                    // var_dump($arrElements);exit;
                 }
-                 
-                 
-                 
-                 
-                 
-                 
+
             
                return $this->renderDetailView($htmlBlocks,$arrElements,$objPage );  
             } 
@@ -341,11 +336,13 @@ class DC_Content extends DC_Table
             $row = $objCte;
 
             // Optional: nur wenn Spalte passt
-            if ($row->type !== 'module') {
+            if ($row->type !== 'module'&&$row->type !== 'form') {
                 $strClass = 'Contao\\Content' . ucfirst($row->type);
-            }else{
+            }elseif($row->type === 'module'){
                  $strClass = 'Bits\\FlyUxBundle\\Content\\Content' . ucfirst($row->type);
-                }
+                }else{
+                    $strClass = 'Contao\\Form';
+                    }
 
                 if (class_exists($strClass)) {
                     /** @var \Contao\ContentElement $objElement */
