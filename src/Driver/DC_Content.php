@@ -99,7 +99,7 @@ class DC_Content extends DC_Table
 				// Save new record in the session
 				$new_records = $objSessionBag->get('new_records');
 				$new_records[$this->strTable][] = $insertID;
-                $objSessionBag->set('OP_ADD_PID',Input::get('pid'));
+            
          
 				$objSessionBag->set('new_records', $new_records);
 
@@ -118,7 +118,7 @@ class DC_Content extends DC_Table
  $intMargin=0, $arrClipboard=null, $blnCircularReference=false, 
  $protectedPage=false, $blnNoRecursion=false, $arrFound=array())
     {
-       
+            
         
       
               if(Input::get('pid')===Null){
@@ -139,6 +139,8 @@ class DC_Content extends DC_Table
                 }
              return $this->renderListView($arrPages);
              }else{
+                 $objSession = System::getContainer()->get('request_stack')->getSession();
+                $objSession->getBag('contao_backend')->set('OP_ADD_PID',Input::get('pid'));
                  //find Layout of the page 
                  $pageModel = new PageModel;
                  $objPage = $pageModel::findById(Input::get('pid'));
@@ -320,8 +322,11 @@ class DC_Content extends DC_Table
             $row = $objCte;
 
             // Optional: nur wenn Spalte passt
-            //if ($row->type && $row->inColumn === $strColumn) {
+            if ($row->type !== 'module') {
                 $strClass = 'Contao\\Content' . ucfirst($row->type);
+            }else{
+                 $strClass = 'Bits\\FlyUxBundle\\Content\\Content' . ucfirst($row->type);
+                }
 
                 if (class_exists($strClass)) {
                     /** @var \Contao\ContentElement $objElement */
@@ -330,7 +335,7 @@ class DC_Content extends DC_Table
                     //var_dump($objElement->generate());
                      return  $objElement->generate();
                 }
-            //}
+            
             
         }
     }

@@ -180,7 +180,7 @@ class MyPageRegular extends Frontend
 						continue;
 					}
                         
-                    if($arrModule['mod'] == 0){
+                    if($arrModule['mod'] === '0'){
                         
                         $this->Template->{$arrModule['col']} .= $this->getContentElements($objPage->id, $arrModule['col']);
 			
@@ -329,7 +329,16 @@ class MyPageRegular extends Frontend
 
             // Optional: nur wenn Spalte passt
             if ($row->type && $row->inColumn === $strColumn) {
-                $strClass = 'Contao\\Content' . ucfirst($row->type);
+                
+                
+                if ($row->type !== 'module') {
+                    $strClass = 'Contao\\Content' . ucfirst($row->type);
+                }else{
+                     $strClass = 'Bits\\FlyUxBundle\\Content\\Content' . ucfirst($row->type);
+                    $objModule = ModuleModel::findById($row->module);
+                
+                    $row = $objModule;
+                }
 
                 if (class_exists($strClass)) {
                     /** @var \Contao\ContentElement $objElement */
