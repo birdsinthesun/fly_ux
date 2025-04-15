@@ -37,3 +37,59 @@
     border-right:1px solid #999;
     
     }
+
+.not-drag-content,
+.drag-content{
+    display:block;
+    clear:both;
+    float:left;
+    min-height:60px;
+    width:100%;
+    
+    }
+.drag-content > h3{
+    position:relative;
+    margin:0px 0 0 0;
+    float:left;
+    display:inline-block;
+    text-align:left;
+    min-width:200px;
+    width:100%;
+    
+}
+.drag-content > div{
+   box-sizing:border-box;
+    display: block;
+float:left;
+    height:auto;
+    }
+.drag-content > div > h4{
+    box-sizing:border-box;
+    display:inline-block;
+    background-color:#eee;
+    padding:5px;
+    width:100%;
+    }
+.drag-content > div > h4 > a.btn_edit{
+     display:inline-block;
+     float:left;
+  
+    padding:10px;
+    background-color:#7cb329;
+    color:#fff;
+    width:auto;
+    border-radius:5px;
+    }
+ .drag-content > div > h4 > a.btn_delete{
+     display:inline-block;
+    float:right;
+    
+    padding:10px;
+    margin-left:30px;
+    
+    
+    background-color:#b33229;
+    color:#fff;
+    width:auto;
+    border-radius:5px;
+    }

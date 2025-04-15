@@ -265,8 +265,7 @@ class DC_Content extends DC_Table
                 'baseUrl' => $request->getSchemeAndHttpHost() . $request->getBaseUrl(),
                 
                 'htmlBlocks' =>$htmlBlocks,
-                'elementsByBlock' => $arrElements,
-                'token' => $tokenManager->getToken('contao_backend')->getValue()
+                'elementsByBlock' => $arrElements
 			)
 		);
     
@@ -291,14 +290,14 @@ class DC_Content extends DC_Table
     protected function buildElements(array $elements, int $parentId = 0): array
     {
         $branch = [];
-
+        $token = System::getContainer()->get('contao.csrf.token_manager')->getDefaultTokenValue();
         foreach ($elements as $element) {
             if ((int)$element['pid'] === $parentId) {
                 $children = $this->buildTree($elements, (int)$element['id']);
                 $element['content_element'] = $this->getElement($element);
                 $element['css_class'] = unserialize($element['cssId'])[1];
                 $element['href_act_edit'] = 'contao?do=content&id='.$element['id'].'&table=tl_content&act=edit';
-               
+               $element['href_act_delete'] = 'contao?do=content&id='.$element['id'].'&table=tl_content&act=delete&rt='.$token;
                
                 if ($children) {
                     $element['children'] = $children;
@@ -334,12 +333,6 @@ class DC_Content extends DC_Table
             
         }
     }
-
-   
-   
-	
-
-        
         
     
     

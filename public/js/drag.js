@@ -33,13 +33,31 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         zone.addEventListener('drop', function (e) {
-           e.preventDefault();
+            e.preventDefault();
             this.classList.remove('drag-over');
 
             if (draggedItem) {
-                this.appendChild(draggedItem);
+                // Mausposition
+                const mouseY = e.clientY;
+                const children = [...this.querySelectorAll('.drag-item')].filter(el => el !== draggedItem);
 
-                // Alle drag-items in dieser Zone
+                let insertBefore = null;
+
+                for (let child of children) {
+                    const rect = child.getBoundingClientRect();
+                    if (mouseY < rect.top + rect.height / 2) {
+                        insertBefore = child;
+                        break;
+                    }
+                }
+
+                if (insertBefore) {
+                    this.insertBefore(draggedItem, insertBefore);
+                } else {
+                    this.appendChild(draggedItem);
+                }
+
+                // Neue Reihenfolge ermitteln
                 const allItems = this.querySelectorAll('.drag-item');
                 const updated = [];
 
@@ -47,11 +65,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     updated.push({
                         id: item.dataset.elementId,
                         inColumn: this.id.replace('fly_ux_', ''),
-                        sorting: (index + 1) * 128 // Symfony / Contao nutzt oft 128er Schritte
+                        sorting: (index + 1) * 128
                     });
                 });
 
-                // AJAX-Request an dein Backend
                 fetch('/contao/_flyux/update-sorting', {
                     method: 'POST',
                     headers: {

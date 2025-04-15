@@ -1,42 +1,9 @@
-.not-drag-content,
-.drag-content{
-    display:block;
-    clear:both;
-    float:left;
-    min-height:60px;
-    width:100%;
-    
-    }
-.drag-content > h3{
-    position:relative;
-    margin:0px 0 0 0;
-    float:left;
-    display:inline-block;
-    text-align:left;
-    min-width:200px;
-    width:100%;
-    
+.drag-item{width:100%; 
+box-sizing:border-box;
 }
-.drag-content > div{
-   box-sizing:border-box;
-    display: block;
-float:left;
-    height:auto;
-    }
-.drag-content > div > h4{
-     display:inline-block;
-     text-align:center;
-    padding:10px;
-    background-color:#666;
-    width:auto;
-    border-radius:5px;
-    }
-    .drag-content > div > h4 > a{
-     color:#fff;
-    }
 .col-md-6{
     
-    box-sizing:border-box;
+    
     width:50% ;
     }
 .col-12,
