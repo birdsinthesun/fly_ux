@@ -30,6 +30,7 @@ class DC_Media extends DC_Folder
             $this->imageResizer = new ImageResizer( $this->container );
             parent::__construct($table, $arrModule); 
         }else{
+            $this->mode = 'list';
          parent::__construct($table, $arrModule);   
         
             }
@@ -52,6 +53,7 @@ class DC_Media extends DC_Folder
                     OR extension = 'png'
                     OR extension = 'gif'
                     OR extension = 'webp'
+                    OR extension = 'svg'
                 )
                 ORDER BY lastModified DESC
             ");
@@ -59,14 +61,23 @@ class DC_Media extends DC_Folder
                 if ($dbFiles !== null)
                 {
                    $arrFiles = $dbFiles;
-                   foreach ($arrFiles as &$file) {
-                        if (isset($file['path'])) {
-                            $objImage = new Image($file['path']);
-                            $file['preview_path'] = $this->imageResizer->resizeAndCacheImage($file['path'], 300,300);
-;                           $file['info_src'] = base64_encode($file['path']);
-;
+                  foreach ($arrFiles as $key => &$file) {
+                    if (isset($file['path'])) {
+                        $objImage = new Image($file['path']);
+                        $resized = $this->imageResizer->resizeAndCacheImage($file['path'], 300, 300);
+
+                        if ($resized !== '') {
+                            $file['preview_path'] = $resized;
+                            $file['info_src'] = base64_encode($file['path']);
+                        } else {
+                            unset($arrFiles[$key]);
+                            continue;
                         }
+                    } else {
+                        unset($arrFiles[$key]);
+                        continue;
                     }
+                }
                     unset($file);
                 }
              return $this->renderMediaView($arrFiles,$path);

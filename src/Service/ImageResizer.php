@@ -32,8 +32,12 @@ class ImageResizer
                 ->setWidth($width)
                 ->setHeight($height)
                 ->setMode(ResizeConfiguration::MODE_CROP);
+          
             $absolutePath = realpath($_SERVER['DOCUMENT_ROOT'] . '/' . $sourcePath);
-            
+           if($absolutePath===false){
+               
+               return '';
+           }
             $resultPath = str_replace($sourcePath, '', $absolutePath);
             $objImage = $this->imageFactory->create($absolutePath, $resizeConfig);
             $imageUrl = $objImage->getUrl($resultPath);
