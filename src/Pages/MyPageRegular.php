@@ -23,6 +23,7 @@ use Contao\Frontend;
 use Contao\System;
 use Contao\LayoutModel;
 use Contao\ThemeModel;
+use Contao\Template;
 use Contao\ModuleModel;
 use Contao\ContentModel;
 use Contao\FilesModel;
