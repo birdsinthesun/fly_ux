@@ -22,26 +22,45 @@ class InstallFlyUx extends AbstractMigration
 
     public function run(): MigrationResult
     {
-        // Prüfen ob tl_article existiert
-        if (!$this->tableExists('tl_article')) {
-            return $this->createResult(false, 'Tabelle tl_article ist schon entfernt.');
+        // 🧱 Füge 'ptable' und 'inColumn' zu tl_content hinzu, falls sie fehlen
+        $schemaManager = method_exists($this->connection, 'createSchemaManager')
+            ? $this->connection->createSchemaManager()
+            : $this->connection->getSchemaManager();
+
+        $columns = $schemaManager->listTableColumns('tl_content');
+
+        if (!array_key_exists('ptable', $columns)) {
+            $this->connection->executeStatement(
+                "ALTER TABLE tl_content ADD ptable VARCHAR(64) COLLATE ascii_bin NOT NULL DEFAULT 'tl_content'"
+            );
         }
 
-        // Hol alle Artikel
+        if (!array_key_exists('inColumn', $columns)) {
+            $this->connection->executeStatement(
+                "ALTER TABLE tl_content ADD inColumn VARCHAR(32) NOT NULL DEFAULT 'main'"
+            );
+        }
+
+        // 🧪 Prüfen ob tl_article existiert
+        if (!$this->tableExists('tl_article')) {
+            return $this->createResult(false, 'Tabelle tl_article ist nicht vorhanden.');
+        }
+
+        // 📑 Artikel holen
         $articles = $this->connection->fetchAllAssociative('SELECT id, pid, inColumn FROM tl_article');
 
         if (empty($articles)) {
-            return $this->createResult(false, 'Keine Datensätze in tl_article gefunden.');
+            return $this->createResult(false, 'Keine Artikel vorhanden.');
         }
 
         $updatedCount = 0;
 
+        // 🔁 Inhalte anpassen
         foreach ($articles as $article) {
             $articleId = (int) $article['id'];
             $pageId = (int) $article['pid'];
-            $articleColumn = $article['inColumn'];
+            $column = $article['inColumn'];
 
-            // tl_content mit pid = article.id finden
             $contentItems = $this->connection->fetchAllAssociative(
                 'SELECT id FROM tl_content WHERE pid = ?',
                 [$articleId]
@@ -50,8 +69,11 @@ class InstallFlyUx extends AbstractMigration
             foreach ($contentItems as $item) {
                 $this->connection->update(
                     'tl_content',
-                    ['inColumn' => $articleColumn],
-                    ['pid' => $pageId],
+                    [
+                        'pid' => $pageId,
+                        'ptable' => 'tl_page',
+                        'inColumn' => $column,
+                    ],
                     ['id' => (int) $item['id']]
                 );
 
@@ -59,21 +81,23 @@ class InstallFlyUx extends AbstractMigration
             }
         }
 
-        return $this->createResult(true, "$updatedCount Inhalte aktualisiert.");
+        // 🧹 Artikel-Tabelle leeren
+        $this->connection->executeStatement('TRUNCATE tl_article');
+
+        return $this->createResult(true, "$updatedCount Inhalte migriert und tl_article geleert.");
     }
 
     private function tableExists(string $table): bool
     {
         $schemaManager = method_exists($this->connection, 'createSchemaManager')
             ? $this->connection->createSchemaManager()
-            : $this->connection->getSchemaManager(); // fallback < doctrine/dbal 3
+            : $this->connection->getSchemaManager();
 
         return $schemaManager->tablesExist([$table]);
     }
-    
+
     public function shouldRun(): bool
-        {
-            // Oder z. B. nur ausführen, wenn Tabelle nicht existiert
-            return $this->tableExists('tl_article');
-        }
+    {
+        return $this->tableExists('tl_article');
+    }
 }
