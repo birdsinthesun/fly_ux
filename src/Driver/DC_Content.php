@@ -348,7 +348,7 @@ class DC_Content extends DC_Table
                 if (class_exists($strClass)) {
                     /** @var \Contao\ContentElement $objElement */
                     $objElement = new $strClass($row);
-                    $row->__set('text','Neues Element');
+                   // $row->__set('text','Neues Element');
                    /// $row->getRelated('relatedTable')->__set('table','tl_page');
                 //var_dump($strClass,'test');
                      return  $objElement->generate();
