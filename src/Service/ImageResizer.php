@@ -4,6 +4,7 @@ namespace Bits\FlyUxBundle\Service;
 use Contao\ContaoBundle\Image\ImageFactoryInterface;
 use Contao\Image\ResizeConfiguration;
 use Contao\File;
+use Contao\System;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 class ImageResizer
@@ -33,9 +34,9 @@ class ImageResizer
                 ->setHeight($height)
                 ->setMode(ResizeConfiguration::MODE_CROP);
       
-            $absolutePath = $_SERVER['DOCUMENT_ROOT'] . '/' . $sourcePath;
-           if(!file_exists($absolutePath)){
-                return '';
+            $absolutePath = System::getContainer()->getParameter('kernel.project_dir'). '/' . $sourcePath;
+             if(!$absolutePath){
+               return '';
                }
            
             $resultPath = str_replace($sourcePath, '', $absolutePath);
