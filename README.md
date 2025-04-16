@@ -40,6 +40,15 @@ Die Inhalte (`tl_content`) lassen sich über ein intuitives Drag-&-Drop-Interfac
 - 🔄 Neue Sortierung wird via AJAX an das Backend übertragen
 - 🔐 Berechtigungen und Sichtbarkeit werden weiterhin beachtet
 
+## 4. Be-Grid: Backend-Vorschau wie im Frontend
+
+Im `tl_layout` wurde das Feld `be_grid` hinzugefügt.
+
+- Redakteure können ein spezielles Backend-Stylesheet auswählen
+- Das Stylesheet imitiert das Frontend-Grid
+- Inhaltselemente erscheinen im Backend wie im Frontend angeordnet
+- Unterstützt klares visuelles Feedback bei Drag-&-Drop
+
 ## ✅ Fazit
 
 Mit diesem Bundle wurde die klassische Struktur von Contao gezielt verändert – zugunsten einer intuitiveren und moderneren Benutzererfahrung. Die Entfernung der Artikel-Ebene ermöglicht eine klarere Hierarchie, während die neuen Medien- und Inhaltsfunktionen das Backend deutlich aufwerten.
