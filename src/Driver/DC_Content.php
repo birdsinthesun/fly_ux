@@ -326,7 +326,7 @@ class DC_Content extends DC_Table
         return $branch;
     }
     
-    protected function getElement(array $element): string
+    protected function getElement(array $element)
     {
         
 		$objCte = ContentModel::findById($element['id']);
@@ -340,20 +340,24 @@ class DC_Content extends DC_Table
                 $strClass = 'Contao\\Content' . ucfirst($row->type);
             }elseif($row->type === 'module'){
                  $strClass = 'Bits\\FlyUxBundle\\Content\\Content' . ucfirst($row->type);
-                }else{
+            }elseif($row->type === 'form'){
                     $strClass = 'Contao\\Form';
-                    }
+            }
+                    
 
                 if (class_exists($strClass)) {
                     /** @var \Contao\ContentElement $objElement */
                     $objElement = new $strClass($row);
-                    
-                    //var_dump($objElement->generate());
+                    $row->__set('text','Neues Element');
+                   /// $row->getRelated('relatedTable')->__set('table','tl_page');
+                //var_dump($strClass,'test');
                      return  $objElement->generate();
                 }
+         }else{
+             return '';
+             } 
             
-            
-        }
+        
     }
         
     
