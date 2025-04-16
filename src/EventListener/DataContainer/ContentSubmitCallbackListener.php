@@ -19,15 +19,15 @@ $Fields,
     DataContainer $dc): void
     {
        
-        if(Input::get('act') !== 'create' ||Input::get('act') !== 'edit'){
+        if(Input::get('act') !== 'create'&&Input::get('op_add') === 'add_content_element' ||Input::get('act') !== 'edit'){
             
              $session = System::getContainer()->get('request_stack')->getSession();
        
              $dc->activeRecord->pid = $session->getBag('contao_backend')->get('OP_ADD_PID');
-               $Fields['pid']= $session->getBag('contao_backend')->get('OP_ADD_PID');
+             
              $dc->activeRecord->ptable = 'tl_page';
-             $Fields['ptable']= 'tl_page';
-         // $this->dc = $dc ;
+                $dc->activeRecord->ctable = [];
+                $this->dc = $dc ;
             
            
             }
