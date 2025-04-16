@@ -53,7 +53,5 @@ Im `tl_layout` wurde das Feld `be_grid` hinzugefügt.
 
 Mit diesem Bundle wurde die klassische Struktur von Contao gezielt verändert – zugunsten einer intuitiveren und moderneren Benutzererfahrung. Die Entfernung der Artikel-Ebene ermöglicht eine klarere Hierarchie, während die neuen Medien- und Inhaltsfunktionen das Backend deutlich aufwerten.
 
----
 
-**Hinweis:** Diese Erweiterung richtet sich an erfahrene Contao-Nutzer. Sie verändert zentrale Abläufe des CMS und sollte daher nur gezielt und mit entsprechender Kenntnis eingesetzt werden.
 
