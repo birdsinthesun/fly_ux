@@ -31,7 +31,7 @@ $GLOBALS['TL_DCA']['tl_content']['list']['label']['fields'] =  ['headline', 'typ
 $GLOBALS['TL_DCA']['tl_content']['list']['label']['format'] =   '%s <span class="label-info">[%s]</span><span class="label-column"> %s </span>';
 //$GLOBALS['TL_DCA']['tl_content']['list']['label']['label_callback'] =   array('tl_content', 'addIcon');
 
-unset($GLOBALS['TL_CTE']['includes']['article']);
+unset($GLOBALS['TL_CTE']['includes']['teaser']);
 unset($GLOBALS['TL_CTE']['includes']['alias']);
 unset($GLOBALS['TL_CTE']['legacy']['accordionSingle']);
 unset($GLOBALS['TL_CTE']['miscellaneous']['swiper']);
