@@ -18,7 +18,7 @@ use Bits\FlyUxBundle\Driver\DC_Content;
 $this->loadDataContainer('tl_page');
 $GLOBALS['TL_DCA']['tl_content']['config']['dataContainer']  = DC_Content::class;
 $GLOBALS['TL_DCA']['tl_content']['config']['ptable'] = 'tl_page';
-$GLOBALS['TL_DCA']['tl_content']['config']['ctable'] = ['tl_content'];
+$GLOBALS['TL_DCA']['tl_content']['config']['ctable'] = [];
 $GLOBALS['TL_DCA']['tl_content']['config']['dynamicPtable'] = true;
 $GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][] = ['tl_page','addBreadcrumb'];
 $GLOBALS['TL_DCA']['tl_content']['config']['switchToEdit']                = true;

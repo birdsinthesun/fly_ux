@@ -5,8 +5,12 @@
   margin-bottom: 0.5rem;
   cursor: grab;
   transition: transform 0.2s ease;
-}
 
+}
+.drag-item *{
+     max-height:300px !important;
+     overflow:hidden;
+    }
 .drag-item.dragging {
   opacity: 0.5;
   transform: rotate(2deg);
@@ -29,3 +33,4 @@
   border-color: #007bff;
   background-color: #f0f8ff;
 }
+
