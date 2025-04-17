@@ -17,6 +17,7 @@ unset($GLOBALS['TL_CTE']['includes']['teaser']);
 unset($GLOBALS['TL_CTE']['includes']['alias']);
 //unset($GLOBALS['TL_MODELS']['tl_article']);
 $GLOBALS['TL_DCA']['tl_content']['config']['ptable'] = 'tl_page';
+$GLOBALS['TL_DCA']['tl_page']['config']['ctable'] = ['tl_content'];
 $GLOBALS['BE_MOD']['content']['content'] = [
     'tables' => ['tl_content'],
     'icon'   => 'vendor/birdsinthesun/fly_ux/assets/icon.svg' // optional
