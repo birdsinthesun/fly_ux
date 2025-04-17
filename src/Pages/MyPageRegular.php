@@ -332,13 +332,15 @@ class MyPageRegular extends Frontend
             if ($row->type && $row->inColumn === $strColumn) {
                 
                 
-                if ($row->type !== 'module') {
+                if ($row->type !== 'module'&&$row->type !== 'form') {
                     $strClass = 'Contao\\Content' . ucfirst($row->type);
-                }else{
+                }elseif($row->type === 'module'){
                      $strClass = 'Bits\\FlyUxBundle\\Content\\Content' . ucfirst($row->type);
                     $objModule = ModuleModel::findById($row->module);
                 
                     $row = $objModule;
+                }elseif($row->type === 'form'){
+                     $strClass = 'Contao\\Form' ;
                 }
 
                 if (class_exists($strClass)) {
