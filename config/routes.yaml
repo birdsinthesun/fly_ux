@@ -1,3 +1,3 @@
 fly_ux_controller:
-    resource: "../Controller"
+    resource: "../src/Controller"
     type: attribute
