@@ -8,18 +8,24 @@ use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
+use Bits\FlyUxBundle\DependencyInjection\Compiler\RemoveContaoCallbackPass;
+use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 
-class FlyUxBundle extends AbstractBundle
+class FlyUxBundle extends Bundle
 {
-    public function loadExtension(
-        array $config, 
-        ContainerConfigurator $containerConfigurator, 
-        ContainerBuilder $containerBuilder,
-    ): void
+    
+     public function build(ContainerBuilder $container): void
     {
-        $containerConfigurator->import('../config/bundles.php');
-        $containerConfigurator->import('../config/services.yaml');
-        //$containerConfigurator->import('../config/routes.yaml');
+        parent::build($container);
+
+        $container->addCompilerPass(
+       
+            new RemoveContaoCallbackPass(),
+        PassConfig::TYPE_BEFORE_OPTIMIZATION,
+        100
+            
+            
+        );
     }
 
 }

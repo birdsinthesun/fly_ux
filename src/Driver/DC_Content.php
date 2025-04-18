@@ -138,7 +138,7 @@ class DC_Content extends DC_Table
                 $arrPages = array();
                 $dbPages = $this->container->get('database_connection')
                 ->fetchAllAssociative("
-                SELECT id,pid,title FROM tl_page
+                SELECT id,pid,title,type FROM tl_page
                 ORDER BY pid ASC, sorting ASC
             ");
                 
@@ -290,7 +290,12 @@ class DC_Content extends DC_Table
                 if ($children) {
                     $element['children'] = $children;
                 }
-                $branch[] = $element;
+                if($element['pid'] ==='root'){
+                     $branch[$element['id']] = $element;
+                    }else{
+                         $branch[] = $element;
+                        }
+               
             }
         }
 
