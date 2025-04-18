@@ -19,7 +19,7 @@ services:
         public: true
         
     Bits\FlyUxBundle\Controller\:
-        resource: '../src/Controller' # Pfad relativ zur services.yaml
+        resource: '../Controller' # Pfad relativ zur services.yaml
         tags: ['controller.service_arguments']
         autowire: true
         autoconfigure: true
@@ -42,7 +42,7 @@ services:
             - { name: contao.migration }
         
     Bits\FlyUxBundle\:
-        resource: '../src/*'
-        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+        resource: '../*'
+        exclude: '../{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
 
    
