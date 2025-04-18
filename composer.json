@@ -5,7 +5,7 @@
     "keywords":["contao","media","tl_files","tl_content","drag","drop","wysiwyg","fly_ux"],
     "homepage":"https://falke.birdsinthesun.de",
     "license": "MIT",
-    "version":"main",
+    "version":"1.1.5",
      "minimum-stability": "stable",
     "prefer-stable": true,
     "authors": [
