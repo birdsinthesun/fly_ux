@@ -25,9 +25,10 @@ class FlyUxBundle extends Bundle
         100
         );
         
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/config'));
+        $projectDir = $container->getParameter('kernel.project_dir');
+        $loader = new YamlFileLoader($container, new FileLocator($projectDir.'/config')); 
         $loader->load('services.yaml');
-        $loader2 = new PhpFileLoader($container, new FileLocator(__DIR__ . '/config'));
+        $loader2 = new PhpFileLoader($container, new FileLocator($projectDir. '/config'));
        
         $loader2->load('bundles.php');
     }
