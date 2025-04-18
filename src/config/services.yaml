@@ -43,6 +43,6 @@ services:
         
     Bits\FlyUxBundle\:
         resource: '../*'
-        exclude: '../{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+        exclude: '../{config,DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
 
    
