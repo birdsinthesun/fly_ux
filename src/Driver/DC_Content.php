@@ -344,6 +344,7 @@ class DC_Content extends DC_Table
             if ($row->type !== 'module'&&$row->type !== 'form') {
                 $strClass = 'Contao\\Content' . ucfirst($row->type);
             }elseif($row->type === 'module'){
+                $row->__set('cssId',$element['css_class']);
                  $strClass = 'Bits\\FlyUxBundle\\Content\\Content' . ucfirst($row->type);
             }elseif($row->type === 'form'){
                             $strClass = 'Contao\\Form';    

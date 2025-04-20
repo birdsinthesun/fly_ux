@@ -337,6 +337,9 @@ class MyPageRegular extends Frontend
                 }elseif($row->type === 'module'){
                      $strClass = 'Bits\\FlyUxBundle\\Content\\Content' . ucfirst($row->type);
                     $objModule = ModuleModel::findById($row->module);
+
+                        $cssID = StringUtil::deserialize($row->cssID, true);
+                        $objModule->cssID = $cssID;
                 
                     $row = $objModule;
                 }elseif($row->type === 'form'){
