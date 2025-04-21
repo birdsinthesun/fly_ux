@@ -1,3 +1,18 @@
+#tl_listing #fly_ux_content.column-1 #fly_ux_main{
+    width:100%;
+    }
+#tl_listing #fly_ux_content.column-2 #fly_ux_main{
+    width:70% !important;
+    float:right;
+    clear:none;
+    }
+    
+#tl_listing #fly_ux_content.column-2 #fly_ux_right{
+    width:30% !important;
+     float:right;
+     clear:none;
+    }
+
 #tl_listing .drag-item{width:100%; 
 box-sizing:border-box;
 

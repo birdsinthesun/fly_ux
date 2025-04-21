@@ -232,7 +232,7 @@ class DC_Content extends DC_Table
                 }
 
             
-               return $this->renderDetailView($htmlBlocks,$arrElements,$objPage );  
+               return $this->renderDetailView($htmlBlocks,$arrElements,$objPage,$objLayout );  
             } 
             
        
@@ -259,7 +259,7 @@ class DC_Content extends DC_Table
 		);
     
     }
-    protected function renderDetailView($htmlBlocks = array(),$arrElements = array(),$objPage )
+    protected function renderDetailView($htmlBlocks = array(),$arrElements = array(),$objPage ,$objLayout)
     {
         
         $requestStack = $this->container->get('request_stack');
@@ -274,6 +274,7 @@ class DC_Content extends DC_Table
 			array(
                 'baseUrl' => $request->getSchemeAndHttpHost() . $request->getBaseUrl(),
                 'pageName' => $objPage->__get('title'),
+                'layoutClass' => $objLayout->__get('cssClass'),
                 'htmlBlocks' =>$htmlBlocks,
                 'elementsByBlock' => $arrElements
 			)
