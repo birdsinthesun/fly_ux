@@ -39,18 +39,18 @@ box-sizing:border-box;
     }  
 }
 @media only screen and (min-width: 961px) {
-    #tl_listing .grid1{ width:calc(100%/10)}
-    #tl_listing .grid2{ width:calc(100%/5)}
-    #tl_listing .grid3{ width:calc(100%/4)}
-    #tl_listing .grid4{ width:calc(100%/3)}
-    #tl_listing .grid5{ width:calc(100%/2.4)}
-    #tl_listing .grid6{ width:calc(100%/2)}
-    #tl_listing .grid7{ width:calc(100%/1.714)}
-    #tl_listing .grid8{ width:calc(100%/1.5)}
-    #tl_listing .grid9{ width:calc(100%/1.333)}
-    #tl_listing .grid10{ width:calc(100%/1.2)}
-    #tl_listing .grid11{ width:calc(100%/1.09)}
-    #tl_listing .grid12{ width:calc(100%/1)}
+    #tl_listing .grid1{ width:calc(100%/12)}
+    #tl_listing .grid2{ width:calc((100%/12)*2)}
+    #tl_listing .grid3{ width:calc((100%/12)*3)}
+    #tl_listing .grid4{ width:calc((100%/12)*4)}
+    #tl_listing .grid5{ width:calc((100%/12)*5)}
+    #tl_listing .grid6{ width:calc((100%/12)*6)}
+    #tl_listing .grid7{ width:calc((100%/12)*7)}
+    #tl_listing .grid8{ width:calc((100%/12)*8)}
+    #tl_listing .grid9{ width:calc((100%/12)*9)}
+    #tl_listing .grid10{ width:calc((100%/12)*10)}
+    #tl_listing .grid11{ width:calc((100%/12)*11)}
+    #tl_listing .grid12{ width:calc((100%/12)*12)}
 }
 
 #tl_listing .grid1 .grid1,
