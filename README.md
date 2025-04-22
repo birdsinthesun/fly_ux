@@ -53,6 +53,10 @@ Im `tl_layout` wurde das Feld `be_grid` hinzugefügt.
 
 Mit diesem Bundle wurde die klassische Struktur von Contao gezielt verändert – zugunsten einer intuitiveren und moderneren Benutzererfahrung. Die Entfernung der Artikel-Ebene ermöglicht eine klarere Hierarchie, während die neuen Medien- und Inhaltsfunktionen das Backend deutlich aufwerten.
 
+## Theme
+
+Hier wird außerdem ein Theme bereitgestellt, welches zum Kennenlernen dieser Erweiterung dienen soll: https://packagist.org/packages/birdsinthesun/contao-theme-falke
+
 ## Hinweis
 
 Es ist gut ein Backup zu machen. Erweiterungen welche auf die Article-Ebene zugreifen oder welche verschachtelte Inhalts-Elemente erzeugen können mit Fly UX kollidieren.
