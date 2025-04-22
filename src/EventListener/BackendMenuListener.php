@@ -8,7 +8,7 @@ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 
 
-#[AsEventListener(ContaoCoreEvents::BACKEND_MENU_BUILD, method: '__invoke' , priority: 0)]
+#[AsEventListener(ContaoCoreEvents::BACKEND_MENU_BUILD, method: '__invoke' , priority: 1)]
 class BackendMenuListener
 {
     public function __invoke(MenuEvent $event): void
@@ -19,19 +19,26 @@ class BackendMenuListener
         if ('mainMenu' !== $tree->getName()) {
             return ;
         }
-//var_dump(get_class_methods($tree));exit;
-        $contentNode = $tree->getChild('content');
-
-        $node = $factory
+//var_dump(get_class_methods($factory
+           // ->createItem('content')));exit;
+        
+        if(isset($GLOBALS['BE_MOD']['content'])){
+            $contentNode = $tree->getChild('content');
+             $node = $factory
             ->createItem('content')
                 ->setLabel('Inhalt')
-                ->setCurrent('tl_content')
                 ->setLinkAttribute('title', 'Inhalte bearbeiten')
+                
+               // ->setCurrent('tl_content')
                 ->setUri('contao?do=content')
-        ;
+            ;
 
-        $contentNode->addChild($node);
-        $contentNode->removeChild($factory->createItem('article'));
+            $contentNode->addChild($node);
+            $contentNode->removeChild($factory->createItem('article'));
+                
+                
+            }
+       
         
         
     }
