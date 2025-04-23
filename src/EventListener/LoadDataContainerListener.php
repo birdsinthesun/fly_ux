@@ -40,7 +40,8 @@ class LoadDataContainerListener
        
            
         if($table === 'tl_content' && Input::get('do') === 'content'){
-                 $GLOBALS['TL_DCA']['tl_content']['config']['dataContainer']  = DC_Content::class;
+            
+                $GLOBALS['TL_DCA']['tl_content']['config']['dataContainer']  = DC_Content::class;
                 $GLOBALS['TL_DCA']['tl_content']['config']['ctable'] = [];
                 $GLOBALS['TL_DCA']['tl_content']['config']['ptable'] = 'tl_page';
                 
@@ -55,7 +56,6 @@ class LoadDataContainerListener
 
                 $GLOBALS['TL_DCA']['tl_content']['list']['label']['fields'] =  ['headline', 'type', 'inColumn'];
                 $GLOBALS['TL_DCA']['tl_content']['list']['label']['format'] =   '%s <span class="label-info">[%s]</span><span class="label-column"> %s </span>';
-//$GLOBALS['TL_DCA']['tl_content']['list']['label']['label_callback'] =   array('tl_content', 'addIcon');
 
 
                 unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['fields']);
@@ -98,43 +98,20 @@ class LoadDataContainerListener
                     'class'      => 'header_drag_drop_disable',
                     'button_callback' => ['\Bits\FlyUxBundle\Driver\DC_ContentOperations', 'dragDropDeaktivateButton'],
                 ];
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
+                           
                 
                 $GLOBALS['TL_DCA'][$table]['config']['notCreatable'] = true;
-          // var_dump($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']);exit;
+  
                 unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['toggleNodes']);
                 unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['all']);
                 unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['showOnSelect']);
                 unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['create']);
            
            
-           
-           
-           
-           
-           
-           
-           
-           
-           
            }
            if($table === 'tl_page'){
                 $GLOBALS['TL_DCA']['tl_page']['config']['ctable'] = ['tl_content'];
                
-               }
+           }
     }
 }

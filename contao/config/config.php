@@ -5,11 +5,5 @@ use Bits\FlyUxBundle\Pages\MyPageRegular;
 
  $GLOBALS['TL_PTY']['regular'] = MyPageRegular::class;
   $GLOBALS['BE_MOD']['content']['content'] = ['tables' => ['tl_content']];
+  unset($GLOBALS['BE_MOD']['content']['article']);
    
-   
-return [
-   
-    ContaoCoreBundle::class => ['all' => true]
-   
-   
-];

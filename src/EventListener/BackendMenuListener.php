@@ -19,42 +19,30 @@ class BackendMenuListener
         if ('mainMenu' !== $tree->getName()) {
             return ;
         }
-//var_dump(get_class_methods($factory
-           // ->createItem('content')));exit;
         
-        
-            $contentNode = $tree->getChild('content');
-             if (!$contentNode) {
-                return;
-            }
-             $node = $factory
-            ->createItem('content')
-                ->setLabel('Inhalt')
-                ->setLinkAttribute('title', 'Inhalte bearbeiten')
-                
-               // ->setCurrent('tl_content')
-                ->setUri('contao?do=content')
-            ;
-            $newChildren = [];
+        $contentNode = $tree->getChild('content');
+         if (!$contentNode) {
+            return;
+        }
+         $node = $factory
+        ->createItem('content')
+            ->setLabel('Inhalt')
+            ->setLinkAttribute('title', 'Inhalte bearbeiten')
+            ->setUri('contao?do=content')
+        ;
+        $newChildren = [];
 
         foreach ($contentNode->getChildren() as $key => $child) {
             $newChildren[$key] = $child;
 
             if ($key === 'page') {
-                // Unseren Punkt direkt danach einfügen
+                
                 $newChildren['content'] = $node;
             }
         }
 
-        // Vorherige Kinder ersetzen (mit neuer Reihenfolge)
         $contentNode->setChildren($newChildren);
-            
-            $contentNode->removeChild($factory->createItem('article'));
-                
-                
-            
-       
-        
+ 
         
     }
 }
