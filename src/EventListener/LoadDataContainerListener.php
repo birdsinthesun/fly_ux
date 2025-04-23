@@ -4,7 +4,6 @@
 namespace Bits\FlyUxBundle\EventListener;
 
 use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
-use Bits\FlyUxBundle\Pages\MyPageRegular;
 use Bits\FlyUxBundle\Widgets\ModuleWizard;
 use Bits\FlyUxBundle\Content\ContentModule;
 use Bits\FlyUxBundle\Driver\DC_Content;
@@ -24,7 +23,7 @@ class LoadDataContainerListener
     public function __invoke(string $table): void
     {
        
-        $GLOBALS['TL_PTY']['regular'] = MyPageRegular::class;
+       
         $GLOBALS['BE_FFL']['flyWizard']  = ModuleWizard::class;
         $GLOBALS['TL_CTE']['includes']['module'] = ContentModule::class;
 
