@@ -6,7 +6,6 @@
     "homepage":"https://github.com/birdsinthesun/fly_ux",
     "license": "MIT",
     "version":"main",
-     "minimum-stability": "stable",
     "prefer-stable": true,
     "authors": [
         {
