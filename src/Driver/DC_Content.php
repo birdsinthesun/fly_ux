@@ -45,6 +45,12 @@ class DC_Content extends DC_Table
 	public function create($set=array())
 	{
 		
+        if(Input::get('do') !== 'content'){
+            
+            parent::create($set);
+            
+        }
+        
         $db = Database::getInstance();
 		$databaseFields = $db->getFieldNames($this->strTable);
         $objSession = System::getContainer()->get('request_stack')->getSession();
@@ -130,10 +136,15 @@ class DC_Content extends DC_Table
  $intMargin=0, $arrClipboard=null, $blnCircularReference=false, 
  $protectedPage=false, $blnNoRecursion=false, $arrFound=array())
     {
-            
+            if(Input::get('do') !== 'content'){
+                parent::generateTree($table, $id, $arrPrevNext, $blnHasSorting,
+ $intMargin, $arrClipboard, $blnCircularReference, 
+ $protectedPage, $blnNoRecursion, $arrFound);
+                
+                }
         
       
-              if(Input::get('pid')===Null){
+            if(Input::get('pid')===Null){
         
                 $arrPages = array();
                 $dbPages = $this->container->get('database_connection')

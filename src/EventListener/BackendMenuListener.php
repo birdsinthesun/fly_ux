@@ -8,7 +8,7 @@ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 
 
-#[AsEventListener(ContaoCoreEvents::BACKEND_MENU_BUILD, method: '__invoke' , priority: 1)]
+#[AsEventListener(ContaoCoreEvents::BACKEND_MENU_BUILD, method: '__invoke' , priority: -255)]
 class BackendMenuListener
 {
     public function __invoke(MenuEvent $event): void
@@ -22,8 +22,11 @@ class BackendMenuListener
 //var_dump(get_class_methods($factory
            // ->createItem('content')));exit;
         
-        if(isset($GLOBALS['BE_MOD']['content'])){
+        
             $contentNode = $tree->getChild('content');
+             if (!$contentNode) {
+                return;
+            }
              $node = $factory
             ->createItem('content')
                 ->setLabel('Inhalt')
@@ -32,12 +35,24 @@ class BackendMenuListener
                // ->setCurrent('tl_content')
                 ->setUri('contao?do=content')
             ;
+            $newChildren = [];
 
-            $contentNode->addChild($node);
+        foreach ($contentNode->getChildren() as $key => $child) {
+            $newChildren[$key] = $child;
+
+            if ($key === 'page') {
+                // Unseren Punkt direkt danach einfügen
+                $newChildren['content'] = $node;
+            }
+        }
+
+        // Vorherige Kinder ersetzen (mit neuer Reihenfolge)
+        $contentNode->setChildren($newChildren);
+            
             $contentNode->removeChild($factory->createItem('article'));
                 
                 
-            }
+            
        
         
         

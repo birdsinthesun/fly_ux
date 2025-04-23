@@ -24,9 +24,9 @@ class ContentElementSaveListener
             $dc->activeRecord->pid = $pid;
             $Values['pid'] = $pid;
            return $Values;
-        }else{
+        }
             return $Values;
-            }
+            
         
     }
 }

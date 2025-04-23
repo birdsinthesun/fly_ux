@@ -19,7 +19,7 @@ $Fields,
     DataContainer $dc): void
     {
        
-        if(Input::get('act') !== 'create'&&Input::get('op_add') === 'add_content_element' ||Input::get('act') !== 'edit'){
+        if(Input::get('do')==='content'&&(Input::get('act') !== 'create'&&Input::get('op_add') === 'add_content_element' ||Input::get('act') !== 'edit')){
             
              $session = System::getContainer()->get('request_stack')->getSession();
        
