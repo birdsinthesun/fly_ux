@@ -3,7 +3,7 @@
     "type": "contao-bundle",
     "description": "Bindet eine Media-Kachel-Ansicht für Bilder ein zum schnellen Editieren von Bildern. Integriert eine Layout-Ansicht im Inhalts-Bereich mit Drag&Drop-Funktion. Ein individuelles Backend-Grid kann eingebunden werden. Entfernt die Artikel-Ebene in Contao CMS und optimiert die UX. Theme: https://packagist.org/packages/birdsinthesun/contao-theme-falke",
     "keywords":["contao","media","tl_files","tl_content","drag","drop","wysiwyg","fly_ux"],
-    "homepage":"https://falke.birdsinthesun.de",
+    "homepage":"https://github.com/birdsinthesun/fly_ux",
     "license": "MIT",
     "version":"main",
      "minimum-stability": "stable",
