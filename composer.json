@@ -5,7 +5,7 @@
     "keywords":["contao","media","tl_files","tl_content","drag","drop","wysiwyg","fly_ux"],
     "homepage":"https://github.com/birdsinthesun/fly_ux",
     "license": "MIT",
-    "version":"main",
+    "version":"1.1.7",
      "minimum-stability": "stable",
     "prefer-stable": true,
     "authors": [
