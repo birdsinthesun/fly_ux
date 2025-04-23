@@ -93,7 +93,7 @@ class DC_Media extends DC_Folder
        
     }
 
-    protected function renderMediaView($arrFiles = array(),$path)
+    protected function renderMediaView($arrFiles,$path)
     {
         
         $requestStack = $this->container->get('request_stack');
