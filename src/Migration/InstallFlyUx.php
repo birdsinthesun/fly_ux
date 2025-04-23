@@ -106,6 +106,6 @@ class InstallFlyUx extends AbstractMigration
 
     public function shouldRun(): bool
     {
-        return !empty($this->connection->fetchAllAssociative('SELECT id FROM tl_article'));
+        return (!empty($this->connection->fetchAllAssociative('SELECT id FROM tl_article'))&&$this->tableExists('tl_article'));
     }
 }
