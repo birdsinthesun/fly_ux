@@ -101,7 +101,7 @@ class LoadDataContainerListener
                            
                 
                 $GLOBALS['TL_DCA'][$table]['config']['notCreatable'] = true;
-  
+                
                 unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['toggleNodes']);
                 unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['all']);
                 unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['showOnSelect']);
@@ -111,7 +111,25 @@ class LoadDataContainerListener
            }
            if($table === 'tl_page'){
                 $GLOBALS['TL_DCA']['tl_page']['config']['ctable'] = ['tl_content'];
+                // unset($GLOBALS['TL_DCA']['tl_page']['list']['operations']['articles']);
+                 //$GLOBALS['TL_DCA']['tl_page']['list']['operations']['show']['label'] = ['Inhalten', 'Inhalt bearbeiten'];
+                 $GLOBALS['TL_DCA']['tl_page']['list']['operations']['children']['button_callback'] = [self::class, 'contentShowButton'];
                
            }
     }
+    
+     public static function contentShowButton(array $row, string $href, string $label, string $title, string $icon, string $attributes): string
+    {
+        $container = System::getContainer();
+        $tokenManager = $container->get('contao.csrf.token_manager');
+        $token = $tokenManager->getToken('contao.csrf.token')->getValue();
+        
+        
+        return '<a href="contao?do=content&pid=' . $row['id']. '&amp;rt='.$token . '" title="Inhalte ID ' . $row['id']. ' bearbeiten" ' . $attributes . '>
+            <img src="system/themes/flexible/icons/children.svg" alt="Inhalte zeigen und bearbeiten">
+        </a>';
+    }
+    
+    
+    
 }

@@ -37,11 +37,13 @@ class BackendMenuListener
 
             if ($key === 'page') {
                 
-                $newChildren['content'] = $node;
+               // $newChildren['content'] = $node;
             }
         }
 
         $contentNode->setChildren($newChildren);
+        //noch nicht sicher ob ich es so lasse, daher der auskommentierte code
+        $contentNode->removeChild($node);
  
         
     }
