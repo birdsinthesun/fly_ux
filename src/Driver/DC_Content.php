@@ -270,7 +270,7 @@ class DC_Content extends DC_Table
 		);
     
     }
-    protected function renderDetailView($objLayout,$htmlBlocks = array(),$arrElements = array(),$objPage)
+    protected function renderDetailView($objLayout,$htmlBlocks,$arrElements,$objPage)
     {
         
         $requestStack = $this->container->get('request_stack');
