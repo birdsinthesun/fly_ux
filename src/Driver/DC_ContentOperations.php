@@ -11,8 +11,15 @@ class DC_ContentOperations extends Backend
         public function addElementButton($href, $label, $title,$class, $icon, $attributes)
     {
         if(Input::get('pid')!==Null){
+            
+            
+            $session = System::getContainer()->get('request_stack')->getSession();
+           $tokenManager = System::getContainer()->get('contao.csrf.token_manager');
+        $token = $tokenManager->getDefaultTokenValue();
+            $pid = (Input::get('mode')==='layout')?Input::get('pid'):$session->getBag('contao_backend')->get('OP_ADD_PID');
+            
             return '<a class="'.$class.'" href="' . $this->getCurrentUrl().'/contao?do=content&'.
-$href . '&rt='.Input::get('rt').'" title="' . $title . '"' . $attributes . '>' . $label . '</a>';
+$href . '&pid='.$pid.'&table=tl_content&rt='.$token.'" title="' . $title . '"' . $attributes . '>' . $label . '</a>';
         }
     }
 
