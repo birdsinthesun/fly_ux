@@ -13,5 +13,23 @@ use Contao\Input;
 
 
 class ContentGrid extends ContentElement
-{}
+{
+    public function generate()
+	{
+        
+        if ($this->isHidden())
+		{
+			return '';
+		}
+        
+    }
+
+	protected function compile()
+	{
+       
+        parent::compile();
+	}
+    
+    
+    }
 
