@@ -27,7 +27,7 @@ class FlyUxBundle extends AbstractBundle
         parent::build($container);
 
        $container->addCompilerPass(new RemoveContaoCallbackPass(),PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);
-       $container->addCompilerPass(new RemoveNewOperationPass(),PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);
+      // $container->addCompilerPass(new RemoveNewOperationPass(),PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);
      
     }
     protected function addCompilerPass($compilerPass, $type = PassConfig::TYPE_AFTER_REMOVING, $priority = 0)

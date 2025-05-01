@@ -1,10 +1,10 @@
 <?php
 use Contao\CoreBundle\ContaoCoreBundle;
-use Contao\Input;
-use Contao\DataContainer;
+
 use Bits\FlyUxBundle\Pages\MyPageRegular;
 use Bits\FlyUxBundle\Content\ContentContentSlider;
-use Bits\FlyUxBundle\Driver\DC_Content;
+use Bits\FlyUxBundle\Content\ContentGrid;
+
 
 
  $GLOBALS['TL_PTY']['regular'] = MyPageRegular::class;
@@ -13,12 +13,6 @@ use Bits\FlyUxBundle\Driver\DC_Content;
   unset($GLOBALS['BE_MOD']['content']['article']);
   
 $GLOBALS['TL_CTE']['plus']['contentslider'] = ContentContentSlider::class;
+$GLOBALS['TL_CTE']['plus']['contentslider'] = ContentGrid::class;
 
- if(Input::get('do') === 'content'){
-            
-                $GLOBALS['TL_DCA']['tl_content']['config']['dataContainer']  = DC_Content::class;
-           
-  unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['new']);
-             
- }
                

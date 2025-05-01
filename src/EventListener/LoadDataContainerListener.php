@@ -40,7 +40,7 @@ class LoadDataContainerListener
       
        
            
-        if($table === 'tl_content' && Input::get('do') === 'content'){
+       if($table === 'tl_content' && Input::get('do') === 'content'){
             
            
             
@@ -66,7 +66,7 @@ class LoadDataContainerListener
                 unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['headerFields']);
                unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['child_record_callback']);
            
-  unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['new']);
+                unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['new']);
                
                
 			
@@ -83,7 +83,7 @@ class LoadDataContainerListener
                         }
                     }
                 }
-                if(!isset($GLOBALS['TL_DCA'][$table]['config']['notCreatable'])){
+                if(!isset($GLOBALS['TL_DCA']['tl_content']['config']['notCreatable'])){
                     $GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['add_content_element'] = [
                         'label'      => ['Neues Element einfügen', ''],
                         'href'       => 'op_add=add_content_element&act=create',
@@ -118,17 +118,17 @@ class LoadDataContainerListener
                 unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['create']);
            
            
-           }
+          }
            if($table === 'tl_page'){
                 $GLOBALS['TL_DCA']['tl_page']['config']['ctable'] = ['tl_content'];
                 // unset($GLOBALS['TL_DCA']['tl_page']['list']['operations']['articles']);
-                 //$GLOBALS['TL_DCA']['tl_page']['list']['operations']['show']['label'] = ['Inhalten', 'Inhalt bearbeiten'];
+                 $GLOBALS['TL_DCA']['tl_page']['list']['operations']['show']['label'] = ['Inhalten', 'Inhalt bearbeiten'];
                  $GLOBALS['TL_DCA']['tl_page']['list']['operations']['children']['button_callback'] = [self::class, 'contentShowButton'];
                
            }
     }
     
-     public static function contentShowButton(array $row, string $href, string $label, string $title, string $icon, string $attributes): string
+     public static function contentShowButton(array $row, $href, string $label, string $title,  $icon, string $attributes): string
     {
         $container = System::getContainer();
         $tokenManager = $container->get('contao.csrf.token_manager');
@@ -140,6 +140,6 @@ class LoadDataContainerListener
         </a>';
     }
     
-    
-    
+
+   
 }
