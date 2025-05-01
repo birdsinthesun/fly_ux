@@ -40,7 +40,7 @@ class LoadDataContainerListener
       
        
            
-       if($table === 'tl_content' && (Input::get('do') === 'content'||Input::get('do') === 'calendar'||Input::get('do') === 'news'){
+       if($table === 'tl_content' && (Input::get('do') === 'content'||Input::get('do') === 'calendar'||Input::get('do') === 'news')){
             
            
             if(Input::get('do') === 'content'){
