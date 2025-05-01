@@ -24,26 +24,9 @@ class BackendMenuListener
          if (!$contentNode) {
             return;
         }
-         $node = $factory
-        ->createItem('content')
-            ->setLabel('Inhalt')
-            ->setLinkAttribute('title', 'Inhalte bearbeiten')
-            ->setUri('contao?do=content')
-        ;
-        $newChildren = [];
 
-        foreach ($contentNode->getChildren() as $key => $child) {
-            $newChildren[$key] = $child;
-
-            if ($key === 'page') {
-                
-               // $newChildren['content'] = $node;
-            }
-        }
-
-        $contentNode->setChildren($newChildren);
-        //noch nicht sicher ob ich es so lasse, daher der auskommentierte code
-        $contentNode->removeChild($node);
+        $contentNode->removeChild($factory->createItem('content'));
+        $contentNode->removeChild($factory->createItem('content_plus'));
  
         
     }

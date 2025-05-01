@@ -16,8 +16,9 @@ use Contao\DC_Table;
 use Contao\LayoutModel;
 use Contao\PageModel;
 use Contao\StringUtil;
+use Contao\CoreBundle\DataContainer\DataContainerOperation;
 
-#[AsHook('loadDataContainer')]
+#[AsHook('loadDataContainer','__invoke',-17)]
 class LoadDataContainerListener
 {
     public function __invoke(string $table): void
@@ -41,30 +42,35 @@ class LoadDataContainerListener
            
         if($table === 'tl_content' && Input::get('do') === 'content'){
             
+           
+            
+                        
                 $GLOBALS['TL_DCA']['tl_content']['config']['dataContainer']  = DC_Content::class;
-                $GLOBALS['TL_DCA']['tl_content']['config']['ctable'] = [];
                 $GLOBALS['TL_DCA']['tl_content']['config']['ptable'] = 'tl_page';
-                
-               
+
                 $GLOBALS['TL_DCA']['tl_content']['config']['dynamicPtable'] = true;
-                $GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][] = ['tl_page','addBreadcrumb'];
+               $GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][] = ['tl_page','addBreadcrumb'];
                 $GLOBALS['TL_DCA']['tl_content']['config']['switchToEdit']                = true;
                 $GLOBALS['TL_DCA']['tl_content']['config']['enableVersioning']            = true;
                 $GLOBALS['TL_DCA']['tl_content']['config']['markAsCopy']                  = 'headline';
 
                 $GLOBALS['TL_DCA']['tl_content']['list']['sorting']['mode'] = DataContainer::MODE_TREE_EXTENDED;
 
-                $GLOBALS['TL_DCA']['tl_content']['list']['label']['fields'] =  ['headline', 'type', 'inColumn'];
-                $GLOBALS['TL_DCA']['tl_content']['list']['label']['format'] =   '%s <span class="label-info">[%s]</span><span class="label-column"> %s </span>';
+               $GLOBALS['TL_DCA']['tl_content']['list']['label']['fields'] =  ['headline', 'type', 'inColumn'];
+               $GLOBALS['TL_DCA']['tl_content']['list']['label']['format'] =   '%s <span class="label-info">[%s]</span><span class="label-column"> %s </span>';
 
 
                 unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['fields']);
                 unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['panelLayout']);
                 unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['defaultSearchField']);
                 unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['headerFields']);
-                unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['child_record_callback']);
+               unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['child_record_callback']);
            
+  unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['new']);
+               
+               
 			
+                $GLOBALS['TL_DCA']['tl_content']['palettes']['contentslider']   = '{type_legend},type,headline,el_count;{slider_legend},sliderDelay,sliderSpeed,sliderStartSlide,sliderContinuous;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},cssID;{invisible_legend:hide},invisible,start,stop';
 
                 foreach ($GLOBALS['TL_DCA']['tl_content']['palettes'] as $paletteKey => $paletteValue) {
                    if ($paletteKey === '__selector__') {
@@ -77,13 +83,16 @@ class LoadDataContainerListener
                         }
                     }
                 }
-       
-                $GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['add_content_element'] = [
-                    'label'      => ['Neues Element einfügen', ''],
-                    'href'       => 'op_add=add_content_element&act=create',
-                    'class'      => 'header_new_element',
-                    'button_callback' => ['\Bits\FlyUxBundle\Driver\DC_ContentOperations', 'addElementButton'],
-                ];
+                if(!isset($GLOBALS['TL_DCA'][$table]['config']['notCreatable'])){
+                    $GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['add_content_element'] = [
+                        'label'      => ['Neues Element einfügen', ''],
+                        'href'       => 'op_add=add_content_element&act=create',
+                        'class'      => 'header_new_element',
+                        'button_callback' => ['\Bits\FlyUxBundle\Driver\DC_ContentOperations', 'addElementButton'],
+                    ];
+                    
+                    }
+                
 
                 $GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['drag_drop_mode'] = [
                     'label'      => ['Drag & Drop Modus', ''],
@@ -99,9 +108,10 @@ class LoadDataContainerListener
                     'button_callback' => ['\Bits\FlyUxBundle\Driver\DC_ContentOperations', 'dragDropDeaktivateButton'],
                 ];
                            
-                
-                $GLOBALS['TL_DCA'][$table]['config']['notCreatable'] = true;
-                
+               
+              //  $GLOBALS['TL_DCA'][$table]['config']['notCreatable'] = true;
+                unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['header_new']);
+                unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['new']);
                 unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['toggleNodes']);
                 unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['all']);
                 unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['showOnSelect']);
@@ -125,7 +135,7 @@ class LoadDataContainerListener
         $token = $tokenManager->getToken('contao.csrf.token')->getValue();
         
         
-        return '<a href="contao?do=content&pid=' . $row['id']. '&amp;rt='.$token . '" title="Inhalte ID ' . $row['id']. ' bearbeiten" ' . $attributes . '>
+        return '<a href="contao?do=content&mode=layout&pid=' . $row['id']. '&amp;rt='.$token . '" title="Inhalte ID ' . $row['id']. ' bearbeiten" ' . $attributes . '>
             <img src="system/themes/flexible/icons/children.svg" alt="Inhalte zeigen und bearbeiten">
         </a>';
     }

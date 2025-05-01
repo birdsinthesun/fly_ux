@@ -27,7 +27,7 @@ $href . '&pid='.$pid.'&table=tl_content&rt='.$token.'" title="' . $title . '"' .
     {
         
         if(Input::get('pid')!==Null){
-            return '<a class="'.$class.'" href="' .$this->getCurrentUrl().'/contao?do=content&pid='.
+            return '<a class="'.$class.'" href="' .$this->getCurrentUrl().'/contao?do=content&mode='.Input::get('mode').'&pid='.
             Input::get('pid').'&'. $href . '&rt='. Input::get('rt').'" title="' . $title . '"' . $attributes . '>' . $label . '</a>';
         }
     }
@@ -37,7 +37,7 @@ $href . '&pid='.$pid.'&table=tl_content&rt='.$token.'" title="' . $title . '"' .
             
         
         
-            return '<a class="'.$class.'" href="' .$this->getCurrentUrl().'/contao?do=content&pid='.
+            return '<a class="'.$class.'" href="' .$this->getCurrentUrl().'/contao?do=content&mode='.Input::get('mode').'&pid='.
             Input::get('pid').'&'. $href . '&rt='. Input::get('rt').'" title="' . $title . '"' . $attributes . '>' . $label . '</a>';
         }
     

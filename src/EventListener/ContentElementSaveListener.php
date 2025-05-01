@@ -4,13 +4,14 @@ namespace Bits\FlyUxBundle\EventListener;
 
 use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
 use Contao\DataContainer;
-use Contao\Input;
 use Contao\System;
+use Contao\Input;
+
 
 #[AsCallback(table: 'tl_content', target: 'config.onbeforesubmit', method:'savePid')]
 class ContentElementSaveListener
 {
-    public function savePid($Values, DataContainer $dc)
+    public function savePid($record, DataContainer $dc):array
     {
         
         
@@ -20,12 +21,16 @@ class ContentElementSaveListener
             
             $session = System::getContainer()->get('request_stack')->getSession();
             $pid = $session->getBag('contao_backend')->get('OP_ADD_PID');
-
-            $dc->activeRecord->pid = $pid;
-            $Values['pid'] = $pid;
-           return $Values;
+            $ptable = $session->getBag('contao_backend')->get('OP_ADD_PTABLE');
+        
+            $record['id'] = Input::get('id');
+            $record['pid'] = $pid;
+           // $record['ptable'] = 'tl_page';
+          //  $record['inColumn'] = $dc->getActiveRecord()['inColumn'];
+            $record['parentTable'] = $ptable;
+           
         }
-            return $Values;
+            return $record;
             
         
     }

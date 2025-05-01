@@ -34,12 +34,12 @@ class AddBackendAssetsListener
             $GLOBALS['TL_CSS'][] = 'bundles/flyux/css/dc_media.css';
         }
         
-        if ($event->getRequest()->get('do') === 'content') {
+        if ($event->getRequest()->get('do') === 'content'||$event->getRequest()->get('do') === 'content_plus') {
            
             $GLOBALS['TL_CSS'][] = 'bundles/flyux/css/dc_content.css';
            
         }
-         if ($event->getRequest()->get('do') === 'content'&&$event->getRequest()->get('pid')!==Null) {
+         if ($event->getRequest()->get('do') === 'content'&&$event->getRequest()->get('pid')!==Null&&!$event->getRequest()->get('act')) {
            
             $page = PageModel::findOneBy('id',$event->getRequest()->get('pid'));
             
@@ -87,7 +87,7 @@ class AddBackendAssetsListener
             }
 
             $uuid = $layout->be_grid;
-///var_dump($uuid);exit;
+
             // Falls kein Wert vorhanden, abbrechen
             if (!$uuid) {
                 $GLOBALS['TL_CSS'][] = 'bundles/flyux/css/grid.css';

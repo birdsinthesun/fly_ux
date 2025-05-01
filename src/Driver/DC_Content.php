@@ -8,10 +8,14 @@ use Contao\System;
 use Contao\Database;
 use Contao\Input;
 use Contao\Image;
+use Contao\StringUtil;
 use Contao\FilesModel;
 use Contao\ContentModel;
 use Contao\PageModel;
 use Contao\LayoutModel;
+use Contao\Versions;
+use Contao\CoreBundle\Security\ContaoCorePermissions;
+use Contao\CoreBundle\Security\DataContainer\UpdateAction;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Bits\FlyUxBundle\Service\ImageResizer;
 
@@ -21,7 +25,6 @@ class DC_Content extends DC_Table
     private $imageResizer;
     private $container;
 
-    protected $strTable;
     protected $arrModule;
     
     public function __construct($strTable, $arrModule=array())
@@ -31,8 +34,7 @@ class DC_Content extends DC_Table
             
             $this->strTable = $strTable;
              $this->arrModule = $arrModule;
-             parent::__construct($strTable, $arrModule); 
-       
+             parent::__construct($strTable, $arrModule);
     }
     
     /**
@@ -45,15 +47,10 @@ class DC_Content extends DC_Table
 	public function create($set=array())
 	{
 		
-        if(Input::get('do') !== 'content'){
-            
-            parent::create($set);
-            
-        }
-        
         $db = Database::getInstance();
 		$databaseFields = $db->getFieldNames($this->strTable);
-        $objSession = System::getContainer()->get('request_stack')->getSession();
+        $objSession = $this->container->get('request_stack')->getSession();
+        
 		// Get all default values for the new entry
 		foreach ($GLOBALS['TL_DCA'][$this->strTable]['fields'] as $k=>$v)
 		{
@@ -71,19 +68,19 @@ class DC_Content extends DC_Table
 			}
             if($k ==='pid'){
                   
-                    $this->set[$k] =   $objSession->getBag('contao_backend')->get('OP_ADD_PID');
+                  $this->set[$k] =   $objSession->getBag('contao_backend')->get('OP_ADD_PID');
                     
-                    }
-                    if($k ==='ptable'){
-                  
-                    $this->set[$k] = 'tl_page';
-                    
-                    }
-                    if($k ==='inColumn'){
-                  
-                    $this->set[$k] = 'main';
-                    
-                    }
+                    }    
+      
+            if($k ==='inColumn'){
+          
+               
+                
+                   $this->set[$k] = $objSession->getBag('contao_backend')->get('OP_ADD_COLUMN');
+             //  System::getContainer()->get('monolog.logger.contao.general')->info('On create "' . $objSession->getBag('contao_backend')->get('OP_ADD_PTABLE'));
+
+            
+            }
 		}
 
 		// Set passed values
@@ -99,6 +96,9 @@ class DC_Content extends DC_Table
 		// Insert the record if the table is not closed and switch to edit mode
 		if (!($GLOBALS['TL_DCA'][$this->strTable]['config']['closed'] ?? null))
 		{
+            
+               
+        //  var_dump($this->set);exit;
 			$objInsertStmt = $db
 				->prepare("INSERT INTO " . $this->strTable . " %s")
 				->set($this->set)
@@ -108,20 +108,17 @@ class DC_Content extends DC_Table
 			{
 				$s2e = ($GLOBALS['TL_DCA'][$this->strTable]['config']['switchToEdit'] ?? null) ? '&s2e=1' : '';
 				
-                
+              
                 $insertID = $objInsertStmt->insertId;
                 
-
+ 
 				$objSessionBag = $objSession->getBag('contao_backend');
 
 				// Save new record in the session
 				$new_records = $objSessionBag->get('new_records');
 				$new_records[$this->strTable][] = $insertID;
-            
          
 				$objSessionBag->set('new_records', $new_records);
-
-               
 
 				System::getContainer()->get('monolog.logger.contao.general')->info('A new entry "' . $this->strTable . '.id=' . $insertID . '" has been created' . $this->getParentEntries($this->strTable, $insertID));
 
@@ -132,38 +129,178 @@ class DC_Content extends DC_Table
 		$this->redirect($this->getReferer());
 	}
     
+    protected function submit()
+	{
+      
+		if (Input::post('FORM_SUBMIT') != $this->strTable)
+		{
+       //var_dump(Input::post('FORM_SUBMIT'),$this->procedure,$this->arrSubmit);exit;
+            return;
+		}
+        
+        $objSession = System::getContainer()->get('request_stack')->getSession();
+            
+   
+		$arrValues = $this->arrSubmit;
+		$this->arrSubmit = array();
+
+		if (!$this->noReload && !empty($arrValues))
+		{
+			$arrValues['tstamp'] = time();
+   
+			if ($GLOBALS['TL_DCA'][$this->strTable]['config']['dynamicPtable'] ?? null)
+			{
+				$arrValues['ptable'] = $this->ptable;
+			}
+
+			// Trigger the onbeforesubmit_callback
+			if (\is_array($GLOBALS['TL_DCA'][$this->strTable]['config']['onbeforesubmit_callback'] ?? null))
+			{
+				foreach ($GLOBALS['TL_DCA'][$this->strTable]['config']['onbeforesubmit_callback'] as $callback)
+				{
+					try
+					{
+						if (\is_array($callback))
+						{
+							$arrValues = System::importStatic($callback[0])->{$callback[1]}($arrValues, $this);
+						}
+						elseif (\is_callable($callback))
+						{
+							$arrValues = $callback($arrValues, $this);
+						}
+					}
+					catch (\Exception $e)
+					{
+						$this->noReload = true;
+						Message::addError($e->getMessage());
+
+						break;
+					}
+
+					if (!\is_array($arrValues))
+					{
+						throw new \RuntimeException('The onbeforesubmit_callback must return the values!');
+					}
+				}
+			}
+		}
+
+		// Check permissions
+		$currentRecord = $this->getCurrentRecord();
+
+		$this->denyAccessUnlessGranted(ContaoCorePermissions::DC_PREFIX . $this->strTable, new UpdateAction($this->strTable, $currentRecord, $arrValues));
+
+		// Persist values
+		if (!$this->noReload && !empty($arrValues))
+		{
+			$arrTypes = array();
+			$blnVersionize = false;
+
+			$db = Database::getInstance();
+
+			foreach ($arrValues as $strField => $varValue)
+			{
+				$arrData = $GLOBALS['TL_DCA'][$this->strTable]['fields'][$strField] ?? array();
+
+				// If the field is a fallback field, empty all other columns (see #6498)
+				if ($varValue && ($arrData['eval']['fallback'] ?? null))
+				{
+					$varEmpty = Widget::getEmptyValueByFieldType($GLOBALS['TL_DCA'][$this->strTable]['fields'][$strField]['sql'] ?? array());
+					$arrType = array_filter(array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$strField]['sql']['type'] ?? null));
+
+					if (($GLOBALS['TL_DCA'][$this->strTable]['list']['sorting']['mode'] ?? null) == self::MODE_PARENT)
+					{
+						$db
+							->prepare("UPDATE " . $this->strTable . " SET " . Database::quoteIdentifier($strField) . "=? WHERE pid=?")
+							->query('', array($varEmpty, $currentRecord['pid'] ?? null), $arrType);
+					}
+					else
+					{
+						$db
+							->prepare("UPDATE " . $this->strTable . " SET " . Database::quoteIdentifier($strField) . "=?")
+							->query('', array($varEmpty), $arrType);
+					}
+				}
+
+				$arrTypes[] = $GLOBALS['TL_DCA'][$this->strTable]['fields'][$strField]['sql']['type'] ?? null;
+
+				if (!isset($arrData['eval']['versionize']) || $arrData['eval']['versionize'] !== false)
+				{
+					$blnVersionize = true;
+				}
+
+				// Update the active record and current field/value (backwards compatibility)
+				if (\is_object($this->objActiveRecord))
+				{
+					$this->objActiveRecord->{$strField} = StringUtil::deserialize($varValue);
+				}
+			}
+ 
+ 
+			$objUpdateStmt = $db
+				->prepare("UPDATE " . $this->strTable . " %s WHERE " . implode(' AND ', $this->procedure))
+				->set($arrValues)
+				->query('', array_merge(array_values($arrValues), $this->values), $arrTypes);
+
+			if ($objUpdateStmt->affectedRows)
+			{
+				// Empty cached data for this record
+				self::clearCurrentRecordCache($this->intId, $this->strTable);
+				$this->invalidateCacheTags();
+
+				if ($blnVersionize)
+				{
+					$this->blnCreateNewVersion = true;
+				}
+			}
+		}
+
+		// Trigger the onsubmit_callback
+		if (!$this->noReload && \is_array($GLOBALS['TL_DCA'][$this->strTable]['config']['onsubmit_callback'] ?? null))
+		{
+			foreach ($GLOBALS['TL_DCA'][$this->strTable]['config']['onsubmit_callback'] as $callback)
+			{
+				if (\is_array($callback))
+				{
+					System::importStatic($callback[0])->{$callback[1]}($this);
+				}
+				elseif (\is_callable($callback))
+				{
+					$callback($this);
+				}
+			}
+		}
+
+		// Create a new version
+		if ($this->blnCreateNewVersion)
+		{
+			$objVersions = new Versions($this->strTable, $this->intId);
+			$objVersions->create();
+		}
+	}
+    
+  
+        
+        
      public function generateTree($table, $id, $arrPrevNext, $blnHasSorting,
  $intMargin=0, $arrClipboard=null, $blnCircularReference=false, 
  $protectedPage=false, $blnNoRecursion=false, $arrFound=array())
     {
-            if(Input::get('do') !== 'content'){
-                parent::generateTree($table, $id, $arrPrevNext, $blnHasSorting,
- $intMargin, $arrClipboard, $blnCircularReference, 
- $protectedPage, $blnNoRecursion, $arrFound);
-                
-                }
         
-      
-            if(Input::get('pid')===Null){
-        
-                $arrPages = array();
-                $dbPages = $this->container->get('database_connection')
-                ->fetchAllAssociative("
-                SELECT id,pid,title,type FROM tl_page
-                ORDER BY pid ASC, sorting ASC
-            ");
+            if(Input::get('do') === 'content'&&Input::get('mode') === 'layout'){
                 
-                
-                if ($dbPages !== null)
-                {
-                  $arrPages = $this->buildTree($dbPages); 
-                  
+                $pTable = 'tl_page';
+                $objSession = System::getContainer()->get('request_stack')->getSession();
+                if(Input::get('pid')){
+                    $objSession->getBag('contao_backend')->set('OP_ADD_PID',Input::get('pid'));
+               
+                    }
+                  $objSession->getBag('contao_backend')->set('OP_ADD_MODE',Input::get('mode'));
+               
+                  $objSession->getBag('contao_backend')->set('OP_ADD_PTABLE',$pTable);
+                 $objSession->getBag('contao_backend')->set('OP_ADD_COLUMN','main');
+                       
                  
-                }
-             return $this->renderListView($arrPages);
-             }else{
-                 $objSession = System::getContainer()->get('request_stack')->getSession();
-                $objSession->getBag('contao_backend')->set('OP_ADD_PID',Input::get('pid'));
                  //find Layout of the page 
                  $pageModel = new PageModel;
                  $objPage = $pageModel::findById(Input::get('pid'));
@@ -177,7 +314,7 @@ class DC_Content extends DC_Table
                  // make an assoc array about the posibilities to include a section
                  $attrBlock = ['position'=>'default'];
                  
-                 $htmlBlocks = array();
+                 $htmlBlocks = [];
                  $htmlBlocks['container'] = $attrBlock;
                  
                  
@@ -220,57 +357,91 @@ class DC_Content extends DC_Table
                                 }
                              
                         }
+                    }
+                      $arrElements = array();
+                        $dbElements = $this->container->get('database_connection')
+                        ->fetchAllAssociative(
+                            "SELECT id, pid, headline, type, inColumn, cssId, el_count
+                             FROM tl_content
+                             WHERE pid = :pid
+                               AND parentTable = :parentTable
+                             ORDER BY pid ASC, sorting ASC",
+                            [
+                                'pid' => (int) Input::get('pid'),
+                                'parentTable' => (string) $pTable,
+                            ]
+                        );
                         
-                       // var_dump($htmlBlocks);exit;
-                  }
-                
-                 
-                 
-                 
-                 $arrElements = array();
-                $dbElements = $this->container->get('database_connection')
-                ->fetchAllAssociative("
-                SELECT id,pid,headline,type,inColumn,cssId FROM tl_content
-                WHERE pid = ".Input::get('pid')."
-                ORDER BY pid ASC, sorting ASC
-            ");
-                
-                
-                if ($dbElements !== null)
-                {
-                  $arrElements = $this->buildElements($dbElements,Input::get('pid')); 
-                   // var_dump($arrElements);exit;
-                }
+                        
+                        if ($dbElements !== null)
+                        {
+                          $arrElements = $this->buildElements($dbElements,Input::get('pid')); 
+                           
+                        }
 
-            
-               return $this->renderDetailView($objLayout,$htmlBlocks,$arrElements,$objPage);  
-            } 
-            
+
+                    
+                    return $this->renderDetailView($objLayout,$htmlBlocks,$arrElements,$objPage);  
+             
+                       // var_dump($htmlBlocks);exit;
+                }
+                if(Input::get('do') === 'content'&&Input::get('mode') === 'plus'){
+                
+                    $pTable = 'tl_content';
+                        $objSession = System::getContainer()->get('request_stack')->getSession();
+                        if(Input::get('id')&&Input::get('op_add')!=='add_content_element'){
+                            $objSession->getBag('contao_backend')->set('OP_ADD_PID',Input::get('id'));
+                            }
+                        $objSession->getBag('contao_backend')->set('OP_ADD_MODE',Input::get('mode'));
+                        $objSession->getBag('contao_backend')->set('OP_ADD_PTABLE',$pTable);
+                        if(Input::get('el')){
+                            $objSession->getBag('contao_backend')->set('OP_ADD_EL',Input::get('el'));
+                            }
+                         if(Input::get('plus')){
+                         $objSession->getBag('contao_backend')->set('OP_ADD_PLUS',Input::get('plus'));
+                        $objSession->getBag('contao_backend')->set('OP_ADD_COLUMN',Input::get('plus').'-el-1');
+                         }
+                        $htmlBlocks = [];
+                        $htmlBlocks[Input::get('plus')] = [];
+                        for ($i = 0; $i < Input::get('el'); $i++) {
+                            $htmlBlocks[Input::get('plus')][Input::get('plus').'-el-'.$i+1] = [];
+                        }
+                        $arrElements = array();
+                        $dbElements = $this->container->get('database_connection')
+                        ->fetchAllAssociative(
+                            "SELECT id, pid, headline, type, inColumn, cssId, el_count
+                             FROM tl_content
+                             WHERE pid = :pid
+                               AND parentTable = :parentTable
+                             ORDER BY sorting ASC",
+                            [
+                                'pid' => (int) $objSession->getBag('contao_backend')->get('OP_ADD_PID'),
+                       
+                                'parentTable' => (string) $pTable
+                            ]
+                        );
+                        
+                       // var_dump($dbElements,$pTable,$objSession->getBag('contao_backend')->get('OP_ADD_PID'));exit;
+                        if ($dbElements !== null)
+                        {
+                          $arrElements = $this->buildElements($dbElements,Input::get('id')); 
+                           // var_dump($arrElements);exit;
+                        }
+
+                         return $this->renderDetailView(Null,$htmlBlocks,$arrElements,Null);
+                        
+                }
+                
+                 
+                 
+                 
+               
+             
        
     }
 
-    protected function renderListView($arrPages = array())
-    {
-        
-        $requestStack = $this->container->get('request_stack');
-        $request = $requestStack->getCurrentRequest();
 
-        $baseUrl = $request->getSchemeAndHttpHost();
-        //$token = RequestToken::get();
-       // $tokenManager = $this->container->get('contao.csrf.token_manager');
-       // var_dump(System::getContainer()->get('contao.csrf.token_manager')->getDefaultTokenValue() );exit;
-		return $this->container->get('twig')->render(
-			'@Contao/be_content_list.html.twig',
-			array(
-                'baseUrl' => $request->getSchemeAndHttpHost() . $request->getBaseUrl(),
-				'tree' => $arrPages,
-                'token' => System::getContainer()->get('contao.csrf.token_manager')->getDefaultTokenValue() 
-                
-			)
-		);
-    
-    }
-    protected function renderDetailView($objLayout,$htmlBlocks,$arrElements,$objPage)
+    protected function renderDetailView($objLayout = Null,$htmlBlocks,$arrElements,$objPage = Null)
     {
         
         $requestStack = $this->container->get('request_stack');
@@ -284,15 +455,15 @@ class DC_Content extends DC_Table
 			'@Contao/be_content_details.html.twig',
 			array(
                 'baseUrl' => $request->getSchemeAndHttpHost() . $request->getBaseUrl(),
-                'pageName' => $objPage->__get('title'),
-                'layoutClass' => $objLayout->__get('cssClass'),
+                'pageName' => ($objPage)?$objPage->__get('title'):'Content Plus',
+                'layoutClass' => ($objLayout)?$objLayout->__get('cssClass'):'',
                 'htmlBlocks' =>$htmlBlocks,
                 'elementsByBlock' => $arrElements
 			)
 		);
     
     }
-    protected function buildTree(array $elements, int $parentId = 0): array
+       protected function buildTree(array $elements, int $parentId = 0): array
     {
         $branch = [];
 
@@ -313,14 +484,13 @@ class DC_Content extends DC_Table
 
         return $branch;
     }
-    
     protected function buildElements(array $elements, int $parentId = 0): array
     {
         $branch = [];
         $token = System::getContainer()->get('contao.csrf.token_manager')->getDefaultTokenValue();
         foreach ($elements as $element) {
             if ((int)$element['pid'] === $parentId) {
-                $children = $this->buildTree($elements, (int)$element['id']);
+               $children = $this->buildTree($elements, (int)$element['id']);
                 $element['content_element'] = $this->getElement($element);
                 
                 if(is_array( unserialize($element['cssId']))){
@@ -332,8 +502,11 @@ class DC_Content extends DC_Table
                 $element['css_class'] = $cssId;
                 $element['href_act_edit'] = 'contao?do=content&id='.$element['id'].'&table=tl_content&act=edit';
                $element['href_act_delete'] = 'contao?do=content&id='.$element['id'].'&table=tl_content&act=delete&rt='.$token;
-               
-                if ($children) {
+                $element['is_content_plus'] = ($element['type']==='contentslider'||$element['type']==='grid')?true:false;
+                $element['href_act_edit_plus'] = 'contao?do=content&mode=plus&pid='.$element['pid'].'&id='.$element['id'].'&plus='.$element['type'].'&el='.$element['el_count'];
+             
+                
+                 if ($children) {
                     $element['children'] = $children;
                   }
                 $branch[$element['inColumn']][] = $element;
@@ -353,11 +526,20 @@ class DC_Content extends DC_Table
             $row = $objCte;
 
             // Optional: nur wenn Spalte passt
-            if ($row->type !== 'module'&&$row->type !== 'form') {
+            if ($row->type !== 'module'
+                &&$row->type !== 'form'
+                &&$row->type !== 'contentslider'
+                &&$row->type !== 'grid'
+            ) {
                 $strClass = 'Contao\\Content' . ucfirst($row->type);
-            }elseif($row->type === 'module'){
+                
+            }elseif($row->type === 'module'
+                ||$row->type === 'contentslider'
+                ||$row->type === 'grid'
+            ){
                // $row->__set('cssId',$element['css_class']);
                  $strClass = 'Bits\\FlyUxBundle\\Content\\Content' . ucfirst($row->type);
+            
             }elseif($row->type === 'form'){
                             $strClass = 'Contao\\Form';    
             }
@@ -375,6 +557,14 @@ class DC_Content extends DC_Table
             
         
     }
+    
+      /**
+	 * Delete all incomplete and unrelated records
+	 */
+	protected function reviseTable()
+	{
+        
+        }
         
     
     

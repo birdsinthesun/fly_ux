@@ -9,6 +9,7 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 use Bits\FlyUxBundle\DependencyInjection\Compiler\RemoveContaoCallbackPass;
+use Bits\FlyUxBundle\DependencyInjection\Compiler\RemoveNewOperationPass;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 
 class FlyUxBundle extends AbstractBundle
@@ -26,8 +27,8 @@ class FlyUxBundle extends AbstractBundle
         parent::build($container);
 
        $container->addCompilerPass(new RemoveContaoCallbackPass(),PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);
-        
-      
+       $container->addCompilerPass(new RemoveNewOperationPass(),PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);
+     
     }
     protected function addCompilerPass($compilerPass, $type = PassConfig::TYPE_AFTER_REMOVING, $priority = 0)
     {
