@@ -1,8 +1,6 @@
 <?php
 
 
-$this->loadDataContainer('tl_page');
-
 $GLOBALS['TL_DCA']['tl_content']['config']['sql']['keys']['parentTable'] = 'index';
 
 $GLOBALS['TL_DCA']['tl_content']['fields']['parentTable'] = array

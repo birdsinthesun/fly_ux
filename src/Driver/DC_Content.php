@@ -135,12 +135,16 @@ class DC_Content extends DC_Table
  $intMargin=0, $arrClipboard=null, $blnCircularReference=false, 
  $protectedPage=false, $blnNoRecursion=false, $arrFound=array())
     {
+             $objSession = System::getContainer()->get('request_stack')->getSession();
+             
+         
+        
+        
         
             if(Input::get('do') === 'content'&&Input::get('mode') === 'layout'){
                 
                 $pTable = 'tl_page';
-                $objSession = System::getContainer()->get('request_stack')->getSession();
-                if(Input::get('pid')){
+                  if(Input::get('pid')){
                     $objSession->getBag('contao_backend')->set('OP_ADD_PID',Input::get('pid'));
                
                     }
@@ -230,15 +234,63 @@ class DC_Content extends DC_Table
 
 
                     
-                    return $this->renderDetailView($objLayout,$htmlBlocks,$arrElements,$objPage);  
+                    return $this->renderDetailView($objLayout,$htmlBlocks,$arrElements,$objPage,$objPage->__get('title'));  
              
                        // var_dump($htmlBlocks);exit;
-                }
+                }elseif((Input::get('do') === 'calendar'||Input::get('do') === 'news')&&Input::get('table') === 'tl_content'&&Input::get('mode') === 'layout'){
+                 
+                        $pTable = (Input::get('do') === 'calendar')?'tl_calendar_events':'tl_news';
+                        
+                        if(Input::get('id')&&Input::get('op_add')!=='add_content_element'){
+                            $objSession->getBag('contao_backend')->set('OP_ADD_PID',Input::get('id'));
+                        }
+                        $objSession->getBag('contao_backend')->set('OP_ADD_MODE',Input::get('mode'));
+                        $objSession->getBag('contao_backend')->set('OP_ADD_PTABLE',$pTable);
+                        if(Input::get('el')){
+                            $objSession->getBag('contao_backend')->set('OP_ADD_EL',Input::get('el'));
+                            }
+                         if(Input::get('plus')){
+                         $objSession->getBag('contao_backend')->set('OP_ADD_PLUS',Input::get('plus'));
+                        $objSession->getBag('contao_backend')->set('OP_ADD_COLUMN',Input::get('plus').'-el-1');
+                         }
+                        $htmlBlocks = [];
+                        $arrElements = array();
+                        $dbElements = $this->container->get('database_connection')
+                        ->fetchAllAssociative(
+                            "SELECT id, pid, headline, type, inColumn, cssId, el_count
+                             FROM tl_content
+                             WHERE pid = :pid
+                               AND parentTable = :parentTable
+                             ORDER BY sorting ASC",
+                            [
+                                'pid' => (int) $objSession->getBag('contao_backend')->get('OP_ADD_PID'),
+                       
+                                'parentTable' => (string) $pTable
+                            ]
+                        );
+                        
+                         if ($dbElements !== null)
+                        {
+                          $arrElements = $this->buildElements($dbElements,Input::get('id')); 
+                           }
+
+                         return $this->renderDetailView(Null,$htmlBlocks,$arrElements,Null,'Details');
+                        
+                        
+                 
+                 
+                 }
+                
+                
+                
+                
+                
                 if(Input::get('do') === 'content'&&Input::get('mode') === 'plus'){
                 
                     $pTable = 'tl_content';
-                        $objSession = System::getContainer()->get('request_stack')->getSession();
-                        if(Input::get('id')&&Input::get('op_add')!=='add_content_element'){
+                    
+                    
+                         if(Input::get('id')&&Input::get('op_add')!=='add_content_element'){
                             $objSession->getBag('contao_backend')->set('OP_ADD_PID',Input::get('id'));
                             }
                         $objSession->getBag('contao_backend')->set('OP_ADD_MODE',Input::get('mode'));
@@ -270,27 +322,21 @@ class DC_Content extends DC_Table
                             ]
                         );
                         
-                       // var_dump($dbElements,$pTable,$objSession->getBag('contao_backend')->get('OP_ADD_PID'));exit;
                         if ($dbElements !== null)
                         {
                           $arrElements = $this->buildElements($dbElements,Input::get('id')); 
-                           // var_dump($arrElements);exit;
+                         
                         }
 
-                         return $this->renderDetailView(Null,$htmlBlocks,$arrElements,Null);
+                         return $this->renderDetailView(Null,$htmlBlocks,$arrElements,Null,'Content Plus');
                         
                 }
-                
-                 
-                 
-                 
-               
-             
+      
        
     }
+ 
 
-
-    protected function renderDetailView($objLayout = Null,$htmlBlocks,$arrElements,$objPage = Null)
+    protected function renderDetailView($objLayout = Null,$htmlBlocks,$arrElements,$objPage = Null,$headline)
     {
         
         $requestStack = $this->container->get('request_stack');
@@ -304,8 +350,8 @@ class DC_Content extends DC_Table
 			'@Contao/be_content_details.html.twig',
 			array(
                 'baseUrl' => $request->getSchemeAndHttpHost() . $request->getBaseUrl(),
-                'pageName' => ($objPage)?$objPage->__get('title'):'Content Plus',
-                'layoutClass' => ($objLayout)?$objLayout->__get('cssClass'):'',
+                'pageName' => $headline,
+                'layoutClass' => ($objLayout)?$objLayout->__get('cssClass'):'details',
                 'htmlBlocks' =>$htmlBlocks,
                 'elementsByBlock' => $arrElements
 			)

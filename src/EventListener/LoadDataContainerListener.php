@@ -40,16 +40,23 @@ class LoadDataContainerListener
       
        
            
-       if($table === 'tl_content' && Input::get('do') === 'content'){
+       if($table === 'tl_content' && (Input::get('do') === 'content'||Input::get('do') === 'calendar'||Input::get('do') === 'news'){
             
            
-            
-                        
+            if(Input::get('do') === 'content'){
+                   $GLOBALS['TL_DCA']['tl_content']['config']['ptable'] = 'tl_page';
+               $GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][] = ['tl_page','addBreadcrumb'];
+            }elseif(Input::get('do') === 'calendar'){
+                   $GLOBALS['TL_DCA']['tl_content']['config']['ptable'] = 'tl_calendar_events';
+              }if(Input::get('do') === 'news'){
+                   $GLOBALS['TL_DCA']['tl_content']['config']['ptable'] = 'tl_news';
+              }
+        
                 $GLOBALS['TL_DCA']['tl_content']['config']['dataContainer']  = DC_Content::class;
-                $GLOBALS['TL_DCA']['tl_content']['config']['ptable'] = 'tl_page';
+               
 
                 $GLOBALS['TL_DCA']['tl_content']['config']['dynamicPtable'] = true;
-               $GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][] = ['tl_page','addBreadcrumb'];
+              
                 $GLOBALS['TL_DCA']['tl_content']['config']['switchToEdit']                = true;
                 $GLOBALS['TL_DCA']['tl_content']['config']['enableVersioning']            = true;
                 $GLOBALS['TL_DCA']['tl_content']['config']['markAsCopy']                  = 'headline';
@@ -83,6 +90,8 @@ class LoadDataContainerListener
                         }
                     }
                 }
+                
+                
                 if(!isset($GLOBALS['TL_DCA']['tl_content']['config']['notCreatable'])){
                     $GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['add_content_element'] = [
                         'label'      => ['Neues Element einfügen', ''],
@@ -119,11 +128,13 @@ class LoadDataContainerListener
            
            
           }
-           if($table === 'tl_page'){
-                $GLOBALS['TL_DCA']['tl_page']['config']['ctable'] = ['tl_content'];
+          
+          
+           if($table === 'tl_page'||$table === 'tl_calendar_events'||$table === 'tl_news'){
+                $GLOBALS['TL_DCA'][$table]['config']['ctable'] = ['tl_content'];
                 // unset($GLOBALS['TL_DCA']['tl_page']['list']['operations']['articles']);
-                 $GLOBALS['TL_DCA']['tl_page']['list']['operations']['show']['label'] = ['Inhalten', 'Inhalt bearbeiten'];
-                 $GLOBALS['TL_DCA']['tl_page']['list']['operations']['children']['button_callback'] = [self::class, 'contentShowButton'];
+                 $GLOBALS['TL_DCA'][$table]['list']['operations']['show']['label'] = ['Inhalten', 'Inhalt bearbeiten'];
+                 $GLOBALS['TL_DCA'][$table]['list']['operations']['children']['button_callback'] = [self::class, 'contentShowButton'];
                
            }
     }
@@ -135,7 +146,7 @@ class LoadDataContainerListener
         $token = $tokenManager->getToken('contao.csrf.token')->getValue();
         
         
-        return '<a href="contao?do=content&mode=layout&pid=' . $row['id']. '&amp;rt='.$token . '" title="Inhalte ID ' . $row['id']. ' bearbeiten" ' . $attributes . '>
+        return '<a href="contao?do='.Input::get('do').'&mode=layout&pid=' . $row['id']. '&amp;rt='.$token . '" title="Inhalte ID ' . $row['id']. ' bearbeiten" ' . $attributes . '>
             <img src="system/themes/flexible/icons/children.svg" alt="Inhalte zeigen und bearbeiten">
         </a>';
     }
