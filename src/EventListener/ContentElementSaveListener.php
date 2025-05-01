@@ -16,7 +16,7 @@ class ContentElementSaveListener
         
         
         
-        if (Input::get('op_add') === 'add_content_element') {
+        if (Input::get('do') === 'content'&&Input::get('op_add') === 'add_content_element') {
 
             
             $session = System::getContainer()->get('request_stack')->getSession();
@@ -25,13 +25,12 @@ class ContentElementSaveListener
         
             $record['id'] = Input::get('id');
             $record['pid'] = $pid;
-           // $record['ptable'] = 'tl_page';
-          //  $record['inColumn'] = $dc->getActiveRecord()['inColumn'];
             $record['parentTable'] = $ptable;
+            
            
         }
-            return $record;
             
+            return $record;
         
     }
 }

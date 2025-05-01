@@ -128,7 +128,7 @@ class LoadDataContainerListener
            }
     }
     
-     public static function contentShowButton(array $row, $href, string $label, string $title,  $icon, string $attributes): string
+     public static function contentShowButton(array $row, string $href, string $label, string $title,  string $icon, string $attributes): string
     {
         $container = System::getContainer();
         $tokenManager = $container->get('contao.csrf.token_manager');

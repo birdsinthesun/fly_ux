@@ -26,8 +26,6 @@ class BackendMenuListener
         }
 
         $contentNode->removeChild($factory->createItem('content'));
-        $contentNode->removeChild($factory->createItem('content_plus'));
- 
-        
+      
     }
 }
