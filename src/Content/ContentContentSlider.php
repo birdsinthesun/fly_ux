@@ -1,13 +1,5 @@
 <?php
 
-/*
- * This file is part of Contao.
- *
- * (c) Leo Feyer
- *
- * @license LGPL-3.0-or-later
- */
-
 namespace Bits\FlyUxBundle\Content;
 
 use Contao\ContentElement;
@@ -20,18 +12,10 @@ use Contao\System;
 use Contao\Input;
 
 
-/**
- * Front end content element "module".
- */
 class ContentContentSlider extends ContentElement
 {
 	
 
-/**
-	 * Parse the template
-	 *
-	 * @return string
-	 */
 	public function generate()
 	{
         
@@ -41,16 +25,13 @@ class ContentContentSlider extends ContentElement
 		}
         
     }
-	/**
-	 * Generate the content element
-	 */
+
 	protected function compile()
 	{
        
-
-        // Optional: auf Modul-Templates zugreifen
         parent::compile();
 	}
     
      
 }
+

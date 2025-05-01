@@ -1,0 +1,17 @@
+<?php
+
+namespace Bits\FlyUxBundle\Content;
+
+use Contao\ContentElement;
+use Contao\ContentModel;
+use Contao\ModuleModel;
+use Contao\Module;
+use Contao\PageModel;
+use Contao\StringUtil;
+use Contao\System;
+use Contao\Input;
+
+
+class ContentGrid extends ContentElement
+{}
+
