@@ -23,12 +23,12 @@ class LoadDataContainerListener
     {
 
         
-        //var_dump($GLOBALS['BE_MOD']['content']['page']['driver'],isset($GLOBALS['BE_MOD']['content']['page']['init']));exit;
          // settings for fly_ux driver
         if(isset($GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['driver'])
             &&$GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['driver'] === 'fly_ux'
             &&!isset($GLOBALS['BE_MOD']['content'][Input::get('do')]['init'])
             ){
+               
                // var_dump($GLOBALS['TL_DCA']['tl_page']);exit;
                 $GLOBALS['BE_MOD']['content'][Input::get('do')]['init'] = true;
                 //$root = $GLOBALS['BE_MOD']['content'][Input::get('do')]['relations'][0];
@@ -39,13 +39,15 @@ class LoadDataContainerListener
                     
                     if(isset($GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['relations'][$key+1])){
                         $GLOBALS['TL_DCA'][$table]['config']['ctable'] = [$GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['relations'][$key+1]];
-                       
                        //set the show-button
-                       if($GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['relations'][$key+1]==='tl_content'){ 
-                            $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['icon'] = 'system/themes/flexible/icons/children.svg';
-                            $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['label'] = ['Inhalten', 'Inhalt bearbeiten'];
-                            $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['button_callback'] = [self::class, 'contentShowButton'];
-                            $GLOBALS['BE_MOD']['content'][Input::get('do')]['showBtn'] = $ptable;
+                       if($GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['relations'][$key+1]==='tl_content'){
+                            unset($GLOBALS['TL_DCA'][$table]['list']['operations']['articles']); 
+                            $GLOBALS['TL_DCA'][$table]['list']['operations']['children']['icon'] = 'system/themes/flexible/icons/children.svg';
+                            $GLOBALS['TL_DCA'][$table]['list']['operations']['children']['label'] = ['Inhalten', 'Inhalt bearbeiten'];
+                            $GLOBALS['TL_DCA'][$table]['list']['operations']['children']['button_callback'] = [self::class, 'contentShowButton'];
+                            $GLOBALS['BE_MOD']['content'][Input::get('do')]['showBtn'] = $table;
+                             var_dump( $table,$GLOBALS['TL_DCA'][$table]['list']['operations'],$GLOBALS['TL_DCA'][$table]['config']['ctable']);exit; 
+                   
                         }
                     
                         if($key !== 0){
