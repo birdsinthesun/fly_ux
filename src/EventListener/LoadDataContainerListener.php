@@ -36,30 +36,30 @@ class LoadDataContainerListener
                     $GLOBALS['TL_DCA']['tl_content']['config']['switchToEdit'] = true;
                     
                     if(isset($GLOBALS['BE_MOD']['content'][Input::get('do')]['relations'][$key+1])){
-                        $GLOBALS['TL_DCA'][$table]['config']['ctable'] = [$GLOBALS['BE_MOD']['content'][Input::get('do')]['relations'][$key+1])];
+                        $GLOBALS['TL_DCA'][$table]['config']['ctable'] = [$GLOBALS['BE_MOD']['content'][Input::get('do')]['relations'][$key+1]];
                        
                        //set the show-button
-                       if($GLOBALS['BE_MOD']['content'][Input::get('do')]['relations'][$key+1])==='tl_content') 
+                       if($GLOBALS['BE_MOD']['content'][Input::get('do')]['relations'][$key+1]==='tl_content'){ 
                             $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['icon'] = 'system/themes/flexible/icons/children.svg';
                             $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['label'] = ['Inhalten', 'Inhalt bearbeiten'];
                             $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['button_callback'] = [self::class, 'contentShowButton'];
                             $GLOBALS['BE_MOD']['content'][Input::get('do')]['showBtn'] = $ptable;
                         }
                     
-                    if($key !== 0){
-                           $GLOBALS['TL_DCA'][$ptable'tl_content']['config']['ptable'] = $root;
+                        if($key !== 0){
+                           $GLOBALS['TL_DCA'][$ptable]['config']['ptable'] = $root;
                            $GLOBALS['TL_DCA'][$ptable]['config']['dynamicPtable'] = true;
                          }
                     
                     $root = $GLOBALS['BE_MOD']['content'][Input::get('do')]['relations'][$key];
                     }
-              
+                }
                 //changes to tl_content only
                 
                 foreach ($GLOBALS['TL_DCA']['tl_content']['palettes'] as $paletteKey => $paletteValue) {
                    if ($paletteKey === '__selector__') {
                     continue;
-                }
+                    }
                     if (is_string($paletteValue)) {
                       
                         if (strpos($paletteValue, '{layout_legend},inColumn;') !== 0) {
@@ -77,7 +77,7 @@ class LoadDataContainerListener
                         'button_callback' => ['\Bits\FlyUxBundle\Driver\DC_ContentOperations', 'addElementButton'],
                     ];
                     
-                    }
+                }
                 
 
                 $GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['drag_drop_mode'] = [
@@ -94,12 +94,8 @@ class LoadDataContainerListener
                     'button_callback' => ['\Bits\FlyUxBundle\Driver\DC_ContentOperations', 'dragDropDeaktivateButton'],
                 ];
                            
-               
+            }    
               //  $GLOBALS['TL_DCA'][$table]['config']['notCreatable'] = true;
-             
-          }
-          
-          
     }
     
      public static function contentShowButton(array $row, $href, string $label, string $title, $icon, string $attributes): string
@@ -108,7 +104,7 @@ class LoadDataContainerListener
         $tokenManager = $container->get('contao.csrf.token_manager');
         $token = $tokenManager->getToken('contao.csrf.token')->getValue();
         $table = $GLOBALS['BE_MOD']['content'][Input::get('do')]['showBtn'];
-        $do = Input::get('do')==='page')?'content':Input::get('do');
+        $do = (Input::get('do')==='page')?'content':Input::get('do');
         
         return '<a href="contao?do='.$do.'&mode=layout&table=tl_content&id=' . $row['id']. '&amp;rt='.$token . '" title="Inhalte ID ' . $row['id']. ' bearbeiten" ' . $attributes . '>
             <img src="system/themes/flexible/icons/children.svg" alt="Inhalte zeigen und bearbeiten">
