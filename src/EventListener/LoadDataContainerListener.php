@@ -16,7 +16,7 @@ use Contao\PageModel;
 use Contao\StringUtil;
 use Contao\CoreBundle\DataContainer\DataContainerOperation;
 
-#[AsHook('loadDataContainer','__invoke',-255)]
+#[AsHook('loadDataContainer','__invoke',210)]
 class LoadDataContainerListener
 {
     public function __invoke(string $table): void
@@ -38,18 +38,20 @@ class LoadDataContainerListener
                     $GLOBALS['TL_DCA']['tl_content']['config']['switchToEdit'] = true;
                     
                     if(isset($GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['relations'][$key+1])){
-                        $GLOBALS['TL_DCA'][$table]['config']['ctable'] = [$GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['relations'][$key+1]];
+                        $GLOBALS['TL_DCA'][$ptable]['config']['ctable'] = [$GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['relations'][$key+1]];
                        //set the show-button
                        if($GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['relations'][$key+1]==='tl_content'){
-                            unset($GLOBALS['TL_DCA'][$table]['list']['operations']['articles']); 
-                            $GLOBALS['TL_DCA'][$table]['list']['operations']['children']['icon'] = 'system/themes/flexible/icons/children.svg';
-                            $GLOBALS['TL_DCA'][$table]['list']['operations']['children']['label'] = ['Inhalten', 'Inhalt bearbeiten'];
-                            $GLOBALS['TL_DCA'][$table]['list']['operations']['children']['button_callback'] = [self::class, 'contentShowButton'];
+                            $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['prefetch'] = true;
+                             $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['primary'] = true;
+                            $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['icon'] = 'system/themes/flexible/icons/children.svg';
+                            $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['label'] = ['Inhalten', 'Inhalt bearbeiten'];
+                            $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['button_callback'] = [self::class, 'contentShowButton'];
                             $GLOBALS['BE_MOD']['content'][Input::get('do')]['showBtn'] = $table;
-                             var_dump( $table,$GLOBALS['TL_DCA'][$table]['list']['operations'],$GLOBALS['TL_DCA'][$table]['config']['ctable']);exit; 
-                   
+                                // var_dump( $ptable, $GLOBALS['TL_DCA'][$ptable]['config']['ctable']);exit; 
+                       
                         }
-                    
+                  
+                   
                         if($key !== 0){
                             $GLOBALS['TL_DCA'][$ptable]['list']['sorting']['mode'] = DataContainer::MODE_TREE_EXTENDED;
                            $GLOBALS['TL_DCA'][$ptable]['config']['ptable'] = (isset($root))?:'';
@@ -60,44 +62,52 @@ class LoadDataContainerListener
                     }
                 }
                 //changes to tl_content only
-                
-                foreach ($GLOBALS['TL_DCA']['tl_content']['palettes'] as $paletteKey => $paletteValue) {
-                   if ($paletteKey === '__selector__') {
-                    continue;
-                    }
-                    if (is_string($paletteValue)) {
-                      
-                        if (strpos($paletteValue, '{layout_legend},inColumn;') !== 0) {
-                            $GLOBALS['TL_DCA']['tl_content']['palettes'][$paletteKey] = '{layout_legend},inColumn;' . $paletteValue;
+                if($table === 'tl_content'){
+                    
+                        foreach ($GLOBALS['TL_DCA']['tl_content']['palettes'] as $paletteKey => $paletteValue) {
+                           if ($paletteKey === '__selector__') {
+                            continue;
+                            }
+                            if (is_string($paletteValue)) {
+                              
+                                if (strpos($paletteValue, '{layout_legend},inColumn;') !== 0) {
+                                    $GLOBALS['TL_DCA']['tl_content']['palettes'][$paletteKey] = '{layout_legend},inColumn;' . $paletteValue;
+                                }
+                            }
                         }
-                    }
-                }
                 
                 
-                if(!isset($GLOBALS['TL_DCA']['tl_content']['config']['notCreatable'])){
-                    $GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['add_content_element'] = [
-                        'label'      => ['Neues Element einfügen', ''],
-                        'href'       => 'op_add=add_content_element&act=create',
-                        'class'      => 'header_new_element',
-                        'button_callback' => ['\Bits\FlyUxBundle\Driver\DC_ContentOperations', 'addElementButton'],
-                    ];
+                        if(!isset($GLOBALS['TL_DCA']['tl_content']['config']['notCreatable'])){
+                            $GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['add_content_element'] = [
+                                'label'      => ['Neues Element einfügen', ''],
+                                'href'       => 'op_add=add_content_element&act=create',
+                                'class'      => 'header_new_element',
+                                'icon'       => '',
+                                'button_callback' => ['\Bits\FlyUxBundle\Driver\DC_ContentOperations', 'addElementButton'],
+                            ];
+                            
+                        }
+                        
+
+                        $GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['drag_drop_mode'] = [
+                            'label'      => ['Drag & Drop Modus', ''],
+                            'href'       => 'op_dd=drag_drop_mode',
+                            'class'      => 'header_drag_drop',
+                            'icon'       => '',
+                            'button_callback' => ['\Bits\FlyUxBundle\Driver\DC_ContentOperations', 'dragDropButton'],
+                        ];
+
+                        $GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['drag_drop_disable'] = [
+                            'label'      => ['Drag & Drop Deaktivieren', ''],
+                            'href'       => '',
+                            'class'      => 'header_drag_drop_disable',
+                            'icon'       => '',
+                            'button_callback' => ['\Bits\FlyUxBundle\Driver\DC_ContentOperations', 'dragDropDeaktivateButton'],
+                        ];
+                    
                     
                 }
                 
-
-                $GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['drag_drop_mode'] = [
-                    'label'      => ['Drag & Drop Modus', ''],
-                    'href'       => 'op_dd=drag_drop_mode',
-                    'class'      => 'header_drag_drop',
-                    'button_callback' => ['\Bits\FlyUxBundle\Driver\DC_ContentOperations', 'dragDropButton'],
-                ];
-
-                $GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['drag_drop_disable'] = [
-                    'label'      => ['Drag & Drop Deaktivieren', ''],
-                    'href'       => '',
-                    'class'      => 'header_drag_drop_disable',
-                    'button_callback' => ['\Bits\FlyUxBundle\Driver\DC_ContentOperations', 'dragDropDeaktivateButton'],
-                ];
                            
             }   
 
