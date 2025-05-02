@@ -24,6 +24,7 @@ class DC_Content extends DC_Table
     
     private $imageResizer;
     private $container;
+    private $session;
 
     protected $arrModule;
     
@@ -31,10 +32,10 @@ class DC_Content extends DC_Table
     {
         
             $this->container = System::getContainer();
-            
+            $this->session = $this->container->get('request_stack')->getSession()->getBag('contao_backend');
             $this->strTable = $strTable;
              $this->arrModule = $arrModule;
-             parent::__construct($strTable, $arrModule);
+           // parent::__construct($strTable, $arrModule);
     }
     
     /**
@@ -50,6 +51,34 @@ class DC_Content extends DC_Table
         $db = Database::getInstance();
 		$databaseFields = $db->getFieldNames($this->strTable);
         $objSession = $this->container->get('request_stack')->getSession();
+        
+        if(Input::get('do') === 'content'&&Input::get('mode') === 'layout'){
+            
+                $pTable = 'tl_page';
+                $inColumn = 'main';
+                
+        }elseif((Input::get('do') === 'calendar'||Input::get('do') === 'news')&&Input::get('mode') === 'layout'){
+                
+                $pTable = (Input::get('do') === 'calendar')?'tl_calendar_events':'tl_news';
+                $inColumn = 'container';
+                
+        }elseif((Input::get('do') === 'content'||Input::get('do') === 'calendar'||Input::get('do') === 'news')&&Input::get('mode') === 'plus'){
+                
+                $pTable = 'tl_content';
+                $inColumn = Input::get('plus').'-el-1';
+        }
+        
+        //set Session Array
+        $this->session->set('OP_ADD' ,[
+                    'pid' => Input::get('pid'),
+                    'parentTable' => $pTable,
+                    'mode' => Input::get('mode'),
+                    'inColumn'=> $inColumn,
+                    'el'=>Input::get('el'),
+                    'plus'=>Input::get('plus')
+                    ]);
+        
+        
         
 		// Get all default values for the new entry
 		foreach ($GLOBALS['TL_DCA'][$this->strTable]['fields'] as $k=>$v)
@@ -68,18 +97,14 @@ class DC_Content extends DC_Table
 			}
             if($k ==='pid'){
                   
-                  $this->set[$k] =   $objSession->getBag('contao_backend')->get('OP_ADD_PID');
+                  $this->set[$k] =   Input::get('pid');
                     
                     }    
       
             if($k ==='inColumn'){
           
-               
-                
-                   $this->set[$k] = $objSession->getBag('contao_backend')->get('OP_ADD_COLUMN');
-             //  System::getContainer()->get('monolog.logger.contao.general')->info('On create "' . $objSession->getBag('contao_backend')->get('OP_ADD_PTABLE'));
-
-            
+                   $this->set[$k] = $inColumn;
+                   
             }
 		}
 
@@ -96,29 +121,24 @@ class DC_Content extends DC_Table
 		// Insert the record if the table is not closed and switch to edit mode
 		if (!($GLOBALS['TL_DCA'][$this->strTable]['config']['closed'] ?? null))
 		{
-            
-               
-        //  var_dump($this->set);exit;
+           // var_dump($this->set);exit;
 			$objInsertStmt = $db
 				->prepare("INSERT INTO " . $this->strTable . " %s")
 				->set($this->set)
 				->execute();
-
+//var_dump($this->set,$objInsertStmt->affectedRows);exit;
 			if ($objInsertStmt->affectedRows)
 			{
 				$s2e = ($GLOBALS['TL_DCA'][$this->strTable]['config']['switchToEdit'] ?? null) ? '&s2e=1' : '';
 				
               
                 $insertID = $objInsertStmt->insertId;
-                
- 
-				$objSessionBag = $objSession->getBag('contao_backend');
 
 				// Save new record in the session
-				$new_records = $objSessionBag->get('new_records');
+				$new_records = $this->session->get('new_records');
 				$new_records[$this->strTable][] = $insertID;
          
-				$objSessionBag->set('new_records', $new_records);
+				$this->session->set('new_records', $new_records);
 
 				System::getContainer()->get('monolog.logger.contao.general')->info('A new entry "' . $this->strTable . '.id=' . $insertID . '" has been created' . $this->getParentEntries($this->strTable, $insertID));
 
@@ -130,33 +150,20 @@ class DC_Content extends DC_Table
 	}
     
    
-        
      public function generateTree($table, $id, $arrPrevNext, $blnHasSorting,
  $intMargin=0, $arrClipboard=null, $blnCircularReference=false, 
  $protectedPage=false, $blnNoRecursion=false, $arrFound=array())
     {
-             $objSession = System::getContainer()->get('request_stack')->getSession();
-             
-         
+            
         
-        
-        
+        var_dump($table);exit;
             if(Input::get('do') === 'content'&&Input::get('mode') === 'layout'){
                 
                 $pTable = 'tl_page';
-                  if(Input::get('pid')){
-                    $objSession->getBag('contao_backend')->set('OP_ADD_PID',Input::get('pid'));
-               
-                    }
-                  $objSession->getBag('contao_backend')->set('OP_ADD_MODE',Input::get('mode'));
-               
-                  $objSession->getBag('contao_backend')->set('OP_ADD_PTABLE',$pTable);
-                 $objSession->getBag('contao_backend')->set('OP_ADD_COLUMN','main');
-                       
-                 
+
                  //find Layout of the page 
                  $pageModel = new PageModel;
-                 $objPage = $pageModel::findById(Input::get('pid'));
+                 $objPage = $pageModel::findById(Input::get('id'));
                  $layoutId = $objPage->loadDetails()->layout;
                  
                  
@@ -220,7 +227,7 @@ class DC_Content extends DC_Table
                                AND parentTable = :parentTable
                              ORDER BY pid ASC, sorting ASC",
                             [
-                                'pid' => (int) Input::get('pid'),
+                                'pid' => (int) Input::get('id'),
                                 'parentTable' => (string) $pTable,
                             ]
                         );
@@ -228,7 +235,7 @@ class DC_Content extends DC_Table
                         
                         if ($dbElements !== null)
                         {
-                          $arrElements = $this->buildElements($dbElements,Input::get('pid')); 
+                          $arrElements = $this->buildElements($dbElements,Input::get('id')); 
                            
                         }
 
@@ -237,23 +244,12 @@ class DC_Content extends DC_Table
                     return $this->renderDetailView($objLayout,$htmlBlocks,$arrElements,$objPage,$objPage->__get('title'));  
              
                        // var_dump($htmlBlocks);exit;
-                }elseif((Input::get('do') === 'calendar'||Input::get('do') === 'news')&&Input::get('table') === 'tl_content'&&Input::get('mode') === 'layout'){
+                }elseif((Input::get('do') === 'calendar'||Input::get('do') === 'news')&&Input::get('mode') === 'layout'){
                  
                         $pTable = (Input::get('do') === 'calendar')?'tl_calendar_events':'tl_news';
-                        
-                        if(Input::get('id')&&Input::get('op_add')!=='add_content_element'){
-                            $objSession->getBag('contao_backend')->set('OP_ADD_PID',Input::get('id'));
-                        }
-                        $objSession->getBag('contao_backend')->set('OP_ADD_MODE',Input::get('mode'));
-                        $objSession->getBag('contao_backend')->set('OP_ADD_PTABLE',$pTable);
-                        if(Input::get('el')){
-                            $objSession->getBag('contao_backend')->set('OP_ADD_EL',Input::get('el'));
-                            }
-                         if(Input::get('plus')){
-                         $objSession->getBag('contao_backend')->set('OP_ADD_PLUS',Input::get('plus'));
-                        $objSession->getBag('contao_backend')->set('OP_ADD_COLUMN',Input::get('plus').'-el-1');
-                         }
+                         
                         $htmlBlocks = [];
+                        $htmlBlocks['container'] = [];
                         $arrElements = array();
                         $dbElements = $this->container->get('database_connection')
                         ->fetchAllAssociative(
@@ -263,7 +259,7 @@ class DC_Content extends DC_Table
                                AND parentTable = :parentTable
                              ORDER BY sorting ASC",
                             [
-                                'pid' => (int) $objSession->getBag('contao_backend')->get('OP_ADD_PID'),
+                                'pid' => (int) Input::get('id'),
                        
                                 'parentTable' => (string) $pTable
                             ]
@@ -279,29 +275,10 @@ class DC_Content extends DC_Table
                         
                  
                  
-                 }
-                
-                
-                
-                
-                
-                if(Input::get('do') === 'content'&&Input::get('mode') === 'plus'){
+                 }elseif((Input::get('do') === 'content'||Input::get('do') === 'calendar'||Input::get('do') === 'news')&&Input::get('mode') === 'plus'){
                 
                     $pTable = 'tl_content';
-                    
-                    
-                         if(Input::get('id')&&Input::get('op_add')!=='add_content_element'){
-                            $objSession->getBag('contao_backend')->set('OP_ADD_PID',Input::get('id'));
-                            }
-                        $objSession->getBag('contao_backend')->set('OP_ADD_MODE',Input::get('mode'));
-                        $objSession->getBag('contao_backend')->set('OP_ADD_PTABLE',$pTable);
-                        if(Input::get('el')){
-                            $objSession->getBag('contao_backend')->set('OP_ADD_EL',Input::get('el'));
-                            }
-                         if(Input::get('plus')){
-                         $objSession->getBag('contao_backend')->set('OP_ADD_PLUS',Input::get('plus'));
-                        $objSession->getBag('contao_backend')->set('OP_ADD_COLUMN',Input::get('plus').'-el-1');
-                         }
+
                         $htmlBlocks = [];
                         $htmlBlocks[Input::get('plus')] = [];
                         for ($i = 0; $i < Input::get('el'); $i++) {
@@ -398,7 +375,7 @@ class DC_Content extends DC_Table
                 $element['href_act_edit'] = 'contao?do=content&id='.$element['id'].'&table=tl_content&act=edit';
                $element['href_act_delete'] = 'contao?do=content&id='.$element['id'].'&table=tl_content&act=delete&rt='.$token;
                 $element['is_content_plus'] = ($element['type']==='contentslider'||$element['type']==='grid')?true:false;
-                $element['href_act_edit_plus'] = 'contao?do=content&mode=plus&pid='.$element['pid'].'&id='.$element['id'].'&plus='.$element['type'].'&el='.$element['el_count'];
+                $element['href_act_edit_plus'] = 'contao?do=content&mode=plus&table=tl_content&pid='.$element['pid'].'&id='.$element['id'].'&plus='.$element['type'].'&el='.$element['el_count'];
              
                 
                  if ($children) {

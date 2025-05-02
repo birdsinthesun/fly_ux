@@ -4,8 +4,6 @@
 namespace Bits\FlyUxBundle\EventListener;
 
 use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
-use Bits\FlyUxBundle\Widgets\ModuleWizard;
-use Bits\FlyUxBundle\Content\ContentModule;
 use Bits\FlyUxBundle\Driver\DC_Content;
 use Contao\Backend;
 use Contao\Database;
@@ -18,67 +16,46 @@ use Contao\PageModel;
 use Contao\StringUtil;
 use Contao\CoreBundle\DataContainer\DataContainerOperation;
 
-#[AsHook('loadDataContainer','__invoke',-17)]
+#[AsHook('loadDataContainer','__invoke',-255)]
 class LoadDataContainerListener
 {
     public function __invoke(string $table): void
     {
-       
-       
-        $GLOBALS['BE_FFL']['flyWizard']  = ModuleWizard::class;
-        $GLOBALS['TL_CTE']['includes']['module'] = ContentModule::class;
 
-        unset($GLOBALS['FE_MOD']['navigationMenu']['articlenav']);
-        unset($GLOBALS['FE_MOD']['miscellaneous']['articlelist']);
-        unset($GLOBALS['TL_CTE']['includes']['article']);
-        unset($GLOBALS['TL_CTE']['includes']['content']);
-        unset($GLOBALS['TL_CTE']['includes']['teaser']);
-        unset($GLOBALS['TL_CTE']['includes']['alias']);
-        unset($GLOBALS['TL_CTE']['legacy']['accordionSingle']);
-        unset($GLOBALS['TL_CTE']['miscellaneous']['swiper']);
-        //unset($GLOBALS['TL_MODELS']['tl_article']);
-      
-       
-           
-       if($table === 'tl_content' && (Input::get('do') === 'content'||Input::get('do') === 'calendar'||Input::get('do') === 'news')){
-            
-           
-            if(Input::get('do') === 'content'){
-                   $GLOBALS['TL_DCA']['tl_content']['config']['ptable'] = 'tl_page';
-               $GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][] = ['tl_page','addBreadcrumb'];
-            }elseif(Input::get('do') === 'calendar'){
-                   $GLOBALS['TL_DCA']['tl_content']['config']['ptable'] = 'tl_calendar_events';
-              }if(Input::get('do') === 'news'){
-                   $GLOBALS['TL_DCA']['tl_content']['config']['ptable'] = 'tl_news';
-              }
-        
-                $GLOBALS['TL_DCA']['tl_content']['config']['dataContainer']  = DC_Content::class;
-               
-
-                $GLOBALS['TL_DCA']['tl_content']['config']['dynamicPtable'] = true;
+         // settings for fly_ux driver
+        if(isset($GLOBALS['BE_MOD']['content'][Input::get('do')]['driver'])
+            &&$GLOBALS['BE_MOD']['content'][Input::get('do')]['driver']==='fly_ux'
+            &&!isset($GLOBALS['BE_MOD']['content'][Input::get('do')]['init'])
+            ){
+                $GLOBALS['BE_MOD']['content'][Input::get('do')]['init'] = true;
+                $root = $GLOBALS['BE_MOD']['content'][Input::get('do')]['relations'][0];
+                
+                foreach($GLOBALS['BE_MOD']['content'][Input::get('do')]['relations'] as $key => $ptable){
+                    $GLOBALS['TL_DCA'][$ptable]['config']['dataContainer'] = DC_Content::class;
+                    $GLOBALS['TL_DCA'][$ptable]['list']['sorting']['mode'] = DataContainer::MODE_TREE_EXTENDED;
+                    $GLOBALS['TL_DCA']['tl_content']['config']['switchToEdit'] = true;
+                    
+                    if(isset($GLOBALS['BE_MOD']['content'][Input::get('do')]['relations'][$key+1])){
+                        $GLOBALS['TL_DCA'][$table]['config']['ctable'] = [$GLOBALS['BE_MOD']['content'][Input::get('do')]['relations'][$key+1])];
+                       
+                       //set the show-button
+                       if($GLOBALS['BE_MOD']['content'][Input::get('do')]['relations'][$key+1])==='tl_content') 
+                            $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['icon'] = 'system/themes/flexible/icons/children.svg';
+                            $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['label'] = ['Inhalten', 'Inhalt bearbeiten'];
+                            $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['button_callback'] = [self::class, 'contentShowButton'];
+                            $GLOBALS['BE_MOD']['content'][Input::get('do')]['showBtn'] = $ptable;
+                        }
+                    
+                    if($key !== 0){
+                           $GLOBALS['TL_DCA'][$ptable'tl_content']['config']['ptable'] = $root;
+                           $GLOBALS['TL_DCA'][$ptable]['config']['dynamicPtable'] = true;
+                         }
+                    
+                    $root = $GLOBALS['BE_MOD']['content'][Input::get('do')]['relations'][$key];
+                    }
               
-                $GLOBALS['TL_DCA']['tl_content']['config']['switchToEdit']                = true;
-                $GLOBALS['TL_DCA']['tl_content']['config']['enableVersioning']            = true;
-                $GLOBALS['TL_DCA']['tl_content']['config']['markAsCopy']                  = 'headline';
-
-                $GLOBALS['TL_DCA']['tl_content']['list']['sorting']['mode'] = DataContainer::MODE_TREE_EXTENDED;
-
-               $GLOBALS['TL_DCA']['tl_content']['list']['label']['fields'] =  ['headline', 'type', 'inColumn'];
-               $GLOBALS['TL_DCA']['tl_content']['list']['label']['format'] =   '%s <span class="label-info">[%s]</span><span class="label-column"> %s </span>';
-
-
-                unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['fields']);
-                unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['panelLayout']);
-                unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['defaultSearchField']);
-                unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['headerFields']);
-               unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['child_record_callback']);
-           
-                unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['new']);
-               
-               
-			
-                $GLOBALS['TL_DCA']['tl_content']['palettes']['contentslider']   = '{type_legend},type,headline,el_count;{slider_legend},sliderDelay,sliderSpeed,sliderStartSlide,sliderContinuous;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},cssID;{invisible_legend:hide},invisible,start,stop';
-
+                //changes to tl_content only
+                
                 foreach ($GLOBALS['TL_DCA']['tl_content']['palettes'] as $paletteKey => $paletteValue) {
                    if ($paletteKey === '__selector__') {
                     continue;
@@ -119,34 +96,21 @@ class LoadDataContainerListener
                            
                
               //  $GLOBALS['TL_DCA'][$table]['config']['notCreatable'] = true;
-                unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['header_new']);
-                unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['new']);
-                unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['toggleNodes']);
-                unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['all']);
-                unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['showOnSelect']);
-                unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['create']);
-           
-           
+             
           }
           
           
-           if($table === 'tl_page'||$table === 'tl_calendar_events'||$table === 'tl_news'){
-                $GLOBALS['TL_DCA'][$table]['config']['ctable'] = ['tl_content'];
-                // unset($GLOBALS['TL_DCA']['tl_page']['list']['operations']['articles']);
-                 $GLOBALS['TL_DCA'][$table]['list']['operations']['show']['label'] = ['Inhalten', 'Inhalt bearbeiten'];
-                 $GLOBALS['TL_DCA'][$table]['list']['operations']['children']['button_callback'] = [self::class, 'contentShowButton'];
-               
-           }
     }
     
-     public static function contentShowButton(array $row, string $href, string $label, string $title,  string $icon, string $attributes): string
+     public static function contentShowButton(array $row, $href, string $label, string $title, $icon, string $attributes): string
     {
         $container = System::getContainer();
         $tokenManager = $container->get('contao.csrf.token_manager');
         $token = $tokenManager->getToken('contao.csrf.token')->getValue();
+        $table = $GLOBALS['BE_MOD']['content'][Input::get('do')]['showBtn'];
+        $do = Input::get('do')==='page')?'content':Input::get('do');
         
-        
-        return '<a href="contao?do='.Input::get('do').'&mode=layout&pid=' . $row['id']. '&amp;rt='.$token . '" title="Inhalte ID ' . $row['id']. ' bearbeiten" ' . $attributes . '>
+        return '<a href="contao?do='.$do.'&mode=layout&table=tl_content&id=' . $row['id']. '&amp;rt='.$token . '" title="Inhalte ID ' . $row['id']. ' bearbeiten" ' . $attributes . '>
             <img src="system/themes/flexible/icons/children.svg" alt="Inhalte zeigen und bearbeiten">
         </a>';
     }

@@ -10,35 +10,55 @@ class DC_ContentOperations extends Backend
 {
         public function addElementButton($href, $label, $title,$class, $icon, $attributes)
     {
-        if(Input::get('pid')!==Null){
-            
-            
-            $session = System::getContainer()->get('request_stack')->getSession();
-           $tokenManager = System::getContainer()->get('contao.csrf.token_manager');
-        $token = $tokenManager->getDefaultTokenValue();
-            $pid = (Input::get('mode')==='layout')?Input::get('pid'):$session->getBag('contao_backend')->get('OP_ADD_PID');
-            
-            return '<a class="'.$class.'" href="' . $this->getCurrentUrl().'/contao?do=content&'.
-$href . '&pid='.$pid.'&table=tl_content&rt='.$token.'" title="' . $title . '"' . $attributes . '>' . $label . '</a>';
-        }
+        
+        if(isset($GLOBALS['BE_MOD']['content'][Input::get('do')]['driver'])
+            &&$GLOBALS['BE_MOD']['content'][Input::get('do')]['driver']==='fly_ux'
+            &&isset($GLOBALS['BE_MOD']['content'][Input::get('do')]['init'])
+            )
+            {
+            $countRelations = count($GLOBALS['BE_MOD']['content'][Input::get('do')]['relations']);
+            if(Input::get('table')===$GLOBALS['BE_MOD']['content'][Input::get('do')]['relations'][$countRelations-1])
+            {
+                $tokenManager = System::getContainer()->get('contao.csrf.token_manager');
+                $token = $tokenManager->getDefaultTokenValue();
+               
+                
+                return '<a class="'.$class.'" href="' . $this->getCurrentUrl().'/contao?do='.Input::get('do').'&'.
+    $href . '&pid='.Input::get('id').'&mode='.Input::get('mode').'&table=tl_content&rt='.$token.'" title="' . $title . '"' . $attributes . '>' . $label . '</a>';
+            }
+        }else{
+            return '';
+            }
     }
 
     public function dragDropButton($href, $label, $title, $class,$icon, $attributes)
     {
-        
-        if(Input::get('pid')!==Null){
-            return '<a class="'.$class.'" href="' .$this->getCurrentUrl().'/contao?do=content&mode='.Input::get('mode').'&pid='.
-            Input::get('pid').'&'. $href . '&rt='. Input::get('rt').'" title="' . $title . '"' . $attributes . '>' . $label . '</a>';
+         if(isset($GLOBALS['BE_MOD']['content'][Input::get('do')]['driver'])
+            &&$GLOBALS['BE_MOD']['content'][Input::get('do')]['driver']==='fly_ux'
+            &&isset($GLOBALS['BE_MOD']['content'][Input::get('do')]['init'])
+            )
+            {
+            $countRelations = count($GLOBALS['BE_MOD']['content'][Input::get('do')]['relations']);
+            if(Input::get('table')===$GLOBALS['BE_MOD']['content'][Input::get('do')]['relations'][$countRelations-1])
+            {
+                return '<a class="'.$class.'" href="' .$this->getCurrentUrl().'/contao?do='.Input::get('do').'&mode='.Input::get('mode').'&pid='.
+                Input::get('id').'&'. $href . '&rt='. Input::get('rt').'" title="' . $title . '"' . $attributes . '>' . $label . '</a>';
+            }
         }
     }
     public function dragDropDeaktivateButton($href, $label, $title, $class,$icon, $attributes)
     {
-        if(Input::get('pid')!==Null){
-            
-        
-        
-            return '<a class="'.$class.'" href="' .$this->getCurrentUrl().'/contao?do=content&mode='.Input::get('mode').'&pid='.
-            Input::get('pid').'&'. $href . '&rt='. Input::get('rt').'" title="' . $title . '"' . $attributes . '>' . $label . '</a>';
+        if(isset($GLOBALS['BE_MOD']['content'][Input::get('do')]['driver'])
+            &&$GLOBALS['BE_MOD']['content'][Input::get('do')]['driver']==='fly_ux'
+            &&isset($GLOBALS['BE_MOD']['content'][Input::get('do')]['init'])
+            )
+            {
+            $countRelations = count($GLOBALS['BE_MOD']['content'][Input::get('do')]['relations']);
+            if(Input::get('table')===$GLOBALS['BE_MOD']['content'][Input::get('do')]['relations'][$countRelations-1])
+            {
+            return '<a class="'.$class.'" href="' .$this->getCurrentUrl().'/contao?do='.Input::get('do').'&mode='.Input::get('mode').'&pid='.
+            Input::get('id').'&'. $href . '&rt='. Input::get('rt').'" title="' . $title . '"' . $attributes . '>' . $label . '</a>';
+            }
         }
     
     }

@@ -34,75 +34,51 @@ class AddBackendAssetsListener
             $GLOBALS['TL_CSS'][] = 'bundles/flyux/css/dc_media.css';
         }
         
-        if ($event->getRequest()->get('do') === 'content'||$event->getRequest()->get('do') === 'content_plus') {
+        if ($event->getRequest()->get('do') === 'content'
+        ||$event->getRequest()->get('do') === 'calendar'
+        ||$event->getRequest()->get('do') === 'news') {
            
             $GLOBALS['TL_CSS'][] = 'bundles/flyux/css/dc_content.css';
            
         }
-         if ($event->getRequest()->get('do') === 'content'&&$event->getRequest()->get('pid')!==Null&&!$event->getRequest()->get('act')) {
+        if (($event->getRequest()->get('mode') === 'layout'||$event->getRequest()->get('mode') === 'plus')&&!$event->getRequest()->get('act')) {
+                    
+                        $page = PageModel::findOneBy('id',$event->getRequest()->get('id'));
+                        if($page){
+                            $layout = LayoutModel::findOneBy('id',$page->loadDetails()->layout);
+
+                        if ($layout === null) {
+                            $GLOBALS['TL_CSS'][] = 'bundles/flyux/css/grid.css';
+                          
+                        }
+
+                        $uuid = $layout->be_grid;
            
-            $page = PageModel::findOneBy('id',$event->getRequest()->get('pid'));
-            
-             $layout = LayoutModel::findOneBy('id',$page->loadDetails()->layout);
+                        // Falls kein Wert vorhanden, abbrechen
+                        if (!$uuid) {
+                            $GLOBALS['TL_CSS'][] = 'bundles/flyux/css/grid.css';
+                           
+                        }
 
-            if ($layout === null) {
-                $GLOBALS['TL_CSS'][] = 'bundles/flyux/css/grid.css';
-              
-            }
+                        // UUID in Pfad auflösen
+                        $file = FilesModel::findByUuid($uuid);
 
-            $uuid = $layout->be_grid;
-///var_dump($uuid);exit;
-            // Falls kein Wert vorhanden, abbrechen
-            if (!$uuid) {
-                $GLOBALS['TL_CSS'][] = 'bundles/flyux/css/grid.css';
-               
-            }
-
-            // UUID in Pfad auflösen
-            $file = FilesModel::findByUuid($uuid);
-
-            if ($file === null) {
-                $GLOBALS['TL_CSS'][] = 'bundles/flyux/css/grid.css';
-                
-            }else{
-                 $GLOBALS['TL_CSS'][] = $file->path;
-                }
-
-            
-           
-                
+                        if ($file !== null) {
+                            $GLOBALS['TL_CSS'][] = $file->path;
+      
+                        }         
+                         
+                    }else{
+                            $GLOBALS['TL_CSS'][] = 'bundles/flyux/css/grid.css';
+                    
+                    } 
              
         }
-       // $GLOBALS['TL_DCA']['tl_layout']['fields']['be_grid']
+      
         if ($event->getRequest()->get('op_dd') === 'drag_drop_mode') {
-           /// $GLOBALS['TL_JAVASCRIPT'][] = 'bundles/flyux/js/sortablejs.js';
+           
             $GLOBALS['TL_JAVASCRIPT'][] = 'bundles/flyux/js/drag.js';
-            $page = PageModel::findOneBy('id',$event->getRequest()->get('pid'));
-            
-             $layout = LayoutModel::findOneBy('id',$page->loadDetails()->layout);
-
-            if ($layout === null) {
-                $GLOBALS['TL_CSS'][] = 'bundles/flyux/css/grid.css';
-                
-            }
-
-            $uuid = $layout->be_grid;
-
-            // Falls kein Wert vorhanden, abbrechen
-            if (!$uuid) {
-                $GLOBALS['TL_CSS'][] = 'bundles/flyux/css/grid.css';
-               
-            }
-
-            // UUID in Pfad auflösen
-            $file = FilesModel::findByUuid($uuid);
-
-            if ($file === null) {
-                $GLOBALS['TL_CSS'][] = 'bundles/flyux/css/grid.css';
-                
-            }else{
-                 $GLOBALS['TL_CSS'][] = $file->path;
-                }
+           
             $GLOBALS['TL_CSS'][] = 'bundles/flyux/css/drag.css';
             
         }

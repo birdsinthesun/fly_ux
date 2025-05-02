@@ -23,13 +23,12 @@ services:
         tags: ['controller.service_arguments']
         autowire: true
         autoconfigure: true
-  
     
     Bits\FlyUxBundle\Driver\DC_Content:
         class: Bits\FlyUxBundle\Driver\DC_Content
         arguments: ['@service_container']
         public: true
-
+        
     Bits\FlyUxBundle\Widgets\ModuleWizard:
         tags:
             - { name: 'contao.backend.widget', inputType: 'flyWizard' }

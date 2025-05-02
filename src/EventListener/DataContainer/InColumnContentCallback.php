@@ -27,47 +27,53 @@ class InColumnContentCallback
         $mode = $session->getBag('contao_backend')->get('OP_ADD_MODE');
         
         if($mode==='layout'){
-            // Show only active sections
-            if ($pid ?? null)
-            {
-                
-                $objPage = PageModel::findWithDetails($pid);
-                
-                
-            }elseif(Input::get('pid') ?? null){
-                $objPage = PageModel::findWithDetails(Input::get('pid'));
-                
             
-            }elseif($dc->getActiveRecord->pid ?? null){
-                $objPage = PageModel::findWithDetails($dc->getActiveRecord->pid);
-                
-            }
-                // Get the layout sections
-                if ($objPage->layout)
+            
+            if(Input::get('do') === 'content'){
+            // Show only active sections
+                if ($pid ?? null)
                 {
-                    $objLayout = LayoutModel::findById($objPage->layout);
-
-                    if ($objLayout === null)
+                    
+                    $objPage = PageModel::findWithDetails($pid);
+                    
+                    
+                }elseif(Input::get('id') ?? null){
+                    $objPage = PageModel::findWithDetails(Input::get('id'));
+                    
+                
+                }elseif($dc->getActiveRecord->pid ?? null){
+                    $objPage = PageModel::findWithDetails($dc->getActiveRecord->pid);
+                    
+                }
+                    // Get the layout sections
+                    if ($objPage->layout)
                     {
-                        return array();
-                    }
+                        $objLayout = LayoutModel::findById($objPage->layout);
 
-                    $arrModules = StringUtil::deserialize($objLayout->modules);
-
-                    if (empty($arrModules) || !is_array($arrModules))
-                    {
-                        return array();
-                    }
-
-                    // Find all sections with an article module (see #6094)
-                    foreach ($arrModules as $arrModule)
-                    {
-                        if ($arrModule['mod'] == 0 && ($arrModule['enable'] ?? null))
+                        if ($objLayout === null)
                         {
-                            $arrSections[] = $arrModule['col'];
+                            return array();
+                        }
+
+                        $arrModules = StringUtil::deserialize($objLayout->modules);
+
+                        if (empty($arrModules) || !is_array($arrModules))
+                        {
+                            return array();
+                        }
+
+                        // Find all sections with an article module (see #6094)
+                        foreach ($arrModules as $arrModule)
+                        {
+                            if ($arrModule['mod'] == 0 && ($arrModule['enable'] ?? null))
+                            {
+                                $arrSections[] = $arrModule['col'];
+                            }
                         }
                     }
-            }
+            }else{
+                        $arrSections[] = 'container';
+                }
         }
 		if($mode==='plus'){
              $el_count = $session->getBag('contao_backend')->get('OP_ADD_EL');
