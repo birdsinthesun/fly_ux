@@ -73,14 +73,14 @@
 float:left;
     height:auto;
     }
-.drag-content > div > h4{
+.drag-item > h4{
     box-sizing:border-box;
     display:inline-block;
     background-color:#eee;
     padding:5px;
     width:100%;
     }
-.drag-content > div > h4 > a.btn_edit{
+.drag-item > h4 > a.btn_edit{
      display:inline-block;
      float:left;
   
@@ -90,7 +90,7 @@ float:left;
     width:auto;
     border-radius:5px;
     }
- .drag-content > div > h4 > a.btn_delete{
+.drag-item > h4 > a.btn_delete{
      display:inline-block;
     float:right;
     

@@ -49,11 +49,55 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
         //if($configService->useflyUxDriver()&&$configService->isContentTable())
         //{           
      
-                   $this->container = System::getContainer();
-                   $this->session = $this->container->get('request_stack')->getSession()->getBag('contao_backend');
-               
+        $this->container = System::getContainer();
+        $this->session = $this->container->get('request_stack')->getSession()->getBag('contao_backend');
+         if(Input::get('do') === 'content'&&Input::get('mode') === 'layout'){
+                    
+                        $pTable = 'tl_page';
+                        $inColumn = 'main';
+                        
+                        //set Session Array
+                        $this->session->set('OP_ADD' ,[
+                            'pid' => Input::get('pid'),
+                            'parentTable' => $pTable,
+                            'mode' => Input::get('mode'),
+                            'inColumn'=> $inColumn,
+                            'el'=>$this->session->get('OP_ADD')['el'],
+                            'plus'=>$this->session->get('OP_ADD')['plus']
+                            ]);
+                        
+                }elseif((Input::get('do') === 'calendar'||Input::get('do') === 'news')&&Input::get('mode') === 'layout'){
+                        
+                        $pTable = (Input::get('do') === 'calendar')?'tl_calendar_events':'tl_news';
+                        $inColumn = 'container';
+                        //set Session Array
+                        $this->session->set('OP_ADD' ,[
+                            'pid' => Input::get('pid'),
+                            'parentTable' => $pTable,
+                            'mode' => Input::get('mode'),
+                            'inColumn'=> $inColumn,
+                            'el'=>$this->session->get('OP_ADD')['el'],
+                            'plus'=>$this->session->get('OP_ADD')['plus']
+                            ]);
+                        
+                }elseif((Input::get('do') === 'content'||Input::get('do') === 'calendar'||Input::get('do') === 'news')&&Input::get('mode') === 'plus'){
+                        
+                        $pTable = 'tl_content';
+                        $inColumn = Input::get('plus').'-el-1';
+                        //set Session Array
+                        $this->session->set('OP_ADD' ,[
+                            'pid' => Input::get('pid'),
+                            'parentTable' => $pTable,
+                            'mode' => Input::get('mode'),
+                            'inColumn'=> $inColumn,
+                            'el'=>Input::get('el'),
+                            'plus'=>Input::get('plus')
+                            ]);
+                        
+                }
             
            // }
+           parent::__construct($strTable, $arrModule);
            
           
           
@@ -93,15 +137,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                         $inColumn = Input::get('plus').'-el-1';
                 }
                 
-                //set Session Array
-                $this->session->set('OP_ADD' ,[
-                            'pid' => Input::get('pid'),
-                            'parentTable' => $pTable,
-                            'mode' => Input::get('mode'),
-                            'inColumn'=> $inColumn,
-                            'el'=>Input::get('el'),
-                            'plus'=>Input::get('plus')
-                            ]);
+               
                 
                 
                 
@@ -160,9 +196,9 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                         $insertID = $objInsertStmt->insertId;
                         $this->intId = $insertID;
                         // Save new record in the session
-                        $objSession = $this->container->get('request_stack')->getSession()->getBag('contao_backend');
-                        $new_records = $objSession->get('new_records');
-                        $new_records[$this->strTable.'.'.$insertID][] = $insertID;
+                        //$objSession = $this->container->get('request_stack')->getSession()->getBag('contao_backend');
+                        $new_records = $this->session->get('new_records');
+                        $new_records[$this->strTable][] = $insertID;
                  //var_dump($insertID,$this->set,$new_records[$this->strTable]);exit;
                         $this->session->set('new_records', $new_records);
 
@@ -325,7 +361,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                                            AND parentTable = :parentTable
                                          ORDER BY sorting ASC",
                                         [
-                                            'pid' => (int) $objSession->getBag('contao_backend')->get('OP_ADD_PID'),
+                                            'pid' => (int) $this->session->get('OP_ADD')['pid'],
                                    
                                             'parentTable' => (string) $pTable
                                         ]
@@ -414,7 +450,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                 $element['href_act_edit'] = 'contao?do=content&id='.$element['id'].'&table=tl_content&act=edit';
                $element['href_act_delete'] = 'contao?do=content&id='.$element['id'].'&table=tl_content&act=delete&rt='.$token;
                 $element['is_content_plus'] = ($element['type']==='contentslider'||$element['type']==='grid')?true:false;
-                $element['href_act_edit_plus'] = 'contao?do=content&mode=plus&table=tl_content&pid='.$element['pid'].'&id='.$element['id'].'&plus='.$element['type'].'&el='.$element['el_count'];
+                $element['href_act_edit_plus'] = 'contao?do='.Input::get('do').'&mode=plus&table=tl_content&pid='.$element['pid'].'&id='.$element['id'].'&plus='.$element['type'].'&el='.$element['el_count'];
              
                 
                  if ($children) {
@@ -473,7 +509,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
     public function edit($intId=null, $ajaxId=null)
 	{
         if(Input::get('act') !== 'edit'){
-            
+          
             $this->parentView();
         }
         
@@ -489,14 +525,25 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
             {
                 $this->intId = $intId;
             }
-
+            //self::preloadCurrentRecords([$this->intId],$this->strTable);
             // Get the current record
-            $currentRecord = $this->getCurrentRecord();
-
+            $currentRecord = $this->getCurrentRecord($this->intId);
+//var_dump($currentRecord);
             // Redirect if there is no record with the given ID
             if (null === $currentRecord)
             {
-               // throw new NotFoundException('Cannot load record "' . $this->strTable . '.id=' . $this->intId . '".');
+                $currentRecord = $this->container->get('database_connection')
+                                    ->fetchAllAssociative(
+                                        "SELECT *
+                                         FROM ".$this->strTable."
+                                         WHERE id = :id",
+                                        [
+                                            'id' => (int) Input::get($this->intId)
+                                        ]
+                                    );
+                
+                
+                // throw new NotFoundException('Cannot load record "' . $this->strTable . '.id=' . $this->intId . '".');
             }
 
            // $this->denyAccessUnlessGranted(ContaoCorePermissions::DC_PREFIX . $this->strTable, new UpdateAction($this->strTable, $currentRecord));
@@ -538,7 +585,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
             // Build an array from boxes and rows
             $this->strPalette = $this->getPalette();
             $boxes = StringUtil::trimsplit(';', $this->strPalette);
-            var_dump($this->strPalette );
+            //var_dump($this->strPalette );
             $legends = array();
 
             if (!empty($boxes))
@@ -907,8 +954,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
         }
     }
   
-    
-        
+
  
       /**
 	 * Delete all incomplete and unrelated records

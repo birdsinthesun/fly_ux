@@ -22,14 +22,14 @@ class InColumnContentCallback
 	{
 		$arrSections = array();
         $session = System::getContainer()->get('request_stack')->getSession();
-        $pid = $session->getBag('contao_backend')->get('OP_ADD_PID');
-        $ptable = $session->getBag('contao_backend')->get('OP_ADD_PTABLE');
-        $mode = $session->getBag('contao_backend')->get('OP_ADD_MODE');
+        $pid = $session->getBag('contao_backend')->get('OP_ADD')['pid'];
+        $ptable = $session->getBag('contao_backend')->get('OP_ADD')['parentTable'];
+        $mode = $session->getBag('contao_backend')->get('OP_ADD')['mode'];
         
         if($mode==='layout'){
             
             
-            if(Input::get('do') === 'content'){
+            if($ptable === 'tl_page'){
             // Show only active sections
                 if ($pid ?? null)
                 {
@@ -71,13 +71,13 @@ class InColumnContentCallback
                             }
                         }
                     }
-            }else{
+            }elseif($ptable !== 'tl_content'){
                         $arrSections[] = 'container';
                 }
         }
-		if($mode==='plus'){
-             $el_count = $session->getBag('contao_backend')->get('OP_ADD_EL');
-             $plus = $session->getBag('contao_backend')->get('OP_ADD_PLUS');
+		if($ptable === 'tl_content'){
+             $el_count = $session->getBag('contao_backend')->get('OP_ADD')['el'];
+             $plus = $session->getBag('contao_backend')->get('OP_ADD')['plus'];
              for ($i = 0; $i < $el_count; $i++) {
                             $arrSections[] = $plus.'-el-'.$i+1;
                         }
