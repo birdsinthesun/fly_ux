@@ -5,6 +5,7 @@ namespace Bits\FlyUxBundle\EventListener;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Bits\FlyUxBundle\Driver\DC_Content;
 use Contao\DataContainer;
+use Contao\Input;
 
 
 #[AsHook('loadDataContainer','__invoke',-17)]
@@ -12,7 +13,35 @@ class LoadDataContainerListenerEnd
 {
     public function __invoke(string $table): void
     {
+            // settings for fly_ux driver
+        if(isset($GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['driver'])
+            &&$GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['driver'] === 'fly_ux'
+            &&!isset($GLOBALS['BE_MOD']['content'][Input::get('do')]['init'])
+            ){
+               
+               // var_dump($GLOBALS['TL_DCA']['tl_page']);exit;
+                $GLOBALS['BE_MOD']['content'][Input::get('do')]['init'] = true;
+                //$root = $GLOBALS['BE_MOD']['content'][Input::get('do')]['relations'][0];
+                
+                foreach($GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['relations'] as $key => $ptable){
+                    $GLOBALS['TL_DCA'][$ptable]['config']['dataContainer'] = DC_Content::class;
+                    $GLOBALS['TL_DCA']['tl_content']['config']['switchToEdit'] = true;
+                    
+                    if(isset($GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['relations'][$key+1])){
+                        $GLOBALS['TL_DCA'][$ptable]['config']['ctable'] = [$GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['relations'][$key+1]];
+
+                        if($key !== 0){
+                            $GLOBALS['TL_DCA'][$ptable]['config']['ptable'] = (isset($root))?:'';
+                           $GLOBALS['TL_DCA'][$ptable]['config']['dynamicPtable'] = true;
+                         }
+                         
+                    
+                    $root = $GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['relations'][$key];
+                    }
+                }
+               
         
+            }
        
             //changes to tl_content only
             if($table === 'tl_content'){

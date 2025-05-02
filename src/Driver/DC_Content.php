@@ -30,6 +30,8 @@ class DC_Content extends DC_Table
     
     protected $strTable;
     
+    public $intId;
+    
     public function __construct($strTable, $arrModule=array())
     {
 
@@ -63,7 +65,6 @@ class DC_Content extends DC_Table
                
         if($configService->useflyUxDriver()&&$configService->isContentTable())
         {
-        
         
                 $db = Database::getInstance();
                 $databaseFields = $db->getFieldNames($this->strTable);
@@ -142,18 +143,19 @@ class DC_Content extends DC_Table
                         ->prepare("INSERT INTO " . $this->strTable . " %s")
                         ->set($this->set)
                         ->execute();
-        //var_dump($this->set,$objInsertStmt->affectedRows);exit;
+        
                     if ($objInsertStmt->affectedRows)
                     {
                         $s2e = ($GLOBALS['TL_DCA'][$this->strTable]['config']['switchToEdit'] ?? null) ? '&s2e=1' : '';
                         
                       
                         $insertID = $objInsertStmt->insertId;
-
+                        $this->intId = $insertID;
                         // Save new record in the session
-                        $new_records = $this->session->get('new_records');
-                        $new_records[$this->strTable][] = $insertID;
-                 
+                        $objSession = $this->container->get('request_stack')->getSession()->getBag('contao_backend');
+                        $new_records = $objSession->get('new_records');
+                        $new_records[$this->strTable.'.'.$insertID][] = $insertID;
+                 //var_dump($insertID,$this->set,$new_records[$this->strTable]);exit;
                         $this->session->set('new_records', $new_records);
 
                        // System::getContainer()->get('monolog.logger.contao.general')->info('A new entry "' . $this->strTable . '.id=' . $insertID . '" has been created' . $this->getParentEntries($this->strTable, $insertID));

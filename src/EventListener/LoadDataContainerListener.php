@@ -34,7 +34,7 @@ class LoadDataContainerListener
                 //$root = $GLOBALS['BE_MOD']['content'][Input::get('do')]['relations'][0];
                 
                 foreach($GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['relations'] as $key => $ptable){
-                   // $GLOBALS['TL_DCA'][$ptable]['config']['dataContainer'] = DC_Content::class;
+                    $GLOBALS['TL_DCA'][$ptable]['config']['dataContainer'] = DC_Content::class;
                     $GLOBALS['TL_DCA']['tl_content']['config']['switchToEdit'] = true;
                     
                     if(isset($GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['relations'][$key+1])){
@@ -42,7 +42,7 @@ class LoadDataContainerListener
                        //set the show-button
                        if($GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['relations'][$key+1]==='tl_content'){
                             $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['prefetch'] = true;
-                             $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['primary'] = true;
+                            $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['primary'] = true;
                             $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['icon'] = 'system/themes/flexible/icons/children.svg';
                             $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['label'] = ['Inhalten', 'Inhalt bearbeiten'];
                             $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['button_callback'] = [self::class, 'contentShowButton'];
@@ -53,7 +53,7 @@ class LoadDataContainerListener
                   
                    
                         if($key !== 0){
-                            $GLOBALS['TL_DCA'][$ptable]['list']['sorting']['mode'] = DataContainer::MODE_TREE_EXTENDED;
+                          //  $GLOBALS['TL_DCA'][$ptable]['list']['sorting']['mode'] = DataContainer::MODE_TREE_EXTENDED;
                            $GLOBALS['TL_DCA'][$ptable]['config']['ptable'] = (isset($root))?:'';
                            $GLOBALS['TL_DCA'][$ptable]['config']['dynamicPtable'] = true;
                          }
@@ -61,13 +61,8 @@ class LoadDataContainerListener
                     $root = $GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['relations'][$key];
                     }
                 }
-                //changes to tl_content only
-                if($table === 'tl_content'){
-
-                            
-      
-                           
-                }   
+               
+        
             }
 
         
