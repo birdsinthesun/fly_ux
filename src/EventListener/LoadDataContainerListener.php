@@ -22,24 +22,26 @@ class LoadDataContainerListener
     public function __invoke(string $table): void
     {
 
+        
+        //var_dump($GLOBALS['BE_MOD']['content']['page']['driver'],isset($GLOBALS['BE_MOD']['content']['page']['init']));exit;
          // settings for fly_ux driver
-        if(isset($GLOBALS['BE_MOD']['content'][Input::get('do')]['driver'])
-            &&$GLOBALS['BE_MOD']['content'][Input::get('do')]['driver']==='fly_ux'
+        if(isset($GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['driver'])
+            &&$GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['driver'] === 'fly_ux'
             &&!isset($GLOBALS['BE_MOD']['content'][Input::get('do')]['init'])
             ){
+               // var_dump($GLOBALS['TL_DCA']['tl_page']);exit;
                 $GLOBALS['BE_MOD']['content'][Input::get('do')]['init'] = true;
-                $root = $GLOBALS['BE_MOD']['content'][Input::get('do')]['relations'][0];
+                //$root = $GLOBALS['BE_MOD']['content'][Input::get('do')]['relations'][0];
                 
-                foreach($GLOBALS['BE_MOD']['content'][Input::get('do')]['relations'] as $key => $ptable){
-                    $GLOBALS['TL_DCA'][$ptable]['config']['dataContainer'] = DC_Content::class;
-                    $GLOBALS['TL_DCA'][$ptable]['list']['sorting']['mode'] = DataContainer::MODE_TREE_EXTENDED;
+                foreach($GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['relations'] as $key => $ptable){
+                   // $GLOBALS['TL_DCA'][$ptable]['config']['dataContainer'] = DC_Content::class;
                     $GLOBALS['TL_DCA']['tl_content']['config']['switchToEdit'] = true;
                     
-                    if(isset($GLOBALS['BE_MOD']['content'][Input::get('do')]['relations'][$key+1])){
-                        $GLOBALS['TL_DCA'][$table]['config']['ctable'] = [$GLOBALS['BE_MOD']['content'][Input::get('do')]['relations'][$key+1]];
+                    if(isset($GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['relations'][$key+1])){
+                        $GLOBALS['TL_DCA'][$table]['config']['ctable'] = [$GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['relations'][$key+1]];
                        
                        //set the show-button
-                       if($GLOBALS['BE_MOD']['content'][Input::get('do')]['relations'][$key+1]==='tl_content'){ 
+                       if($GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['relations'][$key+1]==='tl_content'){ 
                             $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['icon'] = 'system/themes/flexible/icons/children.svg';
                             $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['label'] = ['Inhalten', 'Inhalt bearbeiten'];
                             $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['button_callback'] = [self::class, 'contentShowButton'];
@@ -47,11 +49,12 @@ class LoadDataContainerListener
                         }
                     
                         if($key !== 0){
-                           $GLOBALS['TL_DCA'][$ptable]['config']['ptable'] = $root;
+                            $GLOBALS['TL_DCA'][$ptable]['list']['sorting']['mode'] = DataContainer::MODE_TREE_EXTENDED;
+                           $GLOBALS['TL_DCA'][$ptable]['config']['ptable'] = (isset($root))?:'';
                            $GLOBALS['TL_DCA'][$ptable]['config']['dynamicPtable'] = true;
                          }
                     
-                    $root = $GLOBALS['BE_MOD']['content'][Input::get('do')]['relations'][$key];
+                    $root = $GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['relations'][$key];
                     }
                 }
                 //changes to tl_content only
@@ -94,7 +97,9 @@ class LoadDataContainerListener
                     'button_callback' => ['\Bits\FlyUxBundle\Driver\DC_ContentOperations', 'dragDropDeaktivateButton'],
                 ];
                            
-            }    
+            }   
+
+        
               //  $GLOBALS['TL_DCA'][$table]['config']['notCreatable'] = true;
     }
     

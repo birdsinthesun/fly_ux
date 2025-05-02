@@ -30,20 +30,24 @@ class DC_Content extends DC_Table
 
     protected $arrModule;
     
+    protected $strTable;
+    
     public function __construct($strTable, $arrModule=array())
     {
+
+         $this->strTable = $strTable;
+         $this->arrModule = $arrModule; 
         
         $configService = System::getContainer()->get('fly_ux.config_service');
                
-        if($configService->useflyUxDriver()&&$configService->isParentTable())
+        if($configService->useflyUxDriver()&&$configService->isContentTable())
         { 
                    $this->container = System::getContainer();
                     $this->session = $this->container->get('request_stack')->getSession()->getBag('contao_backend');
-                    $this->strTable = $strTable;
-                    $this->arrModule = $arrModule; 
+                   
                 
             }else{
-                parent::__construct($strTable, $arrModule);
+                parent::__construct($this->strTable, $this->arrModule);
             }
     }
     
@@ -59,7 +63,7 @@ class DC_Content extends DC_Table
 		
          $configService = System::getContainer()->get('fly_ux.config_service');
                
-        if($configService->useflyUxDriver()&&$configService->isParentTable())
+        if($configService->useflyUxDriver()&&$configService->isContentTable())
         {
         
         
@@ -173,9 +177,13 @@ class DC_Content extends DC_Table
  $intMargin=0, $arrClipboard=null, $blnCircularReference=false, 
  $protectedPage=false, $blnNoRecursion=false, $arrFound=array())
     {
+        
+         $countRelations = count($GLOBALS['BE_MOD']['content'][$this->BackendModule]['relations']);
+        var_dump($GLOBALS['BE_MOD']['content']['page']['relations'][$countRelations-1]);exit;  
+    
+  
          $configService = System::getContainer()->get('fly_ux.config_service');
-               
-        if($configService->useflyUxDriver()&&$configService->isParentTable())
+          if($configService->useflyUxDriver()&&$configService->isContentTable())
         {    
         
         
