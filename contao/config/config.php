@@ -14,6 +14,8 @@ use Bits\FlyUxBundle\Content\ContentModule;
     $GLOBALS['TL_CTE']['includes']['module'] = ContentModule::class;
     $GLOBALS['TL_CTE']['plus']['contentslider'] = ContentContentSlider::class;
     $GLOBALS['TL_CTE']['plus']['contentslider'] = ContentGrid::class;
+    
+    $GLOBALS['BE_MOD']['content']['page'] = ['tables' => ['tl_page']];
     $GLOBALS['BE_MOD']['content']['page']['config']  = [
                   'driver' => 'fly_ux',
                   'relations' => [

@@ -22,8 +22,6 @@ use Bits\FlyUxBundle\Service\ImageResizer;
 class DC_Content extends DC_Table
 {
     
-    private $imageResizer;
-    
     private $container;
     
     private $session;
@@ -39,12 +37,12 @@ class DC_Content extends DC_Table
          $this->arrModule = $arrModule; 
         
         $configService = System::getContainer()->get('fly_ux.config_service');
-               
+        
         if($configService->useflyUxDriver()&&$configService->isContentTable())
-        { 
+        {           
+     
                    $this->container = System::getContainer();
-                    $this->session = $this->container->get('request_stack')->getSession()->getBag('contao_backend');
-                   
+                   $this->session = $this->container->get('request_stack')->getSession()->getBag('contao_backend');
                 
             }else{
                 parent::__construct($this->strTable, $this->arrModule);
@@ -173,14 +171,9 @@ class DC_Content extends DC_Table
 	}
     
    
-     public function generateTree($table, $id, $arrPrevNext, $blnHasSorting,
- $intMargin=0, $arrClipboard=null, $blnCircularReference=false, 
- $protectedPage=false, $blnNoRecursion=false, $arrFound=array())
+     public function parentView()
     {
-        
-         $countRelations = count($GLOBALS['BE_MOD']['content'][$this->BackendModule]['relations']);
-        var_dump($GLOBALS['BE_MOD']['content']['page']['relations'][$countRelations-1]);exit;  
-    
+       // var_dump('test');exit;
   
          $configService = System::getContainer()->get('fly_ux.config_service');
           if($configService->useflyUxDriver()&&$configService->isContentTable())
@@ -341,9 +334,7 @@ class DC_Content extends DC_Table
                 
             }else{
                 
-                parent::generateTree($table, $id, $arrPrevNext, $blnHasSorting,
- $intMargin, $arrClipboard, $blnCircularReference, 
- $protectedPage, $blnNoRecursion, $arrFound);
+                parent::parentView();
                 
             }
       

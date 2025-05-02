@@ -27,32 +27,7 @@ $this->loadDataContainer('tl_page');
                 'inputType'               => 'text',
                 'sql'                     => "int(10) unsigned NOT NULL default 1"
             );
-    $GLOBALS['TL_DCA']['tl_content']['config']['dataContainer'] = DC_Content::class;
-    $GLOBALS['TL_DCA']['tl_content']['list']['sorting']['mode'] = DataContainer::MODE_TREE_EXTENDED;
-    $GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][] = ['tl_page','addBreadcrumb'];
-    $GLOBALS['TL_DCA']['tl_content']['config']['ctable'] = ['tl_content'];
-    $GLOBALS['TL_DCA']['tl_content']['config']['enableVersioning']            = true;
-    $GLOBALS['TL_DCA']['tl_content']['config']['markAsCopy']                  = 'headline';
-
-  
-   $GLOBALS['TL_DCA']['tl_content']['list']['label']['fields'] =  ['headline', 'type', 'inColumn'];
-   $GLOBALS['TL_DCA']['tl_content']['list']['label']['format'] =   '%s <span class="label-info">[%s]</span><span class="label-column"> %s </span>';
-
-
-    unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['fields']);
-    unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['panelLayout']);
-    unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['defaultSearchField']);
-    unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['headerFields']);
-    unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['child_record_callback']);
-
-    unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['header_new']);
-    unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['new']);
-    unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['toggleNodes']);
-    unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['all']);
-    unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['showOnSelect']);
-    unset($GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['create']);
-       
-      
+    
    
    
 
