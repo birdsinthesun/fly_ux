@@ -7,6 +7,13 @@ services:
         class: 'Bits\FlyUxBundle\FlyUxBundle'
         public: true
         
+    Bits\FlyUxBundle\Service\Backend\ConfigService:
+        public: true
+
+    fly_ux.config_service:
+        alias: Bits\FlyUxBundle\Service\Backend\ConfigService
+        public: true
+        
     Bits\FlyUxBundle\EventListener\AddBackendAssetsListener:
         arguments:
             $scopeMatcher: '@contao.routing.scope_matcher'

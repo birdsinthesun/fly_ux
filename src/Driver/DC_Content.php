@@ -23,7 +23,9 @@ class DC_Content extends DC_Table
 {
     
     private $imageResizer;
+    
     private $container;
+    
     private $session;
 
     protected $arrModule;
@@ -31,11 +33,18 @@ class DC_Content extends DC_Table
     public function __construct($strTable, $arrModule=array())
     {
         
-            $this->container = System::getContainer();
-            $this->session = $this->container->get('request_stack')->getSession()->getBag('contao_backend');
-            $this->strTable = $strTable;
-             $this->arrModule = $arrModule;
-           // parent::__construct($strTable, $arrModule);
+        $configService = System::getContainer()->get('fly_ux.config_service');
+               
+        if($configService->useflyUxDriver()&&$configService->isParentTable())
+        { 
+                   $this->container = System::getContainer();
+                    $this->session = $this->container->get('request_stack')->getSession()->getBag('contao_backend');
+                    $this->strTable = $strTable;
+                    $this->arrModule = $arrModule; 
+                
+            }else{
+                parent::__construct($strTable, $arrModule);
+            }
     }
     
     /**
@@ -48,105 +57,115 @@ class DC_Content extends DC_Table
 	public function create($set=array())
 	{
 		
-        $db = Database::getInstance();
-		$databaseFields = $db->getFieldNames($this->strTable);
-        $objSession = $this->container->get('request_stack')->getSession();
-        
-        if(Input::get('do') === 'content'&&Input::get('mode') === 'layout'){
-            
-                $pTable = 'tl_page';
-                $inColumn = 'main';
-                
-        }elseif((Input::get('do') === 'calendar'||Input::get('do') === 'news')&&Input::get('mode') === 'layout'){
-                
-                $pTable = (Input::get('do') === 'calendar')?'tl_calendar_events':'tl_news';
-                $inColumn = 'container';
-                
-        }elseif((Input::get('do') === 'content'||Input::get('do') === 'calendar'||Input::get('do') === 'news')&&Input::get('mode') === 'plus'){
-                
-                $pTable = 'tl_content';
-                $inColumn = Input::get('plus').'-el-1';
-        }
-        
-        //set Session Array
-        $this->session->set('OP_ADD' ,[
-                    'pid' => Input::get('pid'),
-                    'parentTable' => $pTable,
-                    'mode' => Input::get('mode'),
-                    'inColumn'=> $inColumn,
-                    'el'=>Input::get('el'),
-                    'plus'=>Input::get('plus')
-                    ]);
+         $configService = System::getContainer()->get('fly_ux.config_service');
+               
+        if($configService->useflyUxDriver()&&$configService->isParentTable())
+        {
         
         
-        
-		// Get all default values for the new entry
-		foreach ($GLOBALS['TL_DCA'][$this->strTable]['fields'] as $k=>$v)
-		{
-			// Use array_key_exists here (see #5252)
-			if (\array_key_exists('default', $v) && \in_array($k, $databaseFields, true))
-			{
-				$default = $v['default'];
-
-				if ($default instanceof \Closure)
-				{
-					$default = $default($this);
-				}
+                $db = Database::getInstance();
+                $databaseFields = $db->getFieldNames($this->strTable);
+                $objSession = $this->container->get('request_stack')->getSession();
                 
-				$this->set[$k] = \is_array($default) ? serialize($default) : $default;
-			}
-            if($k ==='pid'){
-                  
-                  $this->set[$k] =   Input::get('pid');
+                if(Input::get('do') === 'content'&&Input::get('mode') === 'layout'){
                     
-                    }    
-      
-            if($k ==='inColumn'){
-          
-                   $this->set[$k] = $inColumn;
-                   
-            }
-		}
+                        $pTable = 'tl_page';
+                        $inColumn = 'main';
+                        
+                }elseif((Input::get('do') === 'calendar'||Input::get('do') === 'news')&&Input::get('mode') === 'layout'){
+                        
+                        $pTable = (Input::get('do') === 'calendar')?'tl_calendar_events':'tl_news';
+                        $inColumn = 'container';
+                        
+                }elseif((Input::get('do') === 'content'||Input::get('do') === 'calendar'||Input::get('do') === 'news')&&Input::get('mode') === 'plus'){
+                        
+                        $pTable = 'tl_content';
+                        $inColumn = Input::get('plus').'-el-1';
+                }
+                
+                //set Session Array
+                $this->session->set('OP_ADD' ,[
+                            'pid' => Input::get('pid'),
+                            'parentTable' => $pTable,
+                            'mode' => Input::get('mode'),
+                            'inColumn'=> $inColumn,
+                            'el'=>Input::get('el'),
+                            'plus'=>Input::get('plus')
+                            ]);
+                
+                
+                
+                // Get all default values for the new entry
+                foreach ($GLOBALS['TL_DCA'][$this->strTable]['fields'] as $k=>$v)
+                {
+                    // Use array_key_exists here (see #5252)
+                    if (\array_key_exists('default', $v) && \in_array($k, $databaseFields, true))
+                    {
+                        $default = $v['default'];
 
-		// Set passed values
-		if (!empty($set) && \is_array($set))
-		{
-			$this->set = array_merge($this->set, $set);
-		}
-
-		//var_dump( $this->set);exit;
-
-		$this->set['tstamp'] = 0;// time();
-
-		// Insert the record if the table is not closed and switch to edit mode
-		if (!($GLOBALS['TL_DCA'][$this->strTable]['config']['closed'] ?? null))
-		{
-           // var_dump($this->set);exit;
-			$objInsertStmt = $db
-				->prepare("INSERT INTO " . $this->strTable . " %s")
-				->set($this->set)
-				->execute();
-//var_dump($this->set,$objInsertStmt->affectedRows);exit;
-			if ($objInsertStmt->affectedRows)
-			{
-				$s2e = ($GLOBALS['TL_DCA'][$this->strTable]['config']['switchToEdit'] ?? null) ? '&s2e=1' : '';
-				
+                        if ($default instanceof \Closure)
+                        {
+                            $default = $default($this);
+                        }
+                        
+                        $this->set[$k] = \is_array($default) ? serialize($default) : $default;
+                    }
+                    if($k ==='pid'){
+                          
+                          $this->set[$k] =   Input::get('pid');
+                            
+                            }    
               
-                $insertID = $objInsertStmt->insertId;
+                    if($k ==='inColumn'){
+                  
+                           $this->set[$k] = $inColumn;
+                           
+                    }
+                }
 
-				// Save new record in the session
-				$new_records = $this->session->get('new_records');
-				$new_records[$this->strTable][] = $insertID;
-         
-				$this->session->set('new_records', $new_records);
+                // Set passed values
+                if (!empty($set) && \is_array($set))
+                {
+                    $this->set = array_merge($this->set, $set);
+                }
 
-				System::getContainer()->get('monolog.logger.contao.general')->info('A new entry "' . $this->strTable . '.id=' . $insertID . '" has been created' . $this->getParentEntries($this->strTable, $insertID));
+                //var_dump( $this->set);exit;
 
-				$this->redirect($this->switchToEdit($insertID) . $s2e);
-			}
-		}
+                $this->set['tstamp'] = 0;// time();
 
-		$this->redirect($this->getReferer());
+                // Insert the record if the table is not closed and switch to edit mode
+                if (!($GLOBALS['TL_DCA'][$this->strTable]['config']['closed'] ?? null))
+                {
+                   // var_dump($this->set);exit;
+                    $objInsertStmt = $db
+                        ->prepare("INSERT INTO " . $this->strTable . " %s")
+                        ->set($this->set)
+                        ->execute();
+        //var_dump($this->set,$objInsertStmt->affectedRows);exit;
+                    if ($objInsertStmt->affectedRows)
+                    {
+                        $s2e = ($GLOBALS['TL_DCA'][$this->strTable]['config']['switchToEdit'] ?? null) ? '&s2e=1' : '';
+                        
+                      
+                        $insertID = $objInsertStmt->insertId;
+
+                        // Save new record in the session
+                        $new_records = $this->session->get('new_records');
+                        $new_records[$this->strTable][] = $insertID;
+                 
+                        $this->session->set('new_records', $new_records);
+
+                        System::getContainer()->get('monolog.logger.contao.general')->info('A new entry "' . $this->strTable . '.id=' . $insertID . '" has been created' . $this->getParentEntries($this->strTable, $insertID));
+
+                        $this->redirect($this->switchToEdit($insertID) . $s2e);
+                    }
+                }
+
+                $this->redirect($this->getReferer());
+            
+        }else{
+            parent::create($set);
+        }
 	}
     
    
@@ -154,160 +173,171 @@ class DC_Content extends DC_Table
  $intMargin=0, $arrClipboard=null, $blnCircularReference=false, 
  $protectedPage=false, $blnNoRecursion=false, $arrFound=array())
     {
-            
+         $configService = System::getContainer()->get('fly_ux.config_service');
+               
+        if($configService->useflyUxDriver()&&$configService->isParentTable())
+        {    
         
-        var_dump($table);exit;
-            if(Input::get('do') === 'content'&&Input::get('mode') === 'layout'){
-                
-                $pTable = 'tl_page';
+        
+                        if(Input::get('do') === 'content'&&Input::get('mode') === 'layout'){
+                            
+                            $pTable = 'tl_page';
 
-                 //find Layout of the page 
-                 $pageModel = new PageModel;
-                 $objPage = $pageModel::findById(Input::get('id'));
-                 $layoutId = $objPage->loadDetails()->layout;
-                 
-                 
-                 $layoutModel = new LayoutModel;
-                 $objLayout = $layoutModel::findById($layoutId);
-                 // find layout sections within sections and modules
-                
-                 // make an assoc array about the posibilities to include a section
-                 $attrBlock = ['position'=>'default'];
-                 
-                 $htmlBlocks = [];
-                 $htmlBlocks['container'] = $attrBlock;
-                 
-                 
-                    foreach(unserialize($objLayout->modules) as $module){
-                         if($module['mod'] !== '0'){
-                            continue;
-                             }
+                             //find Layout of the page 
+                             $pageModel = new PageModel;
+                             $objPage = $pageModel::findById(Input::get('id'));
+                             $layoutId = $objPage->loadDetails()->layout;
                              
-                  
-                       //var_dump(unserialize($objLayout->sections));exit;
-                         foreach(unserialize($objLayout->sections) as $section){
                              
-                         //  var_dump($module['col'] === $section['id'],$section['id'],$module['col']);  
-                             if($section['position'] === 'top'
-                             &&$module['col'] === $section['id']){
-                                 $htmlBlocks[$section['id']] = ['position'=>'top'];
-                                 }
-                             elseif($section['position'] === 'before'
-                             &&$module['col'] === $section['id']){
-                                     
-                                 $htmlBlocks['container'][$section['id']] = ['position'=>'before'];  
-                                $htmlBlocks['container'][$module['col']] = $attrBlock;
-                                
-                            }elseif($section['position'] === $module['col']
-                            &&$module['col'] === $section['id']){
-                                     
-                                 $htmlBlocks['container'][$module['col']][$section['id']] = ['position'=>'main'];    
-                            }elseif($section['position'] === 'after'
-                            &&$module['col'] === $section['id']){
-                                
-                                $htmlBlocks['container'][$module['col']] = $attrBlock;
-                                 $htmlBlocks['container'][$section['id']] = ['position'=>'after'];    
-                            }elseif($section['position'] === 'bottom'
-                            &&$module['col'] === $section['id']){
-                                     
-                                 $htmlBlocks[$section['id']] = ['position'=>'bottom'];    
-                            }else{
-                                 $htmlBlocks['container'][$module['col']] = $attrBlock;
-                                
+                             $layoutModel = new LayoutModel;
+                             $objLayout = $layoutModel::findById($layoutId);
+                             // find layout sections within sections and modules
+                            
+                             // make an assoc array about the posibilities to include a section
+                             $attrBlock = ['position'=>'default'];
+                             
+                             $htmlBlocks = [];
+                             $htmlBlocks['container'] = $attrBlock;
+                             
+                             
+                                foreach(unserialize($objLayout->modules) as $module){
+                                     if($module['mod'] !== '0'){
+                                        continue;
+                                         }
+                                         
+                              
+                                   //var_dump(unserialize($objLayout->sections));exit;
+                                     foreach(unserialize($objLayout->sections) as $section){
+                                         
+                                     //  var_dump($module['col'] === $section['id'],$section['id'],$module['col']);  
+                                         if($section['position'] === 'top'
+                                         &&$module['col'] === $section['id']){
+                                             $htmlBlocks[$section['id']] = ['position'=>'top'];
+                                             }
+                                         elseif($section['position'] === 'before'
+                                         &&$module['col'] === $section['id']){
+                                                 
+                                             $htmlBlocks['container'][$section['id']] = ['position'=>'before'];  
+                                            $htmlBlocks['container'][$module['col']] = $attrBlock;
+                                            
+                                        }elseif($section['position'] === $module['col']
+                                        &&$module['col'] === $section['id']){
+                                                 
+                                             $htmlBlocks['container'][$module['col']][$section['id']] = ['position'=>'main'];    
+                                        }elseif($section['position'] === 'after'
+                                        &&$module['col'] === $section['id']){
+                                            
+                                            $htmlBlocks['container'][$module['col']] = $attrBlock;
+                                             $htmlBlocks['container'][$section['id']] = ['position'=>'after'];    
+                                        }elseif($section['position'] === 'bottom'
+                                        &&$module['col'] === $section['id']){
+                                                 
+                                             $htmlBlocks[$section['id']] = ['position'=>'bottom'];    
+                                        }else{
+                                             $htmlBlocks['container'][$module['col']] = $attrBlock;
+                                            
+                                            }
+                                         
+                                    }
                                 }
+                                  $arrElements = array();
+                                    $dbElements = $this->container->get('database_connection')
+                                    ->fetchAllAssociative(
+                                        "SELECT id, pid, headline, type, inColumn, cssId, el_count
+                                         FROM tl_content
+                                         WHERE pid = :pid
+                                           AND parentTable = :parentTable
+                                         ORDER BY pid ASC, sorting ASC",
+                                        [
+                                            'pid' => (int) Input::get('id'),
+                                            'parentTable' => (string) $pTable,
+                                        ]
+                                    );
+                                    
+                                    
+                                    if ($dbElements !== null)
+                                    {
+                                      $arrElements = $this->buildElements($dbElements,Input::get('id')); 
+                                       
+                                    }
+
+
+                                
+                                return $this->renderDetailView($objLayout,$htmlBlocks,$arrElements,$objPage,$objPage->__get('title'));  
+                         
+                                   // var_dump($htmlBlocks);exit;
+                            }elseif((Input::get('do') === 'calendar'||Input::get('do') === 'news')&&Input::get('mode') === 'layout'){
                              
-                        }
-                    }
-                      $arrElements = array();
-                        $dbElements = $this->container->get('database_connection')
-                        ->fetchAllAssociative(
-                            "SELECT id, pid, headline, type, inColumn, cssId, el_count
-                             FROM tl_content
-                             WHERE pid = :pid
-                               AND parentTable = :parentTable
-                             ORDER BY pid ASC, sorting ASC",
-                            [
-                                'pid' => (int) Input::get('id'),
-                                'parentTable' => (string) $pTable,
-                            ]
-                        );
-                        
-                        
-                        if ($dbElements !== null)
-                        {
-                          $arrElements = $this->buildElements($dbElements,Input::get('id')); 
-                           
-                        }
+                                    $pTable = (Input::get('do') === 'calendar')?'tl_calendar_events':'tl_news';
+                                     
+                                    $htmlBlocks = [];
+                                    $htmlBlocks['container'] = [];
+                                    $arrElements = array();
+                                    $dbElements = $this->container->get('database_connection')
+                                    ->fetchAllAssociative(
+                                        "SELECT id, pid, headline, type, inColumn, cssId, el_count
+                                         FROM tl_content
+                                         WHERE pid = :pid
+                                           AND parentTable = :parentTable
+                                         ORDER BY sorting ASC",
+                                        [
+                                            'pid' => (int) Input::get('id'),
+                                   
+                                            'parentTable' => (string) $pTable
+                                        ]
+                                    );
+                                    
+                                     if ($dbElements !== null)
+                                    {
+                                      $arrElements = $this->buildElements($dbElements,Input::get('id')); 
+                                       }
 
+                                     return $this->renderDetailView(Null,$htmlBlocks,$arrElements,Null,'Details');
+                                    
+                                    
+                             
+                             
+                             }elseif(Input::get('mode') === 'plus'){
+                            
+                                $pTable = 'tl_content';
 
-                    
-                    return $this->renderDetailView($objLayout,$htmlBlocks,$arrElements,$objPage,$objPage->__get('title'));  
-             
-                       // var_dump($htmlBlocks);exit;
-                }elseif((Input::get('do') === 'calendar'||Input::get('do') === 'news')&&Input::get('mode') === 'layout'){
-                 
-                        $pTable = (Input::get('do') === 'calendar')?'tl_calendar_events':'tl_news';
-                         
-                        $htmlBlocks = [];
-                        $htmlBlocks['container'] = [];
-                        $arrElements = array();
-                        $dbElements = $this->container->get('database_connection')
-                        ->fetchAllAssociative(
-                            "SELECT id, pid, headline, type, inColumn, cssId, el_count
-                             FROM tl_content
-                             WHERE pid = :pid
-                               AND parentTable = :parentTable
-                             ORDER BY sorting ASC",
-                            [
-                                'pid' => (int) Input::get('id'),
-                       
-                                'parentTable' => (string) $pTable
-                            ]
-                        );
-                        
-                         if ($dbElements !== null)
-                        {
-                          $arrElements = $this->buildElements($dbElements,Input::get('id')); 
-                           }
+                                    $htmlBlocks = [];
+                                    $htmlBlocks[Input::get('plus')] = [];
+                                    for ($i = 0; $i < Input::get('el'); $i++) {
+                                        $htmlBlocks[Input::get('plus')][Input::get('plus').'-el-'.$i+1] = [];
+                                    }
+                                    $arrElements = array();
+                                    $dbElements = $this->container->get('database_connection')
+                                    ->fetchAllAssociative(
+                                        "SELECT id, pid, headline, type, inColumn, cssId, el_count
+                                         FROM tl_content
+                                         WHERE pid = :pid
+                                           AND parentTable = :parentTable
+                                         ORDER BY sorting ASC",
+                                        [
+                                            'pid' => (int) $objSession->getBag('contao_backend')->get('OP_ADD_PID'),
+                                   
+                                            'parentTable' => (string) $pTable
+                                        ]
+                                    );
+                                    
+                                    if ($dbElements !== null)
+                                    {
+                                      $arrElements = $this->buildElements($dbElements,Input::get('id')); 
+                                     
+                                    }
 
-                         return $this->renderDetailView(Null,$htmlBlocks,$arrElements,Null,'Details');
-                        
-                        
-                 
-                 
-                 }elseif((Input::get('do') === 'content'||Input::get('do') === 'calendar'||Input::get('do') === 'news')&&Input::get('mode') === 'plus'){
+                                     return $this->renderDetailView(Null,$htmlBlocks,$arrElements,Null,'Content Plus');
+                                    
+                            }
                 
-                    $pTable = 'tl_content';
-
-                        $htmlBlocks = [];
-                        $htmlBlocks[Input::get('plus')] = [];
-                        for ($i = 0; $i < Input::get('el'); $i++) {
-                            $htmlBlocks[Input::get('plus')][Input::get('plus').'-el-'.$i+1] = [];
-                        }
-                        $arrElements = array();
-                        $dbElements = $this->container->get('database_connection')
-                        ->fetchAllAssociative(
-                            "SELECT id, pid, headline, type, inColumn, cssId, el_count
-                             FROM tl_content
-                             WHERE pid = :pid
-                               AND parentTable = :parentTable
-                             ORDER BY sorting ASC",
-                            [
-                                'pid' => (int) $objSession->getBag('contao_backend')->get('OP_ADD_PID'),
-                       
-                                'parentTable' => (string) $pTable
-                            ]
-                        );
-                        
-                        if ($dbElements !== null)
-                        {
-                          $arrElements = $this->buildElements($dbElements,Input::get('id')); 
-                         
-                        }
-
-                         return $this->renderDetailView(Null,$htmlBlocks,$arrElements,Null,'Content Plus');
-                        
-                }
+            }else{
+                
+                parent::generateTree($table, $id, $arrPrevNext, $blnHasSorting,
+ $intMargin, $arrClipboard, $blnCircularReference, 
+ $protectedPage, $blnNoRecursion, $arrFound);
+                
+            }
       
        
     }
