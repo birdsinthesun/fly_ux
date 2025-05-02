@@ -8,40 +8,15 @@ use Contao\DataContainer;
 use Contao\Input;
 
 
-#[AsHook('loadDataContainer','__invoke',-17)]
+#[AsHook('loadDataContainer','__invoke',-18)]
 class LoadDataContainerListenerEnd
 {
     public function __invoke(string $table): void
     {
-            // settings for fly_ux driver
-        if(isset($GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['driver'])
-            &&$GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['driver'] === 'fly_ux'
-            &&!isset($GLOBALS['BE_MOD']['content'][Input::get('do')]['init'])
-            ){
-               
-               // var_dump($GLOBALS['TL_DCA']['tl_page']);exit;
-                $GLOBALS['BE_MOD']['content'][Input::get('do')]['init'] = true;
-                //$root = $GLOBALS['BE_MOD']['content'][Input::get('do')]['relations'][0];
-                
-                foreach($GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['relations'] as $key => $ptable){
-                    $GLOBALS['TL_DCA'][$ptable]['config']['dataContainer'] = DC_Content::class;
-                    $GLOBALS['TL_DCA']['tl_content']['config']['switchToEdit'] = true;
-                    
-                    if(isset($GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['relations'][$key+1])){
-                        $GLOBALS['TL_DCA'][$ptable]['config']['ctable'] = [$GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['relations'][$key+1]];
+         
+     //
 
-                        if($key !== 0){
-                            $GLOBALS['TL_DCA'][$ptable]['config']['ptable'] = (isset($root))?:'';
-                           $GLOBALS['TL_DCA'][$ptable]['config']['dynamicPtable'] = true;
-                         }
-                         
-                    
-                    $root = $GLOBALS['BE_MOD']['content'][Input::get('do')]['config']['relations'][$key];
-                    }
-                }
-               
-        
-            }
+  //var_dump($GLOBALS['BE_MOD']);exit;
        
             //changes to tl_content only
             if($table === 'tl_content'){
@@ -59,12 +34,12 @@ class LoadDataContainerListenerEnd
                     $GLOBALS['TL_DCA']['tl_content']['config']['markAsCopy']                  = 'headline';
                     
                     $GLOBALS['TL_DCA']['tl_content']['list']['sorting']['mode'] = DataContainer::MODE_PARENT;
-                    unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['fields']);
+                    //unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['fields']);
                     $GLOBALS['TL_DCA']['tl_content']['list']['sorting']['panelLayout'] = 'search';
                     $GLOBALS['TL_DCA']['tl_content']['list']['sorting']['defaultSearchField'] = 'headline';
                    $GLOBALS['TL_DCA']['tl_content']['list']['label']['fields'] =  ['headline', 'type', 'inColumn'];
                     $GLOBALS['TL_DCA']['tl_content']['list']['label']['format'] =   '%s <span class="label-info">[%s]</span><span class="label-column"> %s </span>';
-                   // unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['child_record_callback']);
+                    unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['child_record_callback']);
                      unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['renderAsGrid']);
                      unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['limitHeight']);
                   
@@ -124,6 +99,8 @@ class LoadDataContainerListenerEnd
                   
                    
             }
+             // var_dump($table,$GLOBALS['TL_DCA'][$table]['config']['dataContainer']);
+                 
     }
     
 }

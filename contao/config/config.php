@@ -15,23 +15,25 @@ use Bits\FlyUxBundle\Content\ContentModule;
     $GLOBALS['TL_CTE']['plus']['contentslider'] = ContentContentSlider::class;
     $GLOBALS['TL_CTE']['plus']['contentslider'] = ContentGrid::class;
     
-    $GLOBALS['BE_MOD']['content']['page'] = ['tables' => ['tl_page']];
-    $GLOBALS['BE_MOD']['content']['page']['config']  = [
+    $GLOBALS['TL_DCA']['tl_content']['config']['dataContainer'] = DC_Content::class;
+                   
+    $GLOBALS['BE_MOD']['content']['page']['tables'] = ['tl_page','tl_content'];
+    $GLOBALS['BE_FLX_UX']['content']['page']['config']  = [
                   'driver' => 'fly_ux',
                   'relations' => [
                     'tl_page', 
                     'tl_content'
                         ]
     ];
-    $GLOBALS['BE_MOD']['content']['content'] = ['tables' => ['tl_content']];
-    $GLOBALS['BE_MOD']['content']['content']['config'] = [ 
+    $GLOBALS['BE_MOD']['content']['content']['tables'] = ['tl_content'];
+    $GLOBALS['BE_FLX_UX']['content']['content']['config'] = [ 
                   'driver' => 'fly_ux',
                   'relations' => [
                     'tl_page', 
                     'tl_content'
                         ]
   ];
-    $GLOBALS['BE_MOD']['content']['calendar']['config']  = [
+    $GLOBALS['BE_FLX_UX']['content']['calendar']['config']  = [
                 'driver' => 'fly_ux',
                 'relations' => [
                     'tl_calendar', 
@@ -39,9 +41,10 @@ use Bits\FlyUxBundle\Content\ContentModule;
                     'tl_content'
                         ]
   ];
-    $GLOBALS['BE_MOD']['content']['news']['config']  = [
+    $GLOBALS['BE_FLX_UX']['content']['news']['config']  = [
                  'driver' => 'fly_ux',
                 'relations' => [
+                    'tl_news_archive',
                     'tl_news', 
                     'tl_content'
                         ]

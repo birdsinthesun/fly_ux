@@ -13,8 +13,8 @@ class DC_ContentOperations extends Backend
     {
         $configService = System::getContainer()->get('fly_ux.config_service');
                
-        if($configService->useflyUxDriver()&&$configService->isContentTable())
-            {
+        //if($configService->useflyUxDriver()&&$configService->isContentTable())
+          //  {
                 $tokenManager = System::getContainer()->get('contao.csrf.token_manager');
                 $token = $tokenManager->getDefaultTokenValue();
                
@@ -22,32 +22,32 @@ class DC_ContentOperations extends Backend
                 return '<a class="'.$class.'" href="' . $this->getCurrentUrl().'/contao?do='.Input::get('do').'&'.
     $href . '&pid='.Input::get('id').'&mode='.Input::get('mode').'&table=tl_content&rt='.$token.'" title="' . $title . '"' . $attributes . '>' . $label . '</a>';
             
-        }else{
-            return '';
-            }
+        //}else{
+          //  return '';
+          //  }
     }
 
     public function dragDropButton($href, $label, $title, $class,$icon, $attributes)
     {
          $configService = System::getContainer()->get('fly_ux.config_service');
                
-        if($configService->useflyUxDriver()&&$configService->isContentTable())
-        {
+       // if($configService->useflyUxDriver()&&$configService->isContentTable())
+       // {
                 return '<a class="'.$class.'" href="' .$this->getCurrentUrl().'/contao?do='.Input::get('do').'&mode='.Input::get('mode').'&pid='.
                 Input::get('id').'&'. $href . '&rt='. Input::get('rt').'" title="' . $title . '"' . $attributes . '>' . $label . '</a>';
-            }
+          //  }
         
     }
     public function dragDropDeaktivateButton($href, $label, $title, $class,$icon, $attributes)
     {
         $configService = System::getContainer()->get('fly_ux.config_service');
                
-        if($configService->useflyUxDriver()&&$configService->isContentTable())
-        {
+       // if($configService->useflyUxDriver()&&$configService->isContentTable())
+       // {
             return '<a class="'.$class.'" href="' .$this->getCurrentUrl().'/contao?do='.Input::get('do').'&mode='.Input::get('mode').'&pid='.
             Input::get('id').'&'. $href . '&rt='. Input::get('rt').'" title="' . $title . '"' . $attributes . '>' . $label . '</a>';
             
-            }
+          //  }
         
     }
 

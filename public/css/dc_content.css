@@ -1,9 +1,10 @@
-#tl_buttons{
+#fly_ux_operations{
+    min-height:60px;
      margin-top:20px;
     }
-#tl_buttons .header_new_element,
-#tl_buttons .header_drag_drop,
-#tl_buttons .header_drag_drop_disable{
+#fly_ux_operations .header_new_element,
+#fly_ux_operations .header_drag_drop,
+#fly_ux_operations .header_drag_drop_disable{
    
     margin-left:20px;
     padding:10px;
