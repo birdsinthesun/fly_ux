@@ -34,9 +34,7 @@ class AddBackendAssetsListener
             $GLOBALS['TL_CSS'][] = 'bundles/flyux/css/dc_media.css';
         }
         
-        if ($event->getRequest()->get('do') === 'content'
-        ||$event->getRequest()->get('do') === 'calendar'
-        ||$event->getRequest()->get('do') === 'news') {
+        if ($event->getRequest()->get('table') === 'tl_content') {
            
             $GLOBALS['TL_CSS'][] = 'bundles/flyux/css/dc_content.css';
            

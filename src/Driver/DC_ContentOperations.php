@@ -13,7 +13,7 @@ class DC_ContentOperations extends Backend
     {
         $configService = System::getContainer()->get('fly_ux.config_service');
                
-        if($configService->useflyUxDriver()&&$configService->isParentTable())
+        if($configService->useflyUxDriver()&&$configService->isContentTable())
             {
                 $tokenManager = System::getContainer()->get('contao.csrf.token_manager');
                 $token = $tokenManager->getDefaultTokenValue();
@@ -31,7 +31,7 @@ class DC_ContentOperations extends Backend
     {
          $configService = System::getContainer()->get('fly_ux.config_service');
                
-        if($configService->useflyUxDriver()&&$configService->isParentTable())
+        if($configService->useflyUxDriver()&&$configService->isContentTable())
         {
                 return '<a class="'.$class.'" href="' .$this->getCurrentUrl().'/contao?do='.Input::get('do').'&mode='.Input::get('mode').'&pid='.
                 Input::get('id').'&'. $href . '&rt='. Input::get('rt').'" title="' . $title . '"' . $attributes . '>' . $label . '</a>';
@@ -42,7 +42,7 @@ class DC_ContentOperations extends Backend
     {
         $configService = System::getContainer()->get('fly_ux.config_service');
                
-        if($configService->useflyUxDriver()&&$configService->isParentTable())
+        if($configService->useflyUxDriver()&&$configService->isContentTable())
         {
             return '<a class="'.$class.'" href="' .$this->getCurrentUrl().'/contao?do='.Input::get('do').'&mode='.Input::get('mode').'&pid='.
             Input::get('id').'&'. $href . '&rt='. Input::get('rt').'" title="' . $title . '"' . $attributes . '>' . $label . '</a>';

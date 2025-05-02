@@ -67,7 +67,6 @@ class DC_Content extends DC_Table
         
                 $db = Database::getInstance();
                 $databaseFields = $db->getFieldNames($this->strTable);
-                $objSession = $this->container->get('request_stack')->getSession();
                 
                 if(Input::get('do') === 'content'&&Input::get('mode') === 'layout'){
                     
@@ -157,7 +156,7 @@ class DC_Content extends DC_Table
                  
                         $this->session->set('new_records', $new_records);
 
-                        System::getContainer()->get('monolog.logger.contao.general')->info('A new entry "' . $this->strTable . '.id=' . $insertID . '" has been created' . $this->getParentEntries($this->strTable, $insertID));
+                       // System::getContainer()->get('monolog.logger.contao.general')->info('A new entry "' . $this->strTable . '.id=' . $insertID . '" has been created' . $this->getParentEntries($this->strTable, $insertID));
 
                         $this->redirect($this->switchToEdit($insertID) . $s2e);
                     }
@@ -179,7 +178,10 @@ class DC_Content extends DC_Table
           if($configService->useflyUxDriver()&&$configService->isContentTable())
         {    
         
-        
+            
+            
+            
+					$operations = $this->generateGlobalButtons();
                         if(Input::get('do') === 'content'&&Input::get('mode') === 'layout'){
                             
                             $pTable = 'tl_page';
@@ -264,7 +266,7 @@ class DC_Content extends DC_Table
 
 
                                 
-                                return $this->renderDetailView($objLayout,$htmlBlocks,$arrElements,$objPage,$objPage->__get('title'));  
+                                return $this->renderDetailView($objLayout,$htmlBlocks,$arrElements,$objPage,$objPage->__get('title'),$operations);  
                          
                                    // var_dump($htmlBlocks);exit;
                             }elseif((Input::get('do') === 'calendar'||Input::get('do') === 'news')&&Input::get('mode') === 'layout'){
@@ -293,7 +295,7 @@ class DC_Content extends DC_Table
                                       $arrElements = $this->buildElements($dbElements,Input::get('id')); 
                                        }
 
-                                     return $this->renderDetailView(Null,$htmlBlocks,$arrElements,Null,'Details');
+                                     return $this->renderDetailView(Null,$htmlBlocks,$arrElements,Null,'Details',$operations);
                                     
                                     
                              
@@ -328,7 +330,7 @@ class DC_Content extends DC_Table
                                      
                                     }
 
-                                     return $this->renderDetailView(Null,$htmlBlocks,$arrElements,Null,'Content Plus');
+                                     return $this->renderDetailView(Null,$htmlBlocks,$arrElements,Null,'Content Plus',$operations);
                                     
                             }
                 
@@ -342,7 +344,7 @@ class DC_Content extends DC_Table
     }
  
 
-    protected function renderDetailView($objLayout = Null,$htmlBlocks,$arrElements,$objPage = Null,$headline)
+    protected function renderDetailView($objLayout = Null,$htmlBlocks,$arrElements,$objPage = Null,$headline,$operations)
     {
         
         $requestStack = $this->container->get('request_stack');
@@ -359,7 +361,8 @@ class DC_Content extends DC_Table
                 'pageName' => $headline,
                 'layoutClass' => ($objLayout)?$objLayout->__get('cssClass'):'details',
                 'htmlBlocks' =>$htmlBlocks,
-                'elementsByBlock' => $arrElements
+                'elementsByBlock' => $arrElements,
+                'operations' => $operations
 			)
 		);
     
@@ -466,6 +469,8 @@ class DC_Content extends DC_Table
 	{
         
         }
+    
+    
         
     
     
