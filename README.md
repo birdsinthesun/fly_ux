@@ -62,5 +62,7 @@ Hier wird außerdem ein Theme bereitgestellt, welches zum Kennenlernen dieser Er
 Es ist gut ein Backup zu machen. Erweiterungen welche auf die Article-Ebene zugreifen oder welche verschachtelte Inhalts-Elemente erzeugen können mit Fly UX kollidieren.
 Ansonsten siehe offene Issues.
 
+Fly UX nutzt einen eigenen Driver für tl_content. Anstelle von Nested ContentElements wird das ContentPLus-Schema für verschachtelte Inhalts-Elemente verwendet. ContentPlus nutzt im Gegensatz zu Nested ContentElements keine Sub-Controller.
+
 
 
