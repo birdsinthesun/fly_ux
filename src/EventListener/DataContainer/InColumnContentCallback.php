@@ -21,28 +21,25 @@ class InColumnContentCallback
 	public function __invoke(DataContainer $dc)
 	{
 		$arrSections = array();
-        $session = System::getContainer()->get('request_stack')->getSession();
-        $pid = $session->getBag('contao_backend')->get('OP_ADD')['pid'];
-        $ptable = $session->getBag('contao_backend')->get('OP_ADD')['parentTable'];
-        $mode = $session->getBag('contao_backend')->get('OP_ADD')['mode'];
+        $session = System::getContainer()->get('request_stack')->getSession()->getBag('contao_backend');
+        $pid = $session->get('OP_ADD_PID');
+        
+        $ptable = $session->get('OP_ADD_PTABLE');
+        $mode = $session->get('OP_ADD_MODE');
         
         if($mode==='layout'){
             
             
             if($ptable === 'tl_page'){
             // Show only active sections
-                if ($pid ?? null)
+                if ($pid !== null)
                 {
                     
                     $objPage = PageModel::findWithDetails($pid);
                     
                     
-                }elseif(Input::get('id') ?? null){
-                    $objPage = PageModel::findWithDetails(Input::get('id'));
-                    
-                
-                }elseif($dc->getActiveRecord->pid ?? null){
-                    $objPage = PageModel::findWithDetails($dc->getActiveRecord->pid);
+                }elseif($dc->getCurrentRecord() !== null){
+                    $objPage = PageModel::findWithDetails($dc->getCurrentRecord()['pid']);
                     
                 }
                     // Get the layout sections
@@ -76,10 +73,18 @@ class InColumnContentCallback
                 }
         }
 		if($ptable === 'tl_content'){
-             $el_count = $session->getBag('contao_backend')->get('OP_ADD')['el'];
-             $plus = $session->getBag('contao_backend')->get('OP_ADD')['plus'];
-             for ($i = 0; $i < $el_count; $i++) {
-                            $arrSections[] = $plus.'-el-'.$i+1;
+              $parentRecord = System::getContainer()->get('database_connection')
+                                    ->fetchAllAssociative(
+                                        "SELECT el_count,type
+                                         FROM ".$ptable."
+                                         WHERE id = :id",
+                                        [
+                                            'id' => (int) $pid
+                                        ]
+                                    );
+               
+             for ($i = 0; $i < $parentRecord[0]['el_count']; $i++) {
+                            $arrSections[] = $parentRecord[0]['type'].'-el-'.$i+1;
                         }
             
         }

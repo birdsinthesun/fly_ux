@@ -51,52 +51,73 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
      
         $this->container = System::getContainer();
         $this->session = $this->container->get('request_stack')->getSession()->getBag('contao_backend');
-         if(Input::get('do') === 'content'&&Input::get('mode') === 'layout'){
+        
+        if(Input::get('mode')){
+                         $this->session->set('OP_ADD_MODE',Input::get('mode'));
+            }
+        if(Input::get('plus')){
+                         
+                        $inColumn = Input::get('plus').'-el-1';
+                        $this->session->set('OP_ADD_COLUMN',$inColumn);
+                        $this->session->set('OP_ADD_EL',Input::get('el'));
+                        $this->session->set('OP_ADD_PLUS',Input::get('plus'));
+            }
+        if(Input::get('id')&&Input::get('act')!=='edit'){
+                        $this->session->set('OP_ADD_PID',Input::get('id'));
+            }
+            
+        if(Input::get('do') === 'content'&&Input::get('mode') === 'layout'&&Input::get('act')!=='edit'){
                     
                         $pTable = 'tl_page';
                         $inColumn = 'main';
                         
-                        //set Session Array
-                        $this->session->set('OP_ADD' ,[
-                            'pid' => Input::get('pid'),
-                            'parentTable' => $pTable,
-                            'mode' => Input::get('mode'),
-                            'inColumn'=> $inColumn,
-                            'el'=>$this->session->get('OP_ADD')['el'],
-                            'plus'=>$this->session->get('OP_ADD')['plus']
-                            ]);
+                        //set Session 
+                        $this->session->set('OP_ADD_PID',Input::get('id'));
+                        $this->session->set('OP_ADD_PTABLE',$pTable);
+                        $this->session->set('OP_ADD_MODE',Input::get('mode'));
+                        $this->session->set('OP_ADD_COLUMN',$inColumn);
+                       // $this->session->set('OP_ADD_EL',$this->session->get('OP_ADD_EL'));
+                       // $this->session->set('OP_ADD_PLUS',$this->session->get('OP_ADD_PLUS'));
+                          
                         
-                }elseif((Input::get('do') === 'calendar'||Input::get('do') === 'news')&&Input::get('mode') === 'layout'){
+                }elseif((Input::get('do') === 'calendar'||Input::get('do') === 'news')
+                        &&Input::get('mode') === 'layout'&&Input::get('act')!=='edit'){
                         
                         $pTable = (Input::get('do') === 'calendar')?'tl_calendar_events':'tl_news';
                         $inColumn = 'container';
-                        //set Session Array
-                        $this->session->set('OP_ADD' ,[
-                            'pid' => Input::get('pid'),
-                            'parentTable' => $pTable,
-                            'mode' => Input::get('mode'),
-                            'inColumn'=> $inColumn,
-                            'el'=>$this->session->get('OP_ADD')['el'],
-                            'plus'=>$this->session->get('OP_ADD')['plus']
-                            ]);
+                        //set Session 
+                        $this->session->set('OP_ADD_PID',Input::get('id'));
+                        $this->session->set('OP_ADD_PTABLE',$pTable);
                         
-                }elseif((Input::get('do') === 'content'||Input::get('do') === 'calendar'||Input::get('do') === 'news')&&Input::get('mode') === 'plus'){
+                        $this->session->set('OP_ADD_COLUMN',$inColumn);
+                        //$this->session->set('OP_ADD_EL',$this->session->get('OP_ADD_EL'));
+                       // $this->session->set('OP_ADD_PLUS',$this->session->get('OP_ADD_PLUS'));
+                        
+                }elseif(Input::get('do') === 'content'
+                        &&Input::get('mode') === 'layout'&&Input::get('act')!=='edit'){
                         
                         $pTable = 'tl_content';
-                        $inColumn = Input::get('plus').'-el-1';
-                        //set Session Array
-                        $this->session->set('OP_ADD' ,[
-                            'pid' => Input::get('pid'),
-                            'parentTable' => $pTable,
-                            'mode' => Input::get('mode'),
-                            'inColumn'=> $inColumn,
-                            'el'=>Input::get('el'),
-                            'plus'=>Input::get('plus')
-                            ]);
+                        //set Session 
+                        $this->session->set('OP_ADD_PTABLE',$pTable);
+                        
                         
                 }
-            
-           // }
+                    if($this->session->get('OP_ADD_MODE') === 'plus'){
+                     $pTable = 'tl_content';
+                     $inColumn = $this->session->get('OP_ADD_PLUS').'-el-1';
+                        //set Session 
+                        $this->session->set('OP_ADD_PID',$this->session->get('OP_ADD_PID'));
+                        $this->session->set('OP_ADD_PTABLE',$pTable);
+                        
+                        $this->session->set('OP_ADD_COLUMN',$inColumn);
+                        $this->session->set('OP_ADD_EL',$this->session->get('OP_ADD_EL'));
+                        $this->session->set('OP_ADD_PLUS',$this->session->get('OP_ADD_PLUS'));                           
+                    
+                    }
+                    
+                    
+             
+            // var_dump($this->session->get('OP_ADD')['plus']);exit;
            parent::__construct($strTable, $arrModule);
            
           
@@ -121,23 +142,23 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                 $db = Database::getInstance();
                 $databaseFields = $db->getFieldNames($this->strTable);
                 
-                if(Input::get('do') === 'content'&&Input::get('mode') === 'layout'){
+                if(Input::get('do') === 'content'&&$this->session->get('OP_ADD_MODE') === 'layout'){
                     
                         $pTable = 'tl_page';
                         $inColumn = 'main';
-                        
-                }elseif((Input::get('do') === 'calendar'||Input::get('do') === 'news')&&Input::get('mode') === 'layout'){
+                }elseif((Input::get('do') === 'calendar'||Input::get('do') === 'news')&&$this->session->get('OP_ADD_MODE') === 'layout'){
                         
                         $pTable = (Input::get('do') === 'calendar')?'tl_calendar_events':'tl_news';
                         $inColumn = 'container';
+                        $this->session->set('OP_ADD_PID',Input::get('id'));
                         
-                }elseif((Input::get('do') === 'content'||Input::get('do') === 'calendar'||Input::get('do') === 'news')&&Input::get('mode') === 'plus'){
-                        
+                }elseif($this->session->get('OP_ADD_MODE') === 'plus'){
+                    
                         $pTable = 'tl_content';
-                        $inColumn = Input::get('plus').'-el-1';
-                }
-                
-               
+                        
+                        $inColumn = $this->session->get('OP_ADD_PLUS').'-el-1';
+                       
+                    } 
                 
                 
                 
@@ -167,8 +188,15 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                            $this->set[$k] = $inColumn;
                            
                     }
-                }
+                    
 
+                    if($k ==='parentTable'){
+                  
+                           $this->set[$k] = $pTable;
+                           
+                    }
+                }
+                    $this->set['ptable'] = $pTable;
                 // Set passed values
                 if (!empty($set) && \is_array($set))
                 {
@@ -361,7 +389,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                                            AND parentTable = :parentTable
                                          ORDER BY sorting ASC",
                                         [
-                                            'pid' => (int) $this->session->get('OP_ADD')['pid'],
+                                            'pid' => (int) Input::get('id'),
                                    
                                             'parentTable' => (string) $pTable
                                         ]
