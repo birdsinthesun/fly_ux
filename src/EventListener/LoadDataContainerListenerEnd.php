@@ -80,7 +80,7 @@ class LoadDataContainerListenerEnd
 
                         $GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['drag_drop_disable'] = [
                             'label'      => ['Drag & Drop Deaktivieren', ''],
-                            'href'       => '',
+                            'href'       => 'op_dd=drag_drop_mode',
                             'class'      => 'header_drag_drop_disable',
                             'icon'       => '',
                             'button_callback' => ['\Bits\FlyUxBundle\Driver\DC_ContentOperations', 'dragDropDeaktivateButton'],

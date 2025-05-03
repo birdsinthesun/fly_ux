@@ -19,7 +19,7 @@ class DC_ContentOperations extends Backend
                 $token = $tokenManager->getDefaultTokenValue();
                
                 
-                return '<a class="'.$class.'" href="' . $this->getCurrentUrl().'/contao?do='.Input::get('do').'&'.
+                return '<a class="'.$class.'" href="' . $this->getCurrentUrl(true).'/contao?do='.Input::get('do').'&'.
     $href . '&pid='.Input::get('id').'&mode='.Input::get('mode').'&table=tl_content&rt='.$token.'" title="' . $title . '"' . $attributes . '>' . $label . '</a>';
             
         //}else{
@@ -33,8 +33,8 @@ class DC_ContentOperations extends Backend
                
        // if($configService->useflyUxDriver()&&$configService->isContentTable())
        // {
-                return '<a class="'.$class.'" href="' .$this->getCurrentUrl().'/contao?do='.Input::get('do').'&mode='.Input::get('mode').'&pid='.
-                Input::get('id').'&'. $href . '&rt='. Input::get('rt').'" title="' . $title . '"' . $attributes . '>' . $label . '</a>';
+                return '<a class="'.$class.'" href="' .$this->getCurrentUrl(false)
+                .'&'. $href .'" title="' . $title . '"' . $attributes . '>' . $label . '</a>';
           //  }
         
     }
@@ -44,14 +44,15 @@ class DC_ContentOperations extends Backend
                
        // if($configService->useflyUxDriver()&&$configService->isContentTable())
        // {
-            return '<a class="'.$class.'" href="' .$this->getCurrentUrl().'/contao?do='.Input::get('do').'&mode='.Input::get('mode').'&pid='.
-            Input::get('id').'&'. $href . '&rt='. Input::get('rt').'" title="' . $title . '"' . $attributes . '>' . $label . '</a>';
+            return '<a class="'.$class.'" href="' .str_replace('&'.$href,'',$this->getCurrentUrl(false))
+            
+                 .'" title="' . $title . '"' . $attributes . '>' . $label . '</a>';
             
           //  }
         
     }
 
-    public function getCurrentUrl()
+    public function getCurrentUrl($baseOnly=true)
     {
         // Zugriff auf den Service-Container
         $container = System::getContainer();
@@ -67,7 +68,7 @@ class DC_ContentOperations extends Backend
             // Wenn du nur die Basis-URL ohne Query-Parameter benötigst
             $baseUrl = $request->getSchemeAndHttpHost() . $request->getBaseUrl();
 
-            return $baseUrl;
+            return ($baseOnly)?$baseUrl:$currentUrl ;
         }
 
         return '';

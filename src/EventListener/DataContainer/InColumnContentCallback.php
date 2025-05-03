@@ -69,7 +69,7 @@ class InColumnContentCallback
                         }
                     }
             }elseif($ptable !== 'tl_content'){
-                        $arrSections[] = 'container';
+                        $arrSections[] = 'main';
                 }
         }
 		if($ptable === 'tl_content'){

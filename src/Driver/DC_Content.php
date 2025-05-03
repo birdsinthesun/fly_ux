@@ -84,7 +84,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                         &&Input::get('mode') === 'layout'&&Input::get('act')!=='edit'){
                         
                         $pTable = (Input::get('do') === 'calendar')?'tl_calendar_events':'tl_news';
-                        $inColumn = 'container';
+                        $inColumn = 'main';
                         //set Session 
                         $this->session->set('OP_ADD_PID',Input::get('id'));
                         $this->session->set('OP_ADD_PTABLE',$pTable);
@@ -149,7 +149,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                 }elseif((Input::get('do') === 'calendar'||Input::get('do') === 'news')&&$this->session->get('OP_ADD_MODE') === 'layout'){
                         
                         $pTable = (Input::get('do') === 'calendar')?'tl_calendar_events':'tl_news';
-                        $inColumn = 'container';
+                        $inColumn = 'main';
                         $this->session->set('OP_ADD_PID',Input::get('id'));
                         
                 }elseif($this->session->get('OP_ADD_MODE') === 'plus'){
@@ -346,6 +346,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                                      
                                     $htmlBlocks = [];
                                     $htmlBlocks['container'] = [];
+                                    $htmlBlocks['container']['main'] = []
                                     $arrElements = array();
                                     $dbElements = $this->container->get('database_connection')
                                     ->fetchAllAssociative(
