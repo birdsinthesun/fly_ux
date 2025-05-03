@@ -346,7 +346,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                                      
                                     $htmlBlocks = [];
                                     $htmlBlocks['container'] = [];
-                                    $htmlBlocks['container']['main'] = []
+                                    $htmlBlocks['container']['main'] = [];
                                     $arrElements = array();
                                     $dbElements = $this->container->get('database_connection')
                                     ->fetchAllAssociative(
