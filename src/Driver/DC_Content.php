@@ -51,12 +51,15 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
      
         $this->container = System::getContainer();
         $this->session = $this->container->get('request_stack')->getSession()->getBag('contao_backend');
-        
+        if(Input::get('plus')&&!Input::get('act')){
+                        $this->session->set('Fly_UX_RELOAD',true);
+        }
         if(Input::get('mode')){
                          $this->session->set('OP_ADD_MODE',Input::get('mode'));
+                        
             }
         if(Input::get('plus')){
-                         
+                      
                         $inColumn = Input::get('plus').'-el-1';
                         $this->session->set('OP_ADD_COLUMN',$inColumn);
                         $this->session->set('OP_ADD_EL',Input::get('el'));
@@ -587,6 +590,8 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                 
                 // throw new NotFoundException('Cannot load record "' . $this->strTable . '.id=' . $this->intId . '".');
             }
+           
+            
             // ToDo: have to find all the code where contao is setting the ptable
            // var_dump($currentRecord['ptable']);exit;
             $currentRecord['ptable'] = $this->session->get('OP_ADD_PTABLE');

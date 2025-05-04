@@ -26,8 +26,9 @@ class InColumnContentCallback
         
         $ptable = $session->get('OP_ADD_PTABLE');
         $mode = $session->get('OP_ADD_MODE');
-        
-        if($mode==='layout'){
+        $typePlus = (array_key_exists($dc->activeRecord->type,$GLOBALS['TL_CTE']['plus']));
+       // var_dump($typePlus,$mode,$ptable);exit;
+        if($mode === 'layout' || $mode === null){
             
             
             if($ptable === 'tl_page'){
@@ -72,7 +73,7 @@ class InColumnContentCallback
                         $arrSections[] = 'main';
                 }
         }
-		if($ptable === 'tl_content'){
+		elseif($ptable === 'tl_content'){
               $parentRecord = System::getContainer()->get('database_connection')
                                     ->fetchAllAssociative(
                                         "SELECT el_count,type

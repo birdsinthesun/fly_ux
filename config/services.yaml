@@ -13,6 +13,11 @@ services:
     fly_ux.config_service:
         alias: Bits\FlyUxBundle\Service\Backend\ConfigService
         public: true
+    
+    Bits\FlyUxBundle\EventListener\BrowserBackButtonBraceListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: -3 }
+        public: true
         
     Bits\FlyUxBundle\EventListener\AddBackendAssetsListener:
         arguments:

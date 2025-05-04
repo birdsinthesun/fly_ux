@@ -9,7 +9,7 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 use Bits\FlyUxBundle\DependencyInjection\Compiler\RemoveContaoCallbackPass;
-use Bits\FlyUxBundle\DependencyInjection\Compiler\RemoveNewOperationPass;
+use Bits\FlyUxBundle\DependencyInjection\Compiler\MakeListenerPublicPass;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 
 class FlyUxBundle extends AbstractBundle
@@ -18,16 +18,16 @@ class FlyUxBundle extends AbstractBundle
      public function build(ContainerBuilder $container): void
     {
         
-         $projectDir = $container->getParameter('kernel.project_dir').'/vendor/birdsinthesun/fly_ux';
+        $projectDir = $container->getParameter('kernel.project_dir').'/vendor/birdsinthesun/fly_ux';
         $loader = new YamlFileLoader($container, new FileLocator($projectDir.'/config')); 
         $loader->load('services.yaml');
         $loader2 = new PhpFileLoader($container, new FileLocator($projectDir. '/config'));
        
-       $loader2->load('bundles.php');
+        $loader2->load('bundles.php');
         parent::build($container);
 
-       $container->addCompilerPass(new RemoveContaoCallbackPass(),PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);
-      // $container->addCompilerPass(new RemoveNewOperationPass(),PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);
+        $container->addCompilerPass(new RemoveContaoCallbackPass(),PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);
+        $container->addCompilerPass(new MakeListenerPublicPass());
      
     }
     protected function addCompilerPass($compilerPass, $type = PassConfig::TYPE_AFTER_REMOVING, $priority = 0)
