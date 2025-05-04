@@ -28,8 +28,8 @@ class BrowserBackButtonBraceListener
             return;
         }
 
-        //$session = $this->requestStack->getSession();
-        $bag = System::getContainer()->get('request_stack')->getSession()->getBag('contao_backend');
+        $session = $this->requestStack->getSession();
+        $bag = $session->getBag('contao_backend');
 //var_dump($bag->has('Fly_UX_RELOAD'),'test');exit;
         if ($bag->has('Fly_UX_RELOAD')&&Input::get('act') !== 'edit') {
             $bag->remove('Fly_UX_RELOAD');
