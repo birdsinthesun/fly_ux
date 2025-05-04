@@ -746,9 +746,11 @@ class MyPageRegular extends Frontend
 		};
 	}
     
-       public function findContentElementClass(string $targetType):string
+        public function findContentElementClass(string $targetType):string
     {
-        foreach ($GLOBALS['TL_CTE'] as $group => $classes) {
+        
+        $tlCte = $GLOBALS['TL_CTE'];
+        foreach ($tlCte as $group => $classes) {
            foreach ($classes as $type => $class) {
             if($type === $targetType){
                 return  $class;

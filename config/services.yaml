@@ -14,10 +14,9 @@ services:
         alias: Bits\FlyUxBundle\Service\Backend\ConfigService
         public: true
     
-    Bits\FlyUxBundle\EventListener\BrowserBackButtonBraceListener:
+    Bits\FlyUxBundle\Security\Voter\ContentVoter:
         tags:
-            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: -3 }
-        public: true
+            - { name: security.voter, priority: 105 }
         
     Bits\FlyUxBundle\EventListener\AddBackendAssetsListener:
         arguments:

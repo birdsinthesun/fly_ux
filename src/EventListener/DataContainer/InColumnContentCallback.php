@@ -22,11 +22,13 @@ class InColumnContentCallback
 	{
 		$arrSections = array();
         $session = System::getContainer()->get('request_stack')->getSession()->getBag('contao_backend');
-        $pid = $session->get('OP_ADD_PID');
+        $pid = $dc->activeRecord->pid;//$session->get('OP_ADD_PID');
         
-        $ptable = $session->get('OP_ADD_PTABLE');
+        $ptable = $dc->activeRecord->ptable;//$session->get('OP_ADD_PTABLE');
         $mode = $session->get('OP_ADD_MODE');
-        $typePlus = (array_key_exists($dc->activeRecord->type,$GLOBALS['TL_CTE']['plus']));
+        
+        
+        //$typePlus = (array_key_exists($dc->activeRecord->type,$GLOBALS['TL_CTE']['plus']));
        // var_dump($typePlus,$mode,$ptable);exit;
         if($mode === 'layout' || $mode === null){
             

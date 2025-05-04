@@ -25,7 +25,7 @@ $record,
             
             //$dc->activeRecord->id = ($InsertID)?:Input::get('id');
             $dc->activeRecord->ptable = $session->get('OP_ADD_PTABLE');
-           // $record['id'] = ($InsertID)?:Input::get('id');
+            //$record['id'] = ($InsertID)?:Input::get('id');
             $record['ptable'] = $session->get('OP_ADD_PTABLE');
            
             

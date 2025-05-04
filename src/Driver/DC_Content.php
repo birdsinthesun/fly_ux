@@ -488,7 +488,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                         }
                
                 $element['css_class'] = $cssId;
-                $element['href_act_edit'] = 'contao?do=content&id='.$element['id'].'&table=tl_content&act=edit';
+                $element['href_act_edit'] = 'contao?do=content&id='.$element['id'].'&ptable='.$this->session->get('OP_ADD_PTABLE').'&table=tl_content&act=edit';
                $element['href_act_delete'] = 'contao?do=content&id='.$element['id'].'&table=tl_content&act=delete&rt='.$token;
                 $element['is_content_plus'] = ($element['type']==='contentslider'||$element['type']==='contentgrid')?true:false;
                 $element['href_act_edit_plus'] = 'contao?do='.Input::get('do').'&mode=plus&table=tl_content&pid='.$element['pid'].'&id='.$element['id'].'&plus='.$element['type'].'&el='.$element['el_count'];
@@ -512,7 +512,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
 		 if ($objCte !== null) {
         
             $row = $objCte;
-
+            $row->type = ($row->type)?$row->type:'text';
             // Optional: nur wenn Spalte passt
             if ($row->type !== 'module'
                 &&$row->type !== 'form'
@@ -593,8 +593,8 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
            
             
             // ToDo: have to find all the code where contao is setting the ptable
-           // var_dump($currentRecord['ptable']);exit;
-            $currentRecord['ptable'] = $this->session->get('OP_ADD_PTABLE');
+          //  var_dump($currentRecord['ptable'],$this->session->get('OP_ADD_PTABLE'));exit;
+           $currentRecord['ptable'] = $this->session->get('OP_ADD_PTABLE');
            // $this->denyAccessUnlessGranted(ContaoCorePermissions::DC_PREFIX . $this->strTable, new UpdateAction($this->strTable, $currentRecord));
 
             // Store the active record (backwards compatibility)
@@ -1006,7 +1006,9 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
   
     public function findContentElementClass(string $targetType):string
     {
-        foreach ($GLOBALS['TL_CTE'] as $group => $classes) {
+        
+        $tlCte = $GLOBALS['TL_CTE'];
+        foreach ($tlCte as $group => $classes) {
            foreach ($classes as $type => $class) {
             if($type === $targetType){
                 return  $class;

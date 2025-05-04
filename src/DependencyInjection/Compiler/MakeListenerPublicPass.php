@@ -9,13 +9,11 @@ class MakeListenerPublicPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        if ($container->hasDefinition('Bits\FlyUxBundle\EventListener\BrowserBackButtonBraceListener')) {
-            $definition = $container->getDefinition('Bits\FlyUxBundle\EventListener\BrowserBackButtonBraceListener');
+        if ($container->hasDefinition('Bits\FlyUxBundle\Security\Voter\ContentVoter')) {
+            $definition = $container->getDefinition('Bits\FlyUxBundle\Security\Voter\ContentVoter');
             $definition->setPublic(true);
-            $definition->addTag('kernel.event_listener', [
-                'event' => 'kernel.request',
-                'method' => 'onKernelRequest',
-                'priority' => -3,
+            $definition->addTag('security.voter', [
+                'priority' => 105,
             ]);
         
         }

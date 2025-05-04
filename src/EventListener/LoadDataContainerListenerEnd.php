@@ -7,7 +7,6 @@ use Bits\FlyUxBundle\Driver\DC_Content;
 use Contao\DataContainer;
 use Contao\Input;
 
-
 #[AsHook('loadDataContainer','__invoke',-18)]
 class LoadDataContainerListenerEnd
 {
@@ -17,12 +16,13 @@ class LoadDataContainerListenerEnd
        
             //changes to tl_content only
             if($table === 'tl_content'){
-                
+                    if(Input::get('ptable') !== null){
+                        $GLOBALS['TL_DCA']['tl_content']['config']['ptable'] = Input::get('ptable');
+                    }
                    
-          
                     $GLOBALS['TL_DCA']['tl_content']['config']['dataContainer'] = DC_Content::class;
                     $GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][] = ['tl_page','addBreadcrumb'];
-                    $GLOBALS['TL_DCA']['tl_content']['config']['ptable'] = 'tl_page';
+                    
                     $GLOBALS['TL_DCA']['tl_content']['config']['ctable'] = ['tl_content'];
                     $GLOBALS['TL_DCA']['tl_content']['config']['switchToEdit']  = true;
 

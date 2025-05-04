@@ -12,9 +12,10 @@ class DC_ContentOperations extends Backend
         public function addElementButton($href, $label, $title,$class, $icon, $attributes)
     {
         $configService = System::getContainer()->get('fly_ux.config_service');
-               
+        $sessionBag = System::getContainer()->get('request_stack')->getSession()->getBag('contao_backend');
         //if($configService->useflyUxDriver()&&$configService->isContentTable())
           //  {
+        $href .= ($sessionBag->get('OP_ADD_PTABLE'))?'&ptable='.$sessionBag->get('OP_ADD_PTABLE'):'';
                 $tokenManager = System::getContainer()->get('contao.csrf.token_manager');
                 $token = $tokenManager->getDefaultTokenValue();
                

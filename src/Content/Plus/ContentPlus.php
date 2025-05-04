@@ -41,7 +41,7 @@ class ContentPlus
 		 if ($objElements !== null) {
                 while ($objElements->next()) {
                     $objElementModel = $objElements->current();
-
+                        $objElementModel->type = ($objElementModel->type)?$objElementModel->type:'text';
                         if ($objElementModel->type !== 'module'&&$objElementModel->type !== 'form') {
                             $strClass = 'Contao\\Content' . ucfirst($objElementModel->type);
                         }elseif($objElementModel->type === 'module'){
@@ -60,7 +60,8 @@ class ContentPlus
                             /** @var \Contao\ContentElement $objElement */
                             $objElement = new $strClass($objElementModel);
                          }else{
-                             $strClass = $this->findContentElementClass($row->type);
+                             
+                             $strClass = $this->findContentElementClass($objElementModel->type);
                             $objElement = new $strClass($objElementModel);
                         }
                         
@@ -77,7 +78,9 @@ class ContentPlus
     
       public function findContentElementClass(string $targetType):string
     {
-        foreach ($GLOBALS['TL_CTE'] as $group => $classes) {
+        
+        $tlCte = $GLOBALS['TL_CTE'];
+        foreach ($tlCte as $group => $classes) {
            foreach ($classes as $type => $class) {
             if($type === $targetType){
                 return  $class;

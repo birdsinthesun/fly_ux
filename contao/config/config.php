@@ -17,7 +17,7 @@ use Bits\FlyUxBundle\Content\ContentModule;
   
     $GLOBALS['TL_DCA']['tl_content']['config']['dataContainer'] = DC_Content::class;
                    
-    $GLOBALS['BE_MOD']['content']['page']['tables'] = ['tl_page','tl_content'];
+    $GLOBALS['BE_MOD']['content']['page']['tables'] = ['tl_page','tl_content','tl_content'];
     $GLOBALS['BE_FLX_UX']['content']['page']['config']  = [
                   'driver' => 'fly_ux',
                   'relations' => [
@@ -25,7 +25,7 @@ use Bits\FlyUxBundle\Content\ContentModule;
                     'tl_content'
                         ]
     ];
-    $GLOBALS['BE_MOD']['content']['content']['tables'] = ['tl_content'];
+    $GLOBALS['BE_MOD']['content']['content']['tables'] = ['tl_content','tl_content'];
     $GLOBALS['BE_FLX_UX']['content']['content']['config'] = [ 
                   'driver' => 'fly_ux',
                   'relations' => [

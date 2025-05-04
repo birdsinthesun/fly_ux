@@ -22,6 +22,11 @@ class LoadDataContainerListener
     public function __invoke(string $table): void
     {
          //  var_dump($GLOBALS['BE_FLX_UX']['content'][Input::get('do')]);exit;
+         if($table === 'tl_content'){
+                    if(Input::get('ptable') !== null){
+                        $GLOBALS['TL_DCA']['tl_content']['config']['ptable'] = Input::get('ptable');
+                    }
+         }
           // settings for fly_ux driver
         if(isset($GLOBALS['BE_FLX_UX']['content'][Input::get('do')]['config']['driver'])
             &&$GLOBALS['BE_FLX_UX']['content'][Input::get('do')]['config']['driver'] === 'fly_ux'
