@@ -320,11 +320,11 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                                         "SELECT id, pid, headline, type, inColumn, cssId, el_count
                                          FROM tl_content
                                          WHERE pid = :pid
-                                           AND parentTable = :parentTable
+                                           AND ptable = :ptable
                                          ORDER BY pid ASC, sorting ASC",
                                         [
                                             'pid' => (int) Input::get('id'),
-                                            'parentTable' => (string) $pTable,
+                                            'ptable' => (string) $pTable,
                                         ]
                                     );
                                     
@@ -353,12 +353,12 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                                         "SELECT id, pid, headline, type, inColumn, cssId, el_count
                                          FROM tl_content
                                          WHERE pid = :pid
-                                           AND parentTable = :parentTable
+                                           AND ptable = :ptable
                                          ORDER BY sorting ASC",
                                         [
                                             'pid' => (int) Input::get('id'),
                                    
-                                            'parentTable' => (string) $pTable
+                                            'ptable' => (string) $pTable
                                         ]
                                     );
                                     
@@ -387,12 +387,12 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                                         "SELECT id, pid, headline, type, inColumn, cssId, el_count
                                          FROM tl_content
                                          WHERE pid = :pid
-                                           AND parentTable = :parentTable
+                                           AND ptable = :ptable
                                          ORDER BY sorting ASC",
                                         [
                                             'pid' => (int) Input::get('id'),
                                    
-                                            'parentTable' => (string) $pTable
+                                            'ptable' => (string) $pTable
                                         ]
                                     );
                                     

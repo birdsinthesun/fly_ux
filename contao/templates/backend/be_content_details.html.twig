@@ -3,7 +3,7 @@
         {% if id != 'position' %}
             
         
-            <div id="fly_ux_{{ id }}" class="fix-wrapper  {% if id == 'container' %}not-drag-content{% else %}drag-content{% endif %}" >
+            <div id="fly_ux_{{ id }}" class="fix-wrapper  {% if id == 'container' or id == 'contentslider' or id == 'contentgrid' %}not-drag-content{% else %}drag-content{% endif %}" >
             <h3>{{ id }}</h3>
                 {# 1. Content-Elemente einfügen, falls vorhanden #}
                 {% if elementsByBlock[id] is defined %}
