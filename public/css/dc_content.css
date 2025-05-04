@@ -51,11 +51,13 @@
 .not-drag-content,
 .drag-content{
     display:block;
-    clear:both;
     float:left;
     min-height:60px;
     width:100%;
     
+    }
+.drag-content{
+    min-height:120px;
     }
 .drag-content > h3{
     position:relative;

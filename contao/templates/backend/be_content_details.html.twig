@@ -1,9 +1,9 @@
-{% macro renderBlocks(blocks, elementsByBlock) %}
+{% macro renderBlocks(blocks, elementsByBlock,plusClass) %}
     {% for id, content in blocks %}
         {% if id != 'position' %}
             
         
-            <div id="fly_ux_{{ id }}" class="fix-wrapper  {% if id == 'container' or id == 'contentslider' or id == 'contentgrid' %}not-drag-content{% else %}drag-content{% endif %}" >
+            <div id="fly_ux_{{ id }}" class="fix-wrapper  {% if id == 'container' or id == 'contentslider' or id == 'contentgrid' %}not-drag-content{% else %}drag-content {{ plusClass }}{% endif %}" >
             <h3>{{ id }}</h3>
                 {# 1. Content-Elemente einfügen, falls vorhanden #}
                 {% if elementsByBlock[id] is defined %}
@@ -25,7 +25,7 @@
                 {% set children = content %}
                 {% if children|length > 0 %}
                 
-                    {{ _self.renderBlocks(children, elementsByBlock) }}
+                    {{ _self.renderBlocks(children, elementsByBlock,plusClass) }}
                     
                 {% endif %}
             </div>
@@ -37,5 +37,5 @@
 <div id="fly_ux_content" class="drag-drop-wrapper {{ layoutClass }}" >
 <div id="fly_ux_operations">{{ operations|raw }}</div>
 <h2 >{{ pageName }}</h2>
-{{ layout.renderBlocks(htmlBlocks, elementsByBlock) }}
+{{ layout.renderBlocks(htmlBlocks, elementsByBlock,plusClass) }}
 </div>

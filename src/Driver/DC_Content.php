@@ -374,8 +374,16 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                              
                              }elseif(Input::get('mode') === 'plus'){
                             
-                                $pTable = 'tl_content';
-
+                                    $pTable = 'tl_content';
+                                    $plusElement = $this->container->get('database_connection')
+                                    ->fetchAllAssociative(
+                                        "SELECT el_css_class
+                                         FROM tl_content
+                                         WHERE id = :id",
+                                        [
+                                            'id' => (int) Input::get('id')
+                                        ]
+                                    );
                                     $htmlBlocks = [];
                                     $htmlBlocks[Input::get('plus')] = [];
                                     for ($i = 0; $i < Input::get('el'); $i++) {
@@ -384,7 +392,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                                     $arrElements = array();
                                     $dbElements = $this->container->get('database_connection')
                                     ->fetchAllAssociative(
-                                        "SELECT id, pid, headline, type, inColumn, cssId, el_count
+                                        "SELECT id, pid, headline, type, inColumn, cssId, el_count, el_css_class
                                          FROM tl_content
                                          WHERE pid = :pid
                                            AND ptable = :ptable
@@ -402,7 +410,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                                      
                                     }
 
-                                     return $this->renderDetailView(Null,$htmlBlocks,$arrElements,Null,'Content Plus',$operations);
+                                     return $this->renderDetailView(Null,$htmlBlocks,$arrElements,Null,'Content Plus',$operations,$plusElement[0]['el_css_class']);
                                     
                             }
                 
@@ -416,7 +424,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
     }
  
 
-    protected function renderDetailView($objLayout = Null,$htmlBlocks,$arrElements,$objPage = Null,$headline,$operations)
+    protected function renderDetailView($objLayout = Null,$htmlBlocks,$arrElements,$objPage = Null,$headline,$operations,$plusClass= '')
     {
         
         $requestStack = $this->container->get('request_stack');
@@ -429,6 +437,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
 		return $this->container->get('twig')->render(
 			'@Contao/backend/be_content_details.html.twig',
 			array(
+                'plusClass' => $plusClass,
                 'baseUrl' => $request->getSchemeAndHttpHost() . $request->getBaseUrl(),
                 'pageName' => $headline,
                 'layoutClass' => ($objLayout)?$objLayout->__get('cssClass'):'details',
