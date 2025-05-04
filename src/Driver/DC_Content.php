@@ -557,6 +557,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
             //self::preloadCurrentRecords([$this->intId],$this->strTable);
             // Get the current record
             $currentRecord = $this->getCurrentRecord($this->intId);
+           
 //var_dump($currentRecord);
             // Redirect if there is no record with the given ID
             if (null === $currentRecord)
@@ -574,7 +575,9 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                 
                 // throw new NotFoundException('Cannot load record "' . $this->strTable . '.id=' . $this->intId . '".');
             }
-
+            // ToDo: have to find all the code where contao is setting the ptable
+           // var_dump($currentRecord['ptable']);exit;
+            $currentRecord['ptable'] = $this->session->get('OP_ADD_PTABLE');
            // $this->denyAccessUnlessGranted(ContaoCorePermissions::DC_PREFIX . $this->strTable, new UpdateAction($this->strTable, $currentRecord));
 
             // Store the active record (backwards compatibility)
@@ -777,7 +780,8 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                     $return .= "\n</div>\n</fieldset>";
                    // return $return;
                 }
-
+                
+//var_dump($this->objActiveRecord->ptable,$currentRecord);exit;
                 $this->submit();
             }
             // Reload the page to prevent _POST variables from being sent twice

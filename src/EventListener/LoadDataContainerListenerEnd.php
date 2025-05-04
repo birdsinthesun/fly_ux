@@ -24,7 +24,7 @@ class LoadDataContainerListenerEnd
                     $GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][] = ['tl_page','addBreadcrumb'];
                     $GLOBALS['TL_DCA']['tl_content']['config']['ptable'] = 'tl_page';
                     $GLOBALS['TL_DCA']['tl_content']['config']['ctable'] = ['tl_content'];
-                    $GLOBALS['TL_DCA']['tl_content']['config']['ctable']['switchToEdit']  = true;
+                    $GLOBALS['TL_DCA']['tl_content']['config']['switchToEdit']  = true;
 
                     $GLOBALS['TL_DCA']['tl_content']['config']['dynamicPtable'] = true;
                     $GLOBALS['TL_DCA']['tl_content']['config']['enableVersioning']            = true;

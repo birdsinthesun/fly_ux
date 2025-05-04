@@ -8,7 +8,7 @@ use Contao\System;
 use Contao\Input;
 
 
-#[AsCallback(table: 'tl_content', target: 'config.oncreate')]
+#[AsCallback(table: 'tl_content', target: 'config.oncreate', priority:-15)]
 class OnCreateContentListener
 {
 
@@ -24,9 +24,9 @@ $record,
             $session = System::getContainer()->get('request_stack')->getSession()->getBag('contao_backend');
             
             //$dc->activeRecord->id = ($InsertID)?:Input::get('id');
-           // $dc->activeRecord->pid = $session->get('OP_ADD')['pid'];
-            $record['id'] = ($InsertID)?:Input::get('id');
-            $record['pid'] = $session->get('OP_ADD_PID');
+            $dc->activeRecord->ptable = $session->get('OP_ADD_PTABLE');
+           // $record['id'] = ($InsertID)?:Input::get('id');
+            $record['ptable'] = $session->get('OP_ADD_PTABLE');
            
             
            
