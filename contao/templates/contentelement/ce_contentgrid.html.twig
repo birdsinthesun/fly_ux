@@ -1,6 +1,6 @@
-{% macro renderGrid(elementsByColumn) %}
+{% macro renderGrid(elementsByColumn,plusClass) %}
     {% for column,elements in elementsByColumn %}
-            <div class="{{ column }}">
+            <div class="{{ column }} {{ plusClass }}">
                 {% if elements is defined %}
                     {% for element in elements %}
                         {{ element|raw }}
@@ -18,6 +18,6 @@
     <{{ headlineTag }}>{{ headline }}</{{ headlineTag }}>
     {% endif %}
     <div>
-        {{ layout.renderGrid(elementsByColumn) }}
+        {{ layout.renderGrid(elementsByColumn,plusClass) }}
     </div>
 </div>

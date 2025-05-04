@@ -42,7 +42,7 @@ class AddBackendAssetsListener
         if (($event->getRequest()->get('mode') === 'layout'||$event->getRequest()->get('mode') === 'plus')&&!$event->getRequest()->get('act')) {
                     
                         $page = PageModel::findOneBy('id',$event->getRequest()->get('id'));
-                        if($page){
+                    if($page){
                             $layout = LayoutModel::findOneBy('id',$page->loadDetails()->layout);
 
                         if ($layout === null) {

@@ -1,81 +1,81 @@
-#tl_listing #fly_ux_content.column-1 #fly_ux_main{
+#fly_ux_content.column-1 #fly_ux_main{
     width:100%;
     }
-#tl_listing #fly_ux_content.column-2 #fly_ux_main{
+#fly_ux_content.column-2 #fly_ux_main{
     width:70% !important;
     float:right;
     clear:none;
     }
     
-#tl_listing #fly_ux_content.column-2 #fly_ux_right{
+#fly_ux_content.column-2 #fly_ux_right{
     width:30% !important;
      float:right;
      clear:none;
     }
 
-#tl_listing .drag-item{width:100%; 
+#fly_ux_content .drag-item{width:100%; 
 box-sizing:border-box;
 
 }
 
 
-#tl_listing .grid1,
-#tl_listing .grid2,
-#tl_listing .grid3,
-#tl_listing .grid4,
-#tl_listing .grid5,
-#tl_listing .grid6,
-#tl_listing .grid7,
-#tl_listing .grid8,
-#tl_listing .grid9,
-#tl_listing .grid10,
-#tl_listing .grid11,
-#tl_listing .grid12{ 
+#fly_ux_content .grid1,
+#fly_ux_content .grid2,
+#fly_ux_content .grid3,
+#fly_ux_content .grid4,
+#fly_ux_content .grid5,
+#fly_ux_content .grid6,
+#fly_ux_content .grid7,
+#fly_ux_content .grid8,
+#fly_ux_content .grid9,
+#fly_ux_content .grid10,
+#fly_ux_content .grid11,
+#fly_ux_content .grid12{ 
     float:left;
     box-sizing:border-box;
     padding:0 15px;
 }
-#tl_listing  .clear-both{
+#fly_ux_content  .clear-both{
     clear:both;}
 @media only screen and (max-width: 960px) {
-    #tl_listing .grid1,
-    #tl_listing .grid2,
-    #tl_listing .grid3,
-    #tl_listing .grid4,
-    #tl_listing .grid5,
-    #tl_listing .grid6,
-    #tl_listing .grid7,
-    #tl_listing .grid8,
-    #tl_listing .grid9,
-    #tl_listing .grid10,
-    #tl_listing .grid11,
-    #tl_listing .grid12{ 
+    #fly_ux_content .grid1,
+    #fly_ux_content .grid2,
+    #fly_ux_content .grid3,
+    #fly_ux_content .grid4,
+    #fly_ux_content .grid5,
+    #fly_ux_content .grid6,
+    #fly_ux_content .grid7,
+    #fly_ux_content .grid8,
+    #fly_ux_content .grid9,
+    #fly_ux_content .grid10,
+    #fly_ux_content .grid11,
+    #fly_ux_content .grid12{ 
         width:100%;
     }  
 }
 @media only screen and (min-width: 961px) {
-    #tl_listing .grid1{ width:calc(100%/12)}
-    #tl_listing .grid2{ width:calc((100%/12)*2)}
-    #tl_listing .grid3{ width:calc((100%/12)*3)}
-    #tl_listing .grid4{ width:calc((100%/12)*4)}
-    #tl_listing .grid5{ width:calc((100%/12)*5)}
-    #tl_listing .grid6{ width:calc((100%/12)*6)}
-    #tl_listing .grid7{ width:calc((100%/12)*7)}
-    #tl_listing .grid8{ width:calc((100%/12)*8)}
-    #tl_listing .grid9{ width:calc((100%/12)*9)}
-    #tl_listing .grid10{ width:calc((100%/12)*10)}
-    #tl_listing .grid11{ width:calc((100%/12)*11)}
-    #tl_listing .grid12{ width:calc((100%/12)*12)}
+    #fly_ux_content .grid1{ width:calc(100%/12)}
+    #fly_ux_content .grid2{ width:calc((100%/12)*2)}
+    #fly_ux_content .grid3{ width:calc((100%/12)*3)}
+    #fly_ux_content .grid4{ width:calc((100%/12)*4)}
+    #fly_ux_content .grid5{ width:calc((100%/12)*5)}
+    #fly_ux_content .grid6{ width:calc((100%/12)*6)}
+    #fly_ux_content .grid7{ width:calc((100%/12)*7)}
+    #fly_ux_content .grid8{ width:calc((100%/12)*8)}
+    #fly_ux_content .grid9{ width:calc((100%/12)*9)}
+    #fly_ux_content .grid10{ width:calc((100%/12)*10)}
+    #fly_ux_content .grid11{ width:calc((100%/12)*11)}
+    #fly_ux_content .grid12{ width:calc((100%/12)*12)}
 }
 
-#tl_listing .grid1 .grid1,
-#tl_listing .grid2 .grid2,
-#tl_listing .grid3 .grid3,
-#tl_listing .grid4 .grid4,
-#tl_listing .grid5 .grid5,
-#tl_listing .grid6 .grid6,
-#tl_listing .grid7 .grid7,
-#tl_listing .grid8 .grid8,
-#tl_listing .grid9 .grid9,
-#tl_listing .grid10 .grid10,
-#tl_listing .grid11 .grid11{ width:calc(100%/1)}
+#fly_ux_content .grid1 .grid1,
+#fly_ux_content .grid2 .grid2,
+#fly_ux_content .grid3 .grid3,
+#fly_ux_content .grid4 .grid4,
+#fly_ux_content .grid5 .grid5,
+#fly_ux_content .grid6 .grid6,
+#fly_ux_content .grid7 .grid7,
+#fly_ux_content .grid8 .grid8,
+#fly_ux_content .grid9 .grid9,
+#fly_ux_content .grid10 .grid10,
+#fly_ux_content .grid11 .grid11{ width:calc(100%/1)}

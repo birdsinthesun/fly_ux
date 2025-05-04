@@ -27,12 +27,17 @@ $this->loadDataContainer('tl_page');
                 'inputType'               => 'text',
                 'sql'                     => "int(10) unsigned NOT NULL default 1"
             );
+     $GLOBALS['TL_DCA']['tl_content']['fields']['el_css_class'] = array
+            (
+                'inputType'               => 'text',
+                'sql'                     => "varchar(128) NOT NULL default ''"
+            );
     
    
    
 
-    $GLOBALS['TL_DCA']['tl_content']['palettes']['contentslider']   = '{type_legend},type,headline,el_count;{slider_legend},sliderDelay,sliderSpeed,sliderStartSlide,sliderContinuous;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},cssID;{invisible_legend:hide},invisible,start,stop';
-    $GLOBALS['TL_DCA']['tl_content']['palettes']['contentgrid']   = '{type_legend},type,headline,el_count;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},cssID;{invisible_legend:hide},invisible,start,stop';
+    $GLOBALS['TL_DCA']['tl_content']['palettes']['contentslider']   = '{type_legend},type,headline;{plus_legend},el_count,el_css_class;{slider_legend},sliderDelay,sliderSpeed,sliderStartSlide,sliderContinuous;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},cssID;{invisible_legend:hide},invisible,start,stop';
+    $GLOBALS['TL_DCA']['tl_content']['palettes']['contentgrid']   = '{type_legend},type,headline;{plus_legend},el_count,el_css_class;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},cssID;{invisible_legend:hide},invisible,start,stop';
 
                      
         

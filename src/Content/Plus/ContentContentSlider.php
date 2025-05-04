@@ -46,6 +46,7 @@ class ContentContentSlider extends ContentElement
        $elementPlus = $this->container->get('twig')->render(
 			$this->strChildTemplate,
 			array(
+                'plusClass' => $this->objElement->el_css_class,
                 'headline' => (isset($headline['value']))?$headline['value']:'',
                 'headlineTag' => (isset($headline['unit']))?$headline['unit']:'',
                 'cssId' => (isset($cssId[0]))?$cssId[0]:'',

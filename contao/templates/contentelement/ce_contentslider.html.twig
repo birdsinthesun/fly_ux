@@ -1,6 +1,6 @@
-{% macro renderSlides(elementsByColumn) %}
+{% macro renderSlides(elementsByColumn,plusClass) %}
     {% for column,elements in elementsByColumn %}
-            <div class="{{ column }}">
+            <div class="{{ column }} {{ plusClass }}">
                 {% if elements is defined %}
                     {% for element in elements %}
                         {{ element|raw }}
@@ -20,7 +20,7 @@
     {% endif %}
 <div class="content-slider" data-config="{{ settings.delay }},{{ settings.speed }},{{ settings.startSlide }},{{ settings.continuous }}">
     <div class="slider-wrapper">
-        {{ layout.renderSlides(elementsByColumn) }}
+        {{ layout.renderSlides(elementsByColumn,plusClass) }}
 
       </div>
   </div>
