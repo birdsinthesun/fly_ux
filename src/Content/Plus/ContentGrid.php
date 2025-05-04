@@ -42,8 +42,10 @@ class ContentGrid extends ContentElement
        $elementPlusStart = $this->container->get('twig')->render(
 			$strChildTemplate,
 			array(
-                'headline' => $headline,
-                'layoutClass' => ($objLayout)?$objLayout->__get('cssClass'):'details',
+                'headline' => $this->objElement->headline,
+                'headlineTag' => $this->objElement->h1,
+                'cssId' => StringUtil::deserialize($this->objElement->cssId, true)[0],
+                'cssClass' => StringUtil::deserialize($this->objElement->cssId, true)[1],
                 'elementsByColumn' => $objContentPlus->getElements()
 			)
 		);

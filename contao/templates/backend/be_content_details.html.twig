@@ -5,11 +5,6 @@
         
             <div id="fly_ux_{{ id }}" class="fix-wrapper  {% if id == 'container' %}not-drag-content{% else %}drag-content{% endif %}" >
             <h3>{{ id }}</h3>
-                {% if id == 'container' %}
-                    {% block scoper %}
-              
-                    {% endblock %}
-                {% endif %}
                 {# 1. Content-Elemente einfügen, falls vorhanden #}
                 {% if elementsByBlock[id] is defined %}
                     {% for element in elementsByBlock[id] %}
