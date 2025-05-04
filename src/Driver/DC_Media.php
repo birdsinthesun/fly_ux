@@ -104,7 +104,7 @@ class DC_Media extends DC_Folder
         $tokenManager = $this->container->get('contao.csrf.token_manager');
         
 		return $this->container->get('twig')->render(
-			'@Contao/media_view.html.twig',
+			'@Contao/backend/media_view.html.twig',
 			array(
                 'baseUrl' => $request->getSchemeAndHttpHost() . $request->getBaseUrl(),
 				'files' => $arrFiles,

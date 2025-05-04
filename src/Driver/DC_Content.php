@@ -427,7 +427,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
         $tokenManager = $this->container->get('contao.csrf.token_manager');
      
 		return $this->container->get('twig')->render(
-			'@Contao/be_content_details.html.twig',
+			'@Contao/backend/be_content_details.html.twig',
 			array(
                 'baseUrl' => $request->getSchemeAndHttpHost() . $request->getBaseUrl(),
                 'pageName' => $headline,

@@ -2,8 +2,8 @@
 use Contao\CoreBundle\ContaoCoreBundle;
 
 use Bits\FlyUxBundle\Pages\MyPageRegular;
-use Bits\FlyUxBundle\Content\ContentContentSlider;
-use Bits\FlyUxBundle\Content\ContentGrid;
+use Bits\FlyUxBundle\Content\Plus\ContentContentSlider;
+use Bits\FlyUxBundle\Content\Plus\ContentGrid;
 use Bits\FlyUxBundle\Driver\DC_Content;
 use Bits\FlyUxBundle\Widgets\ModuleWizard;
 use Bits\FlyUxBundle\Content\ContentModule;
@@ -14,7 +14,7 @@ use Bits\FlyUxBundle\Content\ContentModule;
     $GLOBALS['TL_CTE']['includes']['module'] = ContentModule::class;
     $GLOBALS['TL_CTE']['plus']['contentslider'] = ContentContentSlider::class;
     $GLOBALS['TL_CTE']['plus']['contentslider'] = ContentGrid::class;
-    
+  
     $GLOBALS['TL_DCA']['tl_content']['config']['dataContainer'] = DC_Content::class;
                    
     $GLOBALS['BE_MOD']['content']['page']['tables'] = ['tl_page','tl_content'];

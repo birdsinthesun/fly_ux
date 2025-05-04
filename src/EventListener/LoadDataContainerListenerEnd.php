@@ -14,9 +14,6 @@ class LoadDataContainerListenerEnd
     public function __invoke(string $table): void
     {
          
-     //
-
-  //var_dump($GLOBALS['BE_MOD']);exit;
        
             //changes to tl_content only
             if($table === 'tl_content'){
@@ -34,14 +31,14 @@ class LoadDataContainerListenerEnd
                     $GLOBALS['TL_DCA']['tl_content']['config']['markAsCopy']                  = 'headline';
                     
                     $GLOBALS['TL_DCA']['tl_content']['list']['sorting']['mode'] = DataContainer::MODE_PARENT;
-                    //unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['fields']);
+                    unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['fields']);
                     $GLOBALS['TL_DCA']['tl_content']['list']['sorting']['panelLayout'] = 'search';
                     $GLOBALS['TL_DCA']['tl_content']['list']['sorting']['defaultSearchField'] = 'headline';
-                   $GLOBALS['TL_DCA']['tl_content']['list']['label']['fields'] =  ['headline', 'type', 'inColumn'];
+                    $GLOBALS['TL_DCA']['tl_content']['list']['label']['fields'] =  ['headline', 'type', 'inColumn'];
                     $GLOBALS['TL_DCA']['tl_content']['list']['label']['format'] =   '%s <span class="label-info">[%s]</span><span class="label-column"> %s </span>';
                     unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['child_record_callback']);
-                     unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['renderAsGrid']);
-                     unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['limitHeight']);
+                    unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['renderAsGrid']);
+                    unset($GLOBALS['TL_DCA']['tl_content']['list']['sorting']['limitHeight']);
                   
                     
                     
@@ -99,8 +96,7 @@ class LoadDataContainerListenerEnd
                   
                    
             }
-             // var_dump($table,$GLOBALS['TL_DCA'][$table]['config']['dataContainer']);
-                 
+                  
     }
     
 }

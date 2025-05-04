@@ -1,0 +1,46 @@
+{% macro renderBlocks(blocks, elementsByBlock) %}
+    {% for id, content in blocks %}
+        {% if id != 'position' %}
+            
+        
+            <div id="fly_ux_{{ id }}" class="fix-wrapper  {% if id == 'container' %}not-drag-content{% else %}drag-content{% endif %}" >
+            <h3>{{ id }}</h3>
+                {% if id == 'container' %}
+                    {% block scoper %}
+              
+                    {% endblock %}
+                {% endif %}
+                {# 1. Content-Elemente einfügen, falls vorhanden #}
+                {% if elementsByBlock[id] is defined %}
+                    {% for element in elementsByBlock[id] %}
+                    <div  class="drag-item {{ element.css_class }}" data-element-id='{{ element.id }}'>
+                        <h4>
+                            <a class="btn_edit" href="{{ element.href_act_edit }}" title="{{ element.type }} bearbeiten">{{ element.type }}</a>
+                            {% if element.is_content_plus == true %}
+                              <a class="btn_edit_plus" href="{{ element.href_act_edit_plus }}" title="{{ element.type }}-elemente bearbeiten">Plus</a>
+                            {% endif %}
+                           <a class="btn_delete" href="{{ element.href_act_delete }}" title="{{ element.id }} löschen">Löschen</a>
+                        </h4>
+                        {{ element.content_element|raw }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                
+                {# 2. Kinder rendern (rekursiv) #}
+                {% set children = content %}
+                {% if children|length > 0 %}
+                
+                    {{ _self.renderBlocks(children, elementsByBlock) }}
+                    
+                {% endif %}
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+{% import _self as layout %}
+
+<div id="fly_ux_content" class="drag-drop-wrapper {{ layoutClass }}" >
+<div id="fly_ux_operations">{{ operations|raw }}</div>
+<h2 >{{ pageName }}</h2>
+{{ layout.renderBlocks(htmlBlocks, elementsByBlock) }}
+</div>
