@@ -1,6 +1,6 @@
 <?php
 
-namespace Bits\FlyUxBundle\Plus\Content;
+namespace Bits\FlyUxBundle\Content\Plus;
 
 use Contao\ContentModel;
 use Contao\System;
@@ -12,15 +12,13 @@ class ContentPlus
     
     public $ptable;
     
-    protected $objParent;
     
     
-     public function __construct($objParent)
+     public function __construct($objParentId)
     {
         
-        $this->id = $objParent->id;
+        $this->pid = $objParentId;
         $this->table = 'tl_content';
-        $this->objParent = $objParent;
         
     }
     
@@ -31,11 +29,11 @@ class ContentPlus
 		$arrElements = [];
         
         $request = System::getContainer()->get('request_stack')->getCurrentRequest();
-		if($request && $this->container->get('contao.routing.scope_matcher')->isBackendRequest($request)){
-            $objElements = ContentModel::findByPidAndTable($this->id ,$this->table);
+		if($request && System::getContainer()->get('contao.routing.scope_matcher')->isBackendRequest($request)){
+            $objElements = ContentModel::findByPidAndTable($this->pid ,$this->table);
 
             }else{
-             $objElements = ContentModel::findPublishedByPidAndTable($this->id ,$this->table);
+             $objElements = ContentModel::findPublishedByPidAndTable($this->pid ,$this->table);
    
         }
             
@@ -61,14 +59,31 @@ class ContentPlus
                         if (class_exists($strClass)) {
                             /** @var \Contao\ContentElement $objElement */
                             $objElement = new $strClass($objElementModel);
-                            $arrElements[$objElementModel->inColumn][$objElementModel->id] = $objElement->generate();
+                         }else{
+                             $strClass = $this->findContentElementClass($row->type);
+                            $objElement = new $strClass($objElementModel);
                         }
+                        
+                        $arrElements[$objElementModel->inColumn][$objElementModel->id] = $objElement->generate();
+                     
     
                 }
             }
 
     return $arrElements;
      
+        
+    }
+    
+      public function findContentElementClass(string $targetType):string
+    {
+        foreach ($GLOBALS['TL_CTE'] as $group => $classes) {
+           foreach ($classes as $type => $class) {
+            if($type === $targetType){
+                return  $class;
+                }
+            }
+        }
         
     }
     

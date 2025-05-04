@@ -34,13 +34,15 @@ class ContentContentSlider extends ContentElement
     
 	public function generate()
 	{
+        
+        
         $this->objElement = ContentModel::findById($this->__get('id'));
         $this->container = System::getContainer();
        
        $objContentPlus = new ContentPlus($this->objElement->id);
        
        $elementPlusStart = $this->container->get('twig')->render(
-			$strChildTemplate,
+			$this->strChildTemplate,
 			array(
                 'headline' => $this->objElement->headline,
                 'headlineTag' => $this->objElement->h1,
@@ -58,7 +60,6 @@ class ContentContentSlider extends ContentElement
 			)
 		);
 
-        
         return $elementPlus;
        
     }
@@ -66,6 +67,7 @@ class ContentContentSlider extends ContentElement
 	protected function compile()
 	{
        
+        
         $request = $this->container->get('request_stack')->getCurrentRequest();
 		
         if($this->hasParentPlus()){

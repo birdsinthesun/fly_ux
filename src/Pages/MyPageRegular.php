@@ -349,9 +349,12 @@ class MyPageRegular extends Frontend
                 if (class_exists($strClass)) {
                     /** @var \Contao\ContentElement $objElement */
                     $objElement = new $strClass($row);
-                    $arrElements[$row->id] = $objElement->generate();
-                    //var_dump($objElement->generate());
-                }
+                 
+                }else{
+                    $strClass = $this->findContentElementClass($row->type);
+                    $objElement = new $strClass($row);
+                    }
+                 $arrElements[$row->id] = $objElement->generate();
             }
             
         }
@@ -742,4 +745,16 @@ class MyPageRegular extends Frontend
 			return $this->responseContext->get(JsonLdManager::class)->collectFinalScriptFromGraphs();
 		};
 	}
+    
+       public function findContentElementClass(string $targetType):string
+    {
+        foreach ($GLOBALS['TL_CTE'] as $group => $classes) {
+           foreach ($classes as $type => $class) {
+            if($type === $targetType){
+                return  $class;
+                }
+            }
+        }
+        
+    }
 }

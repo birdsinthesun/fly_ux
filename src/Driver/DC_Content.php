@@ -523,10 +523,13 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
 
                 if (class_exists($strClass)) {
                     /** @var \Contao\ContentElement $objElement */
+                    $objElement = new $strClass($row);   
+                }else{
+                    $strClass = $this->findContentElementClass($row->type);
                     $objElement = new $strClass($row);
-                  
-                     return  $objElement->generate();
-                }
+                    }
+                
+                 return  $objElement->generate();
          }else{
              return '';
              } 
@@ -987,7 +990,17 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
         }
     }
   
-
+    public function findContentElementClass(string $targetType):string
+    {
+        foreach ($GLOBALS['TL_CTE'] as $group => $classes) {
+           foreach ($classes as $type => $class) {
+            if($type === $targetType){
+                return  $class;
+                }
+            }
+        }
+        
+    }
  
       /**
 	 * Delete all incomplete and unrelated records
