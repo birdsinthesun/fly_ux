@@ -30,7 +30,7 @@ class ContentPlus
         
         $request = System::getContainer()->get('request_stack')->getCurrentRequest();
 		if($request && System::getContainer()->get('contao.routing.scope_matcher')->isBackendRequest($request)){
-            $objElements = ContentModel::findByPidAndTable($this->pid ,$this->table);
+            $objElements = ContentModel::findBy('pid',$this->pid ,['ptable'=>$this->table]);
 
             }else{
              $objElements = ContentModel::findPublishedByPidAndTable($this->pid ,$this->table);

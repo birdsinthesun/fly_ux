@@ -1,8 +1,8 @@
 {% macro renderSlides(elementsByColumn) %}
-    {% for column in elementsByColumn %}
+    {% for column,elements in elementsByColumn %}
             <div class="{{ column }}">
-                {% if elementsByBlock[column] is defined %}
-                    {% for element in elementsByBlock[id] %}
+                {% if elements is defined %}
+                    {% for element in elements %}
                         {{ element|raw }}
                     {% endfor %}
                 {% endif %}
@@ -15,7 +15,9 @@
 
 <div id="{{ cssId }}" class="{{ cssClass }}" >
 
-<{{ headlineTag }}>{{ headline }}</{{ headlineTag }}>
+{% if headline != '' %}
+    <{{ headlineTag }}>{{ headline }}</{{ headlineTag }}>
+    {% endif %}
 <div class="content-slider" data-config="{{ settings.delay }},{{ settings.speed }},{{ settings.startSlide }},{{ settings.continuous }}">
     <div class="slider-wrapper">
         {{ layout.renderSlides(elementsByColumn) }}

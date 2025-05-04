@@ -478,7 +478,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                 $element['css_class'] = $cssId;
                 $element['href_act_edit'] = 'contao?do=content&id='.$element['id'].'&table=tl_content&act=edit';
                $element['href_act_delete'] = 'contao?do=content&id='.$element['id'].'&table=tl_content&act=delete&rt='.$token;
-                $element['is_content_plus'] = ($element['type']==='contentslider'||$element['type']==='grid')?true:false;
+                $element['is_content_plus'] = ($element['type']==='contentslider'||$element['type']==='contentgrid')?true:false;
                 $element['href_act_edit_plus'] = 'contao?do='.Input::get('do').'&mode=plus&table=tl_content&pid='.$element['pid'].'&id='.$element['id'].'&plus='.$element['type'].'&el='.$element['el_count'];
              
                 

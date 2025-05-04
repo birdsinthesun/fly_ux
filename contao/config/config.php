@@ -13,7 +13,7 @@ use Bits\FlyUxBundle\Content\ContentModule;
     $GLOBALS['BE_FFL']['flyWizard']  = ModuleWizard::class;
     $GLOBALS['TL_CTE']['includes']['module'] = ContentModule::class;
     $GLOBALS['TL_CTE']['plus']['contentslider'] = ContentContentSlider::class;
-    $GLOBALS['TL_CTE']['plus']['contentslider'] = ContentGrid::class;
+    $GLOBALS['TL_CTE']['plus']['contentgrid'] = ContentGrid::class;
   
     $GLOBALS['TL_DCA']['tl_content']['config']['dataContainer'] = DC_Content::class;
                    

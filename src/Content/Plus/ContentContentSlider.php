@@ -40,14 +40,16 @@ class ContentContentSlider extends ContentElement
         $this->container = System::getContainer();
        
        $objContentPlus = new ContentPlus($this->objElement->id);
-       
-       $elementPlusStart = $this->container->get('twig')->render(
+       $cssId = StringUtil::deserialize($this->objElement->cssId, true);
+       $headline = StringUtil::deserialize($this->objElement->cssId, true);
+      
+       $elementPlus = $this->container->get('twig')->render(
 			$this->strChildTemplate,
 			array(
-                'headline' => $this->objElement->headline,
-                'headlineTag' => $this->objElement->h1,
-                'cssId' => StringUtil::deserialize($this->objElement->cssId, true)[0],
-                'cssClass' => StringUtil::deserialize($this->objElement->cssId, true)[1],
+                'headline' => (isset($headline['value']))?$headline['value']:'',
+                'headlineTag' => (isset($headline['unit']))?$headline['unit']:'',
+                'cssId' => (isset($cssId[0]))?$cssId[0]:'',
+                'cssClass' => (isset($cssId[1]))?$cssId[1]:'',
                 'elementsByColumn' => $objContentPlus->getElements(),
                 'settings' => [
                         'delay' => $this->objElement->sliderDelay,

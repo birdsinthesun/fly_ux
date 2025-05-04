@@ -32,6 +32,7 @@ $this->loadDataContainer('tl_page');
    
 
     $GLOBALS['TL_DCA']['tl_content']['palettes']['contentslider']   = '{type_legend},type,headline,el_count;{slider_legend},sliderDelay,sliderSpeed,sliderStartSlide,sliderContinuous;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},cssID;{invisible_legend:hide},invisible,start,stop';
+    $GLOBALS['TL_DCA']['tl_content']['palettes']['contentgrid']   = '{type_legend},type,headline,el_count;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},cssID;{invisible_legend:hide},invisible,start,stop';
 
                      
         

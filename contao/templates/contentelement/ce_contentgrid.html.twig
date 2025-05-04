@@ -1,8 +1,8 @@
 {% macro renderGrid(elementsByColumn) %}
-    {% for column in elementsByColumn %}
+    {% for column,elements in elementsByColumn %}
             <div class="{{ column }}">
-                {% if elementsByBlock[column] is defined %}
-                    {% for element in elementsByBlock[id] %}
+                {% if elements is defined %}
+                    {% for element in elements %}
                         {{ element|raw }}
                     {% endfor %}
                 {% endif %}
@@ -14,8 +14,9 @@
 {% import _self as layout %}
 
 <div id="{{ cssId }}" class="{{ cssClass }}" >
-
+ {% if headline != '' %}
     <{{ headlineTag }}>{{ headline }}</{{ headlineTag }}>
+    {% endif %}
     <div>
         {{ layout.renderGrid(elementsByColumn) }}
     </div>
