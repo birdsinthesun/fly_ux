@@ -16,6 +16,13 @@ Beispiel für contao/calendar-bundle
                         
 ### Events
 
+#### config/services.yaml
+
+´Bits\FlyUxBundle\EventListener\ContentLayoutModeCalendarListener:
+    tags:
+        - { name: kernel.event_listener, event: Bits\FlyUxBundle\DependencyInjection\Event\ContentLayoutModeEvent }
+       ´
+
 #### ContentLayoutModeEvent
 
 
