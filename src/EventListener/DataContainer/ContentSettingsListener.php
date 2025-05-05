@@ -1,6 +1,6 @@
 <?php
 
-namespace Bits\FlyUxBundle\EventListener;
+namespace Bits\FlyUxBundle\EventListener\DataContainer;
 
 use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Bits\FlyUxBundle\Driver\DC_Content;
@@ -8,7 +8,7 @@ use Contao\DataContainer;
 use Contao\Input;
 
 #[AsHook('loadDataContainer','__invoke',-18)]
-class LoadDataContainerListenerEnd
+class ContentSettingsListener
 {
     public function __invoke(string $table): void
     {

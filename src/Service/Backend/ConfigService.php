@@ -17,12 +17,20 @@ class ConfigService
     
     public function useflyUxDriver():bool
     {
-        return(
+         return(
             isset($GLOBALS['BE_FLY_UX']['content'][$this->backendModule]['config']['driver'])
             &&$GLOBALS['BE_FLY_UX']['content'][$this->backendModule]['config']['driver']==='fly_ux'
-            &&isset($GLOBALS['BE_FLY_UX']['content'][$this->backendModule]['init'])
         );
     }
+    
+     public function getViewSettings($arrSettings):array
+    {
+       $class = new $GLOBALS['BE_FLY_UX']['content'][$this->backendModule]['config']['callbacks']['view_settings'][0];
+        
+        return $class->{$GLOBALS['BE_FLY_UX']['content'][$this->backendModule]['config']['callbacks']['view_settings'][1]}($arrSettings);
+    
+    }
+    
     
     public function isParentTable():bool
     {

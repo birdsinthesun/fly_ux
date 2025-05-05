@@ -50,6 +50,14 @@ services:
             $connection: '@database_connection'
         tags:
             - { name: contao.migration }
+            
+                  
+    Bits\FlyUxBundle\EventListener\View\ContentLayoutModeContentListener:
+        tags: ['contao.callback']
+    Bits\FlyUxBundle\EventListener\View\ContentLayoutModeCalendarListener:
+        tags: ['contao.callback']
+    Bits\FlyUxBundle\EventListener\View\ContentLayoutModeNewsListener:
+        tags: ['contao.callback']
         
     Bits\FlyUxBundle\:
         resource: '../src/*'

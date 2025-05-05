@@ -6,21 +6,19 @@ Beispiel für contao/calendar-bundle
 
 
 
-´    $GLOBALS['BE_FLY_UX']['content']['calendar']['config']  = [
+´$GLOBALS['BE_FLY_UX']['content']['calendar']['config']  = [
                 'driver' => 'fly_ux',
                 'relations' => [
                     'tl_calendar', 
                     'tl_calendar_events',
                     'tl_content'
-                        ]´
+                        ],
+                  'callbacks' => [
+                    'view_settings' => ['Bits\FlyUxBundle\EventListener\View\ContentLayoutModeCalendarListener', 'getSettings']
+                  
+                  ]´
                         
-### Events
-
-#### config/services.yaml
-
-´Bits\FlyUxBundle\EventListener\ContentLayoutModeCalendarListener:
-    tags:
-        - { name: kernel.event_listener, event: Bits\FlyUxBundle\DependencyInjection\Event\ContentLayoutModeEvent }
+### Callbacks
        ´
 
 #### ContentLayoutModeEvent
@@ -28,30 +26,23 @@ Beispiel für contao/calendar-bundle
 
 
 ´<?php
-// src\EventListener\View\ContentLayoutModeCalendarListener
-
 
 namespace Bits\FlyUxBundle\EventListener\View;
 
-use Bits\FlyUxBundle\DependencyInjection\Event\ContentLayoutModeEvent;
 
 class ContentLayoutModeCalendarListener
 {
-    public function __invoke(ContentLayoutModeEvent $event): void
+     public function getSettings($arrSettings): array
     {
-            $arrSettings = $event->getDetailViewSettings();
 
             $arrSettings['ptable'] = 'tl_calendar_events';
             $arrSettings['headline'] = 'Event Details';
-            $arrSettings['layoutClass'] = '';
-
-
-                                     
+            $arrSettings['layoutClass'] = '';       
             $arrSettings['htmlBlocks'] = [];
             $arrSettings['htmlBlocks']['container'] = [];
             $arrSettings['htmlBlocks']['container']['main'] = [];
             
-            $event->setDetailViewSettings($arrSettings);
+            return $arrSettings;
     }
     
 }´

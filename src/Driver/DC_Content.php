@@ -23,7 +23,8 @@ use Contao\CoreBundle\Security\DataContainer\UpdateAction;
 use Contao\EditableDataContainerInterface;
 use Contao\ListableDataContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Bits\FlyUxBundle\Service\ImageResizer;
+use Bits\FlyUxBundle\Callback\ContentLayoutMode;
+use Bits\FlyUxBundle\Helper\FrameworkHelper;
 
 class DC_Content extends DC_Table implements EditableDataContainerInterface
 {
@@ -38,10 +39,19 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
     
     public $intId;
     
+    protected $configService;
+    
     public function __construct($strTable, $arrModule=array())
     {
 
-         $this->strTable = $strTable;
+         
+        $this->configService = System::getContainer()->get('fly_ux.config_service');
+        if(!$this->configService ->useflyUxDriver()){
+            
+             return 'Bitte die API-Doku auf Github lesen. (https://github.com/birdsinthesun/fly_ux)';
+                   
+        }
+        $this->strTable = $strTable;
          $this->arrModule = $arrModule; 
         
         $configService = System::getContainer()->get('fly_ux.config_service');
@@ -251,131 +261,42 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
     {
         
   
-         $configService = System::getContainer()->get('fly_ux.config_service');
-      //    if($configService->useflyUxDriver()&&$configService->isContentTable())
-      //  {    
-          
-					$operations = $this->generateGlobalButtons();
-                        if(Input::get('do') === 'content'&&Input::get('mode') === 'layout'){
-                            
-                            $pTable = 'tl_page';
+            $operations = $this->generateGlobalButtons();
+                    
+            if(Input::get('mode') === 'layout'){
+                
+                $arrSettings = [];
+                $arrSettings =  $this->configService->getViewSettings($arrSettings);
 
-                             //find Layout of the page 
-                             $pageModel = new PageModel;
-                             $objPage = $pageModel::findById(Input::get('id'));
-                             $layoutId = $objPage->loadDetails()->layout;
-                             
-                             
-                             $layoutModel = new LayoutModel;
-                             $objLayout = $layoutModel::findById($layoutId);
-                             // find layout sections within sections and modules
                             
-                             // make an assoc array about the posibilities to include a section
-                             $attrBlock = ['position'=>'default'];
-                             
-                             $htmlBlocks = [];
-                             $htmlBlocks['container'] = $attrBlock;
-                             
-                             
-                                foreach(unserialize($objLayout->modules) as $module){
-                                     if($module['mod'] !== '0'){
-                                        continue;
-                                         }
-                                         
-                              
-                                   //var_dump(unserialize($objLayout->sections));exit;
-                                     foreach(unserialize($objLayout->sections) as $section){
-                                         
-                                     //  var_dump($module['col'] === $section['id'],$section['id'],$module['col']);  
-                                         if($section['position'] === 'top'
-                                         &&$module['col'] === $section['id']){
-                                             $htmlBlocks[$section['id']] = ['position'=>'top'];
-                                             }
-                                         elseif($section['position'] === 'before'
-                                         &&$module['col'] === $section['id']){
-                                                 
-                                             $htmlBlocks['container'][$section['id']] = ['position'=>'before'];  
-                                            $htmlBlocks['container'][$module['col']] = $attrBlock;
-                                            
-                                        }elseif($section['position'] === $module['col']
-                                        &&$module['col'] === $section['id']){
-                                                 
-                                             $htmlBlocks['container'][$module['col']][$section['id']] = ['position'=>'main'];    
-                                        }elseif($section['position'] === 'after'
-                                        &&$module['col'] === $section['id']){
-                                            
-                                            $htmlBlocks['container'][$module['col']] = $attrBlock;
-                                             $htmlBlocks['container'][$section['id']] = ['position'=>'after'];    
-                                        }elseif($section['position'] === 'bottom'
-                                        &&$module['col'] === $section['id']){
-                                                 
-                                             $htmlBlocks[$section['id']] = ['position'=>'bottom'];    
-                                        }else{
-                                             $htmlBlocks['container'][$module['col']] = $attrBlock;
-                                            
-                                            }
-                                         
-                                    }
-                                }
-                                  $arrElements = array();
-                                    $dbElements = $this->container->get('database_connection')
-                                    ->fetchAllAssociative(
-                                        "SELECT id, pid, headline, type, inColumn, cssId, el_count
-                                         FROM tl_content
-                                         WHERE pid = :pid
-                                           AND ptable = :ptable
-                                         ORDER BY pid ASC, sorting ASC",
-                                        [
-                                            'pid' => (int) Input::get('id'),
-                                            'ptable' => (string) $pTable,
-                                        ]
-                                    );
+                      $arrElements = array();
+                        $dbElements = $this->container->get('database_connection')
+                        ->fetchAllAssociative(
+                            "SELECT id, pid, headline, type, inColumn, cssId, el_count
+                             FROM tl_content
+                             WHERE pid = :pid
+                               AND ptable = :ptable
+                             ORDER BY pid ASC, sorting ASC",
+                            [
+                                'pid' => (int) Input::get('id'),
+                                'ptable' => (string) $arrSettings['ptable'],
+                            ]
+                        );
                                     
                                     
-                                    if ($dbElements !== null)
-                                    {
-                                      $arrElements = $this->buildElements($dbElements,Input::get('id')); 
-                                       
-                                    }
+                        if ($dbElements !== null)
+                        {
+                          $arrElements = $this->buildElements($dbElements,Input::get('id')); 
+                           
+                        }
 
 
                                 
-                                return $this->renderDetailView($objLayout,$htmlBlocks,$arrElements,$objPage,$objPage->__get('title'),$operations);  
-                         
-                                   // var_dump($htmlBlocks);exit;
-                            }elseif((Input::get('do') === 'calendar'||Input::get('do') === 'news')&&Input::get('mode') === 'layout'){
-                             
-                                    $pTable = (Input::get('do') === 'calendar')?'tl_calendar_events':'tl_news';
-                                     
-                                    $htmlBlocks = [];
-                                    $htmlBlocks['container'] = [];
-                                    $htmlBlocks['container']['main'] = [];
-                                    $arrElements = array();
-                                    $dbElements = $this->container->get('database_connection')
-                                    ->fetchAllAssociative(
-                                        "SELECT id, pid, headline, type, inColumn, cssId, el_count
-                                         FROM tl_content
-                                         WHERE pid = :pid
-                                           AND ptable = :ptable
-                                         ORDER BY sorting ASC",
-                                        [
-                                            'pid' => (int) Input::get('id'),
-                                   
-                                            'ptable' => (string) $pTable
-                                        ]
-                                    );
-                                    
-                                     if ($dbElements !== null)
-                                    {
-                                      $arrElements = $this->buildElements($dbElements,Input::get('id')); 
-                                       }
-
-                                     return $this->renderDetailView(Null,$htmlBlocks,$arrElements,Null,'Details',$operations);
-                                    
-                                    
+                        return $this->renderDetailView($arrSettings['htmlBlocks'],$arrElements,$arrSettings['layoutClass'],$arrSettings['headline'],$operations);  
+                                       
                              
                              
-                             }elseif(Input::get('mode') === 'plus'){
+                }elseif(Input::get('mode') === 'plus'){
                             
                                     $pTable = 'tl_content';
                                     $plusElement = $this->container->get('database_connection')
@@ -413,21 +334,15 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                                      
                                     }
 
-                                     return $this->renderDetailView(Null,$htmlBlocks,$arrElements,Null,'Content Plus',$operations,$plusElement[0]['el_css_class']);
+                                     return $this->renderDetailView($htmlBlocks,$arrElements,'','Content Plus',$operations,$plusElement[0]['el_css_class']);
                                     
                             }
-                
-          //  }else{
-                
-             //   parent::parentView();
-                
-          //  }
       
        
     }
  
 
-    protected function renderDetailView($objLayout = Null,$htmlBlocks,$arrElements,$objPage = Null,$headline,$operations,$plusClass= '')
+    protected function renderDetailView($htmlBlocks,$arrElements,$layoutClass,$headline,$operations,$plusClass= '')
     {
         
         $requestStack = $this->container->get('request_stack');
@@ -443,7 +358,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                 'plusClass' => $plusClass,
                 'baseUrl' => $request->getSchemeAndHttpHost() . $request->getBaseUrl(),
                 'pageName' => $headline,
-                'layoutClass' => ($objLayout)?$objLayout->__get('cssClass'):'details',
+                'layoutClass' => $layoutClass,
                 'htmlBlocks' =>$htmlBlocks,
                 'elementsByBlock' => $arrElements,
                 'operations' => $operations
