@@ -10,10 +10,7 @@ class ContentLayoutModeCalendarListener
 
             $arrSettings['ptable'] = 'tl_calendar_events';
             $arrSettings['headline'] = 'Event Details';
-            $arrSettings['layoutClass'] = '';
-
-
-                                     
+            $arrSettings['layoutClass'] = '';       
             $arrSettings['htmlBlocks'] = [];
             $arrSettings['htmlBlocks']['container'] = [];
             $arrSettings['htmlBlocks']['container']['main'] = [];
