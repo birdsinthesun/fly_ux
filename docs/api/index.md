@@ -1,8 +1,10 @@
-## API
+## API 
+
+Beispiel für contao/calendar-bundle
 
 ### contao/config.php
 
-Example for contao/calendar-bundle
+
 
 ´    $GLOBALS['BE_FLX_UX']['content']['calendar']['config']  = [
                 'driver' => 'fly_ux',
@@ -12,8 +14,38 @@ Example for contao/calendar-bundle
                     'tl_content'
                         ]´
                         
-### Callbacks
+### Events
 
-#### fly_ux.driver_view
+#### ContentLayoutModeEvent
 
-#### fly_ux.inColumn_Options
+
+
+´<?php
+// src\EventListener\View\ContentLayoutModeCalendarListener
+
+
+namespace Bits\FlyUxBundle\EventListener\View;
+
+use Bits\FlyUxBundle\DependencyInjection\Event\ContentLayoutModeEvent;
+
+class ContentLayoutModeCalendarListener
+{
+    public function __invoke(ContentLayoutModeEvent $event): void
+    {
+            $arrSettings = $event->getDetailViewSettings();
+
+            $arrSettings['ptable'] = 'tl_calendar_events';
+            $arrSettings['headline'] = 'Event Details';
+            $arrSettings['layoutClass'] = '';
+
+
+                                     
+            $arrSettings['htmlBlocks'] = [];
+            $arrSettings['htmlBlocks']['container'] = [];
+            $arrSettings['htmlBlocks']['container']['main'] = [];
+            
+            $event->setDetailViewSettings($arrSettings);
+    }
+    
+}´
+
