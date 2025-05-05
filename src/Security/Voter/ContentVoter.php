@@ -20,11 +20,14 @@ class ContentVoter extends Voter
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         /** @var CreateAction $subject */
-//var_dump($token);exit;
+
         if ($subject->getDataSource() !== 'tl_content') {
             return false;
         }
 
+        if(in_array(Input::get('ptable'),$GLOBALS['BE_FLY_UX']['content'][Input::get('do')]['config']['relations'])){
+            return true;
+            }
         // PTable == tl_content erlauben (z.B. Nested Elements)
         if ((Input::get('ptable') ?? null) === 'tl_content') {
             return true;

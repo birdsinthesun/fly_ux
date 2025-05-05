@@ -46,11 +46,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
 
          
         $this->configService = System::getContainer()->get('fly_ux.config_service');
-        if(!$this->configService ->useflyUxDriver()){
-            
-             return 'Bitte die API-Doku auf Github lesen. (https://github.com/birdsinthesun/fly_ux)';
-                   
-        }
+      
         $this->strTable = $strTable;
          $this->arrModule = $arrModule; 
         
@@ -251,9 +247,6 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
 
                 $this->redirect($this->getReferer());
             
-       // }else{
-           // parent::create($set);
-       // }
 	}
     
    
@@ -261,13 +254,20 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
     {
         
   
+            if(!$this->configService ->useflyUxDriver()){
+            
+                return 'Bitte die API-Doku auf Github lesen. (https://github.com/birdsinthesun/fly_ux)';
+                   
+            }
+        
             $operations = $this->generateGlobalButtons();
-                    
+                  
             if(Input::get('mode') === 'layout'){
                 
                 $arrSettings = [];
+                
                 $arrSettings =  $this->configService->getViewSettings($arrSettings);
-
+             
                             
                       $arrElements = array();
                         $dbElements = $this->container->get('database_connection')
