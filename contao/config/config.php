@@ -70,11 +70,12 @@ use Bits\FlyUxBundle\Content\ContentModule;
         unset($GLOBALS['FE_MOD']['navigationMenu']['articlenav']);
         unset($GLOBALS['FE_MOD']['miscellaneous']['articlelist']);
         unset($GLOBALS['TL_CTE']['includes']['article']);
-        unset($GLOBALS['TL_CTE']['includes']['content']);
+        //unset($GLOBALS['TL_CTE']['includes']['content']);
         unset($GLOBALS['TL_CTE']['includes']['teaser']);
         unset($GLOBALS['TL_CTE']['includes']['alias']);
         unset($GLOBALS['TL_CTE']['legacy']['accordionSingle']);
         unset($GLOBALS['TL_CTE']['miscellaneous']['swiper']);
+         unset($GLOBALS['TL_CTE']['miscellaneous']['element_group']);
         //unset($GLOBALS['TL_MODELS']['tl_article']);
          // unset($GLOBALS['TL_DCA']['tl_page']['list']['operations']['children']);
        
