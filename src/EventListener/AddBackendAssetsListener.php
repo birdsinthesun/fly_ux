@@ -28,6 +28,10 @@ class AddBackendAssetsListener
         if (!$this->scopeMatcher->isBackendMainRequest($event)) {
             return;
         }
+        if ($event->getRequest()->get('do') === 'page') {
+            
+            $GLOBALS['TL_CSS'][] = 'bundles/flyux/css/tl-page.css';
+        }
        
         if ($event->getRequest()->get('do') === 'files') {
            

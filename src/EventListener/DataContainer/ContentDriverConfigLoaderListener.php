@@ -26,6 +26,9 @@ class ContentDriverConfigLoaderListener
                         $GLOBALS['TL_DCA']['tl_content']['config']['ptable'] = Input::get('ptable');
                     }
          }
+         if($table === 'tl_page'){
+          //  unset($GLOBALS['TL_DCA']['tl_page']['list']['operations']);
+         }
           // settings for fly_ux driver
         if(isset($GLOBALS['BE_FLY_UX']['content'][Input::get('do')]['config']['driver'])
             &&$GLOBALS['BE_FLY_UX']['content'][Input::get('do')]['config']['driver'] === 'fly_ux'
@@ -41,12 +44,33 @@ class ContentDriverConfigLoaderListener
                         $GLOBALS['TL_DCA'][$ptable]['config']['ctable'] = [$GLOBALS['BE_FLY_UX']['content'][Input::get('do')]['config']['relations'][$key+1]];
                        //set the show-button
                        if($GLOBALS['BE_FLY_UX']['content'][Input::get('do')]['config']['relations'][$key+1]==='tl_content'){
-                           // $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['prefetch'] = false;
-                            $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['primary'] = true;
-                            $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['attributes'] = 'data-contao--deeplink-target="primary"';
-                            $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['icon'] = 'system/themes/flexible/icons/children.svg';
-                            $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['label'] = ['Inhalte', 'Inhalt bearbeiten'];
-                            $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['button_callback'] = [self::class, 'contentShowButton'];
+                           if(Input::get('do')!=='page')
+                            { 
+                               $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['prefetch'] = true;
+                           
+                                $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['primary'] = true;
+                                $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['attributes'] = 'data-contao--deeplink-target="primary"';
+                                $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['icon'] = 'system/themes/flexible/icons/children.svg';
+                                $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['label'] = ['Inhalte', 'Inhalt bearbeiten'];
+                                $GLOBALS['TL_DCA'][$ptable]['list']['operations']['children']['button_callback'] = ['Bits\FlyUxBundle\Operation\Children', 'contentShowButton'];
+                            }else{
+                                
+                                
+                               
+                                
+                               
+                                $GLOBALS['TL_DCA'][$ptable]['list']['operations']['articles']['prefetch'] = true;
+                           
+                                $GLOBALS['TL_DCA'][$ptable]['list']['operations']['articles']['primary'] = true;
+                                $GLOBALS['TL_DCA'][$ptable]['list']['operations']['articles']['attributes'] = 'data-contao--deeplink-target="primary"';
+                                $GLOBALS['TL_DCA'][$ptable]['list']['operations']['articles']['icon'] = 'system/themes/flexible/icons/children.svg';
+                                $GLOBALS['TL_DCA'][$ptable]['list']['operations']['articles']['label'] = ['Inhalte', 'Inhalt bearbeiten'];
+                                $GLOBALS['TL_DCA'][$ptable]['list']['operations']['articles']['href'] = 'mode=layout&table=tl_content';
+                                $GLOBALS['TL_DCA'][$ptable]['list']['operations']['articles']['button_callback'] = ['Bits\FlyUxBundle\Operation\Children', 'contentShowButton'];
+                                
+                                
+                                }
+                             
                              $GLOBALS['BE_FLY_UX']['content'][Input::get('do')]['showBtn'] = $ptable;
                           
                         }
@@ -66,19 +90,6 @@ class ContentDriverConfigLoaderListener
 
             }
 
-    }
-    
-     public static function contentShowButton(array $row, $href, string $label, string $title, $icon, string $attributes): string
-    {
-        $container = System::getContainer();
-        $tokenManager = $container->get('contao.csrf.token_manager');
-        $token = $tokenManager->getToken('contao.csrf.token')->getValue();
-        $table = $GLOBALS['BE_FLY_UX']['content'][Input::get('do')]['showBtn'];
-        $do = (Input::get('do')==='page')?'content':Input::get('do');
-        
-        return '<a href="contao?do='.$do.'&mode=layout&table=tl_content&id=' . $row['id']. '&amp;rt='.$token . '" title="Inhalte ID ' . $row['id']. ' bearbeiten" ' . $attributes . '>
-            <img src="system/themes/flexible/icons/children.svg" alt="Inhalte zeigen und bearbeiten">
-        </a>';
     }
     
 

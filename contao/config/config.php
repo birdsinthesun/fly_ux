@@ -23,7 +23,11 @@ use Bits\FlyUxBundle\Content\ContentModule;
                   'relations' => [
                     'tl_page', 
                     'tl_content'
-                        ]
+                        ],
+                  'callbacks' => [
+                    'view_settings' => ['Bits\FlyUxBundle\EventListener\View\ContentLayoutModeContentListener', 'getSettings']
+                  
+                  ]
     ];
     $GLOBALS['BE_MOD']['content']['content']['tables'] = ['tl_content'];
     $GLOBALS['BE_FLY_UX']['content']['content']['config'] = [ 
@@ -72,4 +76,6 @@ use Bits\FlyUxBundle\Content\ContentModule;
         unset($GLOBALS['TL_CTE']['legacy']['accordionSingle']);
         unset($GLOBALS['TL_CTE']['miscellaneous']['swiper']);
         //unset($GLOBALS['TL_MODELS']['tl_article']);
+         // unset($GLOBALS['TL_DCA']['tl_page']['list']['operations']['children']);
+       
               

@@ -15,6 +15,10 @@ class MakeListenerPublicPass implements CompilerPassInterface
             $definition->addTag('security.voter', [
                 'priority' => 105,
             ]);
+        } 
+        if ($container->hasDefinition('Bits\FlyUxBundle\Operation\Children')) {
+            $definition = $container->getDefinition('Bits\FlyUxBundle\Operation\Children');
+            $definition->setPublic(true);
         
         }
      
