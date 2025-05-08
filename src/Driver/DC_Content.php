@@ -982,11 +982,17 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
            
             // new Record 
             unset($pasteRecord['id']);
-            $pasteRecord['pid'] = Input::get('pid');
+            if(Input::get('mode') === 'layout'){
+                 $pasteRecord['pid'] = Input::get('pid');
+                }else{
+                     $pasteRecord['pid'] = Input::get('pid');
+                     $pasteRecord['inColumn'] =  $this->session->get('OP_ADD_COLUMN');
+            }
+           
             $pasteRecord['ptable'] = Input::get('ptable');
             $pasteRecord['parentTable'] = Input::get('ptable');
             
-                
+              //  var_dump($pasteRecord);exit;
             $pasteRecord['`groups`'] = $pasteRecord['groups'];
             unset($pasteRecord['groups']);
           
