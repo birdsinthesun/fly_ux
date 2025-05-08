@@ -346,7 +346,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
 			'@Contao/backend/be_paste_panel.html.twig',
 			array(
                 'headline' => 'Paste Panel',
-                'subline' => 'Kopierte Elemente können hier oder in andere Bereiche kopiert werden, in Kalender,News usw. (Überall wo das Panel aufleuchtet).',
+                'subline' => 'Kopierte Elemente können hier oder in andere Bereiche kopiert werden, in Kalender, News usw. (Überall wo das Panel aufleuchtet).',
                 'elements' => $arrPanelElements,
                 
 			)

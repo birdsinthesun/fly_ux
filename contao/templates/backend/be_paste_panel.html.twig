@@ -1,7 +1,7 @@
 <div id="fly_ux_panel">
     <h2>{{ headline }}</h2>
     <p class="subline">{{ subline }}</p>
-
+    <ul>
     {% for element in elements %}
     <li>
         <a href="{{ element.href }}"
@@ -11,4 +11,5 @@
         </a>
     </li>
 {% endfor %}
+</ul>
 </div>
