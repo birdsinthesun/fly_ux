@@ -41,6 +41,8 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
     
     protected $configService;
     
+    protected $pasteElements;
+    
     public function __construct($strTable, $arrModule=array())
     {
 
@@ -50,13 +52,12 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
         $this->strTable = $strTable;
          $this->arrModule = $arrModule; 
         
-        $configService = System::getContainer()->get('fly_ux.config_service');
-        
-        //if($configService->useflyUxDriver()&&$configService->isContentTable())
-        //{           
      
         $this->container = System::getContainer();
         $this->session = $this->container->get('request_stack')->getSession()->getBag('contao_backend');
+        
+         $this->pasteElements = $this->session->get('Fly_UX_COPIED');
+        
         if(Input::get('plus')&&!Input::get('act')){
                         $this->session->set('Fly_UX_RELOAD',true);
         }
@@ -75,9 +76,9 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                         $this->session->set('OP_ADD_PID',Input::get('id'));
             }
             
-        if(Input::get('do') === 'content'&&Input::get('mode') === 'layout'&&Input::get('act')!=='edit'){
-                    
-                        $pTable = 'tl_page';
+        if(Input::get('mode') === 'layout'&&Input::get('act')!=='edit'){
+                 
+                        $pTable = $this->configService->getParentTable();
                         $inColumn = 'main';
                         
                         //set Session 
@@ -89,28 +90,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                        // $this->session->set('OP_ADD_PLUS',$this->session->get('OP_ADD_PLUS'));
                           
                         
-                }elseif((Input::get('do') === 'calendar'||Input::get('do') === 'news')
-                        &&Input::get('mode') === 'layout'&&Input::get('act')!=='edit'){
-                        
-                        $pTable = (Input::get('do') === 'calendar')?'tl_calendar_events':'tl_news';
-                        $inColumn = 'main';
-                        //set Session 
-                        $this->session->set('OP_ADD_PID',Input::get('id'));
-                        $this->session->set('OP_ADD_PTABLE',$pTable);
-                        
-                        $this->session->set('OP_ADD_COLUMN',$inColumn);
-                        //$this->session->set('OP_ADD_EL',$this->session->get('OP_ADD_EL'));
-                       // $this->session->set('OP_ADD_PLUS',$this->session->get('OP_ADD_PLUS'));
-                        
-                }elseif(Input::get('do') === 'content'
-                        &&Input::get('mode') === 'layout'&&Input::get('act')!=='edit'){
-                        
-                        $pTable = 'tl_content';
-                        //set Session 
-                        $this->session->set('OP_ADD_PTABLE',$pTable);
-                        
-                        
-                }
+        }
                     if($this->session->get('OP_ADD_MODE') === 'plus'){
                      $pTable = 'tl_content';
                      $inColumn = $this->session->get('OP_ADD_PLUS').'-el-1';
@@ -151,13 +131,8 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                 $db = Database::getInstance();
                 $databaseFields = $db->getFieldNames($this->strTable);
                 
-                if(Input::get('do') === 'content'&&$this->session->get('OP_ADD_MODE') === 'layout'){
-                    
-                        $pTable = 'tl_page';
-                        $inColumn = 'main';
-                }elseif((Input::get('do') === 'calendar'||Input::get('do') === 'news')&&$this->session->get('OP_ADD_MODE') === 'layout'){
-                        
-                        $pTable = (Input::get('do') === 'calendar')?'tl_calendar_events':'tl_news';
+                if($this->session->get('OP_ADD_MODE') === 'layout'){
+                        $pTable = $this->configService->getParentTable();
                         $inColumn = 'main';
                         $this->session->set('OP_ADD_PID',Input::get('id'));
                         
@@ -260,6 +235,16 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                    
             }
         
+        // View with Paste-Panel
+            if($this->pasteElements){
+              $pastePanel =   $this->renderPastePanel($this->pasteElements);
+            }else{
+                $pastePanel = '';
+                
+            }
+            
+        
+        // Default View
             $operations = $this->generateGlobalButtons();
                   
             if(Input::get('mode') === 'layout'){
@@ -292,7 +277,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
 
 
                                 
-                        return $this->renderDetailView($arrSettings['htmlBlocks'],$arrElements,$arrSettings['layoutClass'],$arrSettings['headline'],$operations);  
+                        return $this->renderDetailView($arrSettings['htmlBlocks'],$arrElements,$arrSettings['layoutClass'],$arrSettings['headline'],$operations,$pastePanel);  
                                        
                              
                              
@@ -334,15 +319,42 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                                      
                                     }
 
-                                     return $this->renderDetailView($htmlBlocks,$arrElements,'','Content Plus',$operations,$plusElement[0]['el_css_class']);
+                                     return $this->renderDetailView($htmlBlocks,$arrElements,'','Content Plus',$operations,$pastePanel,$plusElement[0]['el_css_class']);
                                     
                             }
       
        
     }
- 
+    protected function renderPastePanel($arrElements){
+        
+            $requestStack = $this->container->get('request_stack');
+            $request = $requestStack->getCurrentRequest();
+            $baseUrl = $request->getSchemeAndHttpHost();
+            $token = $this->container->get('contao.csrf.token_manager')->getDefaultTokenValue();
+            
+                $arrPanelElements = [];
+                foreach($arrElements as $id){
+                    $arrPanelElements[$id]['id'] = $id;
+                    $arrPanelElements[$id]['name'] = 'Element ('.$id . ') einfügen';
+                    $arrPanelElements[$id]['title'] = 'Element mit der Id: '.$id . ' hier einfügen';
+                    $arrPanelElements[$id]['href'] = $request->getSchemeAndHttpHost() . $request->getBaseUrl().'/contao?do='.Input::get('do').'&id='.$id.'&pid='.Input::get('id').'&ptable='.$this->session->get('OP_ADD_PTABLE').'&table=tl_content&act=paste&rt='.$token;
+                    }
+                
+               // var_dump($arrPanelElements);
+        
+        return $this->container->get('twig')->render(
+			'@Contao/backend/be_paste_panel.html.twig',
+			array(
+                'headline' => 'Paste Panel',
+                'subline' => 'Kopierte Elemente können hier oder in andere Bereiche kopiert werden, in Kalender,News usw. (Überall wo das Panel aufleuchtet).',
+                'elements' => $arrPanelElements,
+                
+			)
+		);
+        
+        }
 
-    protected function renderDetailView($htmlBlocks,$arrElements,$layoutClass,$headline,$operations,$plusClass= '')
+    protected function renderDetailView($htmlBlocks,$arrElements,$layoutClass,$headline,$operations,$pastePanel,$plusClass= '')
     {
         
         $requestStack = $this->container->get('request_stack');
@@ -361,7 +373,8 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                 'layoutClass' => $layoutClass,
                 'htmlBlocks' =>$htmlBlocks,
                 'elementsByBlock' => $arrElements,
-                'operations' => $operations
+                'operations' => $operations,
+                'pastePanel' => $pastePanel
 			)
 		);
     
@@ -404,7 +417,8 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                
                 $element['css_class'] = $cssId;
                 $element['href_act_edit'] = 'contao?do=content&id='.$element['id'].'&ptable='.$this->session->get('OP_ADD_PTABLE').'&table=tl_content&act=edit';
-               $element['href_act_delete'] = 'contao?do=content&id='.$element['id'].'&table=tl_content&act=delete&rt='.$token;
+                $element['href_act_copy'] = 'contao?do=content&id='.$element['id'].'&table=tl_content&act=copy&rt='.$token;
+                $element['href_act_delete'] = 'contao?do=content&id='.$element['id'].'&table=tl_content&act=delete&rt='.$token;
                 $element['is_content_plus'] = ($element['type']==='contentslider'||$element['type']==='contentgrid')?true:false;
                 $element['href_act_edit_plus'] = 'contao?do='.Input::get('do').'&mode=plus&table=tl_content&pid='.$element['pid'].'&id='.$element['id'].'&plus='.$element['type'].'&el='.$element['el_count'];
              
@@ -488,7 +502,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
             // Get the current record
             $currentRecord = $this->getCurrentRecord($this->intId);
            
-//var_dump($currentRecord);
+
             // Redirect if there is no record with the given ID
             if (null === $currentRecord)
             {
@@ -498,7 +512,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                                          FROM ".$this->strTable."
                                          WHERE id = :id",
                                         [
-                                            'id' => (int) Input::get($this->intId)
+                                            'id' => (int) Input::get('id')
                                         ]
                                     );
                 
@@ -917,6 +931,99 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
             
             
         }
+    }
+    
+
+	public function copy($blnDoNotRedirect=false)
+	{
+        if($this->configService->useflyUxDriver()){
+            
+            if(!$this->session->has('Fly_UX_COPIED')){
+                $this->session->set('Fly_UX_COPIED',[Input::get('id')]);
+                }else{
+                $this->session->set('Fly_UX_COPIED',array_merge($this->session->get('Fly_UX_COPIED'),[Input::get('id')]));  
+            }
+            
+           
+            $this->redirect($this->getReferer());
+            
+            }else{
+                
+         parent::copy($blnDoNotRedirect);
+        }
+       
+    }
+    
+    public function showAll()
+	{
+        
+        
+        if(Input::get('act')==='paste'){
+            
+           // var_dump('test', get_class_methods($this->container->get('database_connection')));exit;
+            $pasteRecord = $this->getCurrentRecord(Input::get('id'));
+            // unset the pasted record
+            $this->session->set('Fly_UX_COPIED',array_filter($this->session->get('Fly_UX_COPIED'),function($id){return $id !== Input::get('id');}));
+            
+            // Redirect if there is no record with the given ID
+            if (null === $pasteRecord)
+            {
+                $pasteRecord = $this->container->get('database_connection')
+                                    ->fetchAllAssociative(
+                                        "SELECT *
+                                         FROM ".$this->strTable."
+                                         WHERE id = :id",
+                                        [
+                                            'id' => (int) Input::get('id')
+                                        ]
+                                    );
+                
+              }
+           
+            // new Record 
+            unset($pasteRecord['id']);
+            $pasteRecord['pid'] = Input::get('pid');
+            $pasteRecord['ptable'] = Input::get('ptable');
+            $pasteRecord['parentTable'] = Input::get('ptable');
+            
+                
+            $pasteRecord['`groups`'] = $pasteRecord['groups'];
+            unset($pasteRecord['groups']);
+          
+            $this->container->get('database_connection')->insert($this->strTable, $pasteRecord);
+            $newElementId = $this->container->get('database_connection')->lastInsertId();
+            
+             $childRecords = $this->container->get('database_connection')
+                                    ->fetchAllAssociative(
+                                        "SELECT *
+                                         FROM ".$this->strTable."
+                                         WHERE pid = :pid",
+                                        [
+                                            'pid' => (int) Input::get('id')
+                                        ]
+                                    );
+            if(!empty($childRecords)){
+                
+                foreach($childRecords as $childRecord){
+                    
+                     unset($childRecord['id']);
+                    $childRecord['pid'] = $newElementId;
+                    $childRecord['ptable'] = Input::get('table');
+                    $childRecord['parentTable'] = Input::get('table');
+                    $childRecord['`groups`'] = $childRecord['groups'];
+                    unset($childRecord['groups']);
+                    $this->container->get('database_connection')->insert($this->strTable, $childRecord);
+                }
+            }
+            
+           $this->redirect($this->getReferer());
+            
+        }
+
+        
+      return $this->parentView();
+        
+       
     }
   
     public function findContentElementClass(string $targetType):string

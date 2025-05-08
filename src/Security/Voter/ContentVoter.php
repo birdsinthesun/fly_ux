@@ -24,7 +24,7 @@ class ContentVoter extends Voter
         if ($subject->getDataSource() !== 'tl_content') {
             return false;
         }
-
+        
         if(in_array(Input::get('ptable'),$GLOBALS['BE_FLY_UX']['content'][Input::get('do')]['config']['relations'])){
             return true;
             }
@@ -34,6 +34,6 @@ class ContentVoter extends Voter
         }
 
         // Weitere Spezialfälle erlauben? Dann hier ergänzen
-        return false; // alle anderen Fälle dem nächsten Voter überlassen
+        return true; // alle anderen Fälle dem nächsten Voter überlassen
     }
 }

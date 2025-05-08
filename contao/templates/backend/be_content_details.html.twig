@@ -14,6 +14,8 @@
                             {% if element.is_content_plus == true %}
                               <a class="btn_edit_plus" href="{{ element.href_act_edit_plus }}" title="{{ element.type }}-elemente bearbeiten">Plus</a>
                             {% endif %}
+                            <a class="btn_copy" href="{{ element.href_act_copy }}" title="{{ element.id }} kopieren">Kopieren</a>
+                  
                            <a class="btn_delete" href="{{ element.href_act_delete }}" title="{{ element.id }} löschen">Löschen</a>
                         </h4>
                         {{ element.content_element|raw }}
@@ -35,6 +37,7 @@
 {% import _self as layout %}
 
 <div id="fly_ux_content" class="drag-drop-wrapper {{ layoutClass }}" >
+{{ pastePanel|raw }}
 <div id="fly_ux_operations">{{ operations|raw }}</div>
 <h2 >{{ pageName }}</h2>
 {{ layout.renderBlocks(htmlBlocks, elementsByBlock,plusClass) }}

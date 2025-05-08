@@ -40,6 +40,12 @@ class ConfigService
             $this->currentTable === $GLOBALS['BE_FLY_UX']['content'][$this->backendModule]['config']['relations'][$countRelations-2]
             );
     }
+     public function getParentTable()
+    {
+        $countRelations = count($GLOBALS['BE_FLY_UX']['content'][$this->backendModule]['config']['relations']);
+        
+        return $GLOBALS['BE_FLY_UX']['content'][$this->backendModule]['config']['relations'][$countRelations-2];
+    }
     
      public function isContentTable():bool
     {
