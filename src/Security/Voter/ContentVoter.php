@@ -21,7 +21,7 @@ class ContentVoter extends Voter
     {
         /** @var CreateAction $subject */
 
-        if ($subject->getDataSource() !== 'tl_content') {
+        if ($subject->getDataSource() !== 'tl_content'||Input::get('do')==='undo') {
             return false;
         }
         
