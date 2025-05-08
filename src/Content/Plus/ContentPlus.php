@@ -30,11 +30,20 @@ class ContentPlus
         
         $request = System::getContainer()->get('request_stack')->getCurrentRequest();
 		if($request && System::getContainer()->get('contao.routing.scope_matcher')->isBackendRequest($request)){
-            $objElements = ContentModel::findBy('pid',$this->pid ,['ptable'=>$this->table]);
-
+            $objElements = ContentModel::findBy(
+                            ['pid = ?', 'ptable = ?'],
+                            [(int) $this->pid, (string) $this->table],
+                            ['order' => 'pid ASC, inColumn ASC, sorting ASC']
+                        );   
             }else{
-             $objElements = ContentModel::findPublishedByPidAndTable($this->pid ,$this->table);
-   
+             $objElements = ContentModel::findBy(
+                            ['pid = ?', 'ptable = ?',
+                             "(invisible='' OR invisible IS NULL)",
+    "(start='' OR start < ?)",
+    "(stop='' OR stop > ?)"],
+                            [(int) $this->pid, (string) $this->table, time(),time()],
+                            ['order' => 'pid ASC, inColumn ASC, sorting ASC']
+                        );
         }
             
 		

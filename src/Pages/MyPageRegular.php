@@ -322,7 +322,12 @@ class MyPageRegular extends Frontend
         $objTemplate->id = 'page-content-' . $objPageId;
 
 		$arrElements = [];
-		$objCte = ContentModel::findPublishedByPidAndTable($objPageId, 'tl_page');
+        
+		$objCte = ContentModel::findBy(
+    ['pid = ?', 'ptable = ?'],
+    [(int) $objPageId, (string) 'tl_page'],
+    ['order' => 'pid ASC, sorting ASC']
+);
 
 		 if ($objCte !== null) {
         while ($objCte->next()) {
