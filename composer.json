@@ -26,7 +26,8 @@
         }
     },
   "extra": {
-        "contao-manager-plugin": "Bits\\FlyUxBundle\\ContaoManager\\Plugin"
+        "contao-manager-plugin": "Bits\\FlyUxBundle\\ContaoManager\\Plugin",
+        "contao-component-dir": "assets"
     },
     "scripts": {
     "post-install-cmd": [
