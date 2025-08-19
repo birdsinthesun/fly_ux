@@ -199,7 +199,9 @@ class ModuleWizard extends Widget
 			}
 
 			$rows[] = array(
-				'module_id' => $value['mod'] ?? null,
+				'id' => $value['mod'] ?? null,
+                'is_content_element' => false,
+				'element_options' => [],
 				'module_options' => $moduleOptions,
 				'layout_options' => $layoutOptions,
 				'controls' => array(
