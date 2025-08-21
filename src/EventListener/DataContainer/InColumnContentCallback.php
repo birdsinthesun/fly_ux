@@ -22,9 +22,9 @@ class InColumnContentCallback
 	{
 		$arrSections = array();
         $session = System::getContainer()->get('request_stack')->getSession()->getBag('contao_backend');
-        $pid = $dc->activeRecord->pid;//$session->get('OP_ADD_PID');
+        $pid = $dc->__get('pid');//$dc->activeRecord->pid;//$session->get('OP_ADD_PID');
         
-        $ptable = $dc->activeRecord->ptable;//$session->get('OP_ADD_PTABLE');
+        $ptable = $dc->__get('ptable');//$session->get('OP_ADD_PTABLE');
         $mode = $session->get('OP_ADD_MODE');
         
         

@@ -25,6 +25,9 @@ use Contao\ListableDataContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Bits\FlyUxBundle\Callback\ContentLayoutMode;
 use Bits\FlyUxBundle\Helper\FrameworkHelper;
+use Bits\FlyUxBundle\Driver\Operations\AddElement;
+use Bits\FlyUxBundle\Driver\Operations\DragDrop;
+use Bits\FlyUxBundle\Driver\Operations\DragDropDisable;
 
 class DC_Content extends DC_Table implements EditableDataContainerInterface
 {
@@ -243,9 +246,16 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                 
             }
             
-        
-        // Default View
-            $operations = $this->generateGlobalButtons();
+
+            // Default View
+            $addElementButton = (new AddElement)->getButton();
+            $dragDropButton = (new DragDrop)->getButton();
+            $dragDropDisableButton = (new DragDropDisable)->getButton();
+            $flyOperations = $addElementButton.$dragDropButton.$dragDropDisableButton;
+            $operations = $this->container->get('contao.data_container.global_operations_builder')->initialize($this->strTable);
+            $legacyCallback = function(){};
+            $operations->addGlobalButtons($this,$legacyCallback);
+			$operations->addBackButton();
                   
             if(Input::get('mode') === 'layout'){
                 
@@ -268,7 +278,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                             ]
                         );
                                     
-                                    
+                         //  var_dump($dbElements);exit;         
                         if ($dbElements !== null)
                         {
                           $arrElements = $this->buildElements($dbElements,Input::get('id')); 
@@ -277,7 +287,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
 
 
                                 
-                        return $this->renderDetailView($arrSettings['htmlBlocks'],$arrElements,$arrSettings['layoutClass'],$arrSettings['headline'],$operations,$pastePanel);  
+                        return $this->renderDetailView($arrSettings['htmlBlocks'],$arrElements,$arrSettings['layoutClass'],$arrSettings['headline'],$flyOperations.(string) $operations,$pastePanel);  
                                        
                              
                              
@@ -319,9 +329,10 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                                      
                                     }
 
-                                     return $this->renderDetailView($htmlBlocks,$arrElements,'','Content Plus',$operations,$pastePanel,$plusElement[0]['el_css_class']);
+                                     return $this->renderDetailView($htmlBlocks,$arrElements,'','Content Plus',$flyOperations.(string) $operations,$pastePanel,$plusElement[0]['el_css_class']);
                                     
                             }
+      
       
        
     }
@@ -489,248 +500,171 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
         elseif(Input::get('act') === 'edit'){
         
             
-            if ($GLOBALS['TL_DCA'][$this->strTable]['config']['notEditable'] ?? null)
-            {
-              //  throw new AccessDeniedException('Table "' . $this->strTable . '" is not editable.');
-            }
 
-            if ($intId)
-            {
-                $this->intId = $intId;
-            }
-            //self::preloadCurrentRecords([$this->intId],$this->strTable);
-            // Get the current record
-            $currentRecord = $this->getCurrentRecord($this->intId);
-           
+		if ($GLOBALS['TL_DCA'][$this->strTable]['config']['notEditable'] ?? null)
+		{
+			throw new AccessDeniedException('Table "' . $this->strTable . '" is not editable.');
+		}
 
-            // Redirect if there is no record with the given ID
-            if (null === $currentRecord)
-            {
-                $currentRecord = $this->container->get('database_connection')
-                                    ->fetchAllAssociative(
-                                        "SELECT *
-                                         FROM ".$this->strTable."
-                                         WHERE id = :id",
-                                        [
-                                            'id' => (int) Input::get('id')
-                                        ]
-                                    );
-                
-                
-                // throw new NotFoundException('Cannot load record "' . $this->strTable . '.id=' . $this->intId . '".');
-            }
-           
-            
-            // ToDo: have to find all the code where contao is setting the ptable
-          //  var_dump($currentRecord['ptable'],$this->session->get('OP_ADD_PTABLE'));exit;
-           $currentRecord['ptable'] = $this->session->get('OP_ADD_PTABLE');
-           // $this->denyAccessUnlessGranted(ContaoCorePermissions::DC_PREFIX . $this->strTable, new UpdateAction($this->strTable, $currentRecord));
+		if ($intId)
+		{
+			$this->intId = $intId;
+		}
 
-            // Store the active record (backwards compatibility)
-            $this->objActiveRecord = (object) $currentRecord;
+		// Get the current record
+		$currentRecord = $this->getCurrentRecord();
 
-            $return = '';
-            $this->values[] = $this->intId;
-            $this->procedure[] = 'id=?';
-            $this->arrSubmit = array();
-            $this->blnCreateNewVersion = false;
-            $objVersions = new Versions($this->strTable, $this->intId);
+		// Redirect if there is no record with the given ID
+		if (null === $currentRecord)
+		{
+			throw new NotFoundException('Cannot load record "' . $this->strTable . '.id=' . $this->intId . '".');
+		}
 
-            if (!($GLOBALS['TL_DCA'][$this->strTable]['config']['hideVersionMenu'] ?? null))
-            {
-                // Compare versions
-                if (Input::get('versions'))
-                {
-                    $objVersions->compare();
-                }
+		$this->denyAccessUnlessGranted(ContaoCorePermissions::DC_PREFIX . $this->strTable, new UpdateAction($this->strTable, $currentRecord));
 
-                // Restore a version
-                if (Input::post('FORM_SUBMIT') == 'tl_version' && Input::post('version'))
-                {
-                    $objVersions->restore(Input::post('version'));
+		// Store the active record (backwards compatibility)
+		$this->objActiveRecord = (object) $currentRecord;
 
-                    $this->invalidateCacheTags();
+		$return = '';
+		$this->values[] = $this->intId;
+		$this->procedure[] = 'id=?';
+		$this->arrSubmit = array();
+		$this->blnCreateNewVersion = false;
+		$objVersions = new Versions($this->strTable, $this->intId);
 
-                    $this->reload();
-                }
-            }
+		if (!($GLOBALS['TL_DCA'][$this->strTable]['config']['hideVersionMenu'] ?? null))
+		{
+			// Compare versions
+			if (Input::get('versions'))
+			{
+				$objVersions->compare();
+			}
 
-            $objVersions->initialize();
-            $intLatestVersion = $objVersions->getLatestVersion();
+			// Restore a version
+			if (Input::post('FORM_SUBMIT') == 'tl_version' && Input::post('version'))
+			{
+				$objVersions->restore(Input::post('version'));
 
-            $security = System::getContainer()->get('security.helper');
+				$this->invalidateCacheTags();
 
-            // Build an array from boxes and rows
-            $this->strPalette = $this->getPalette();
-            $boxes = StringUtil::trimsplit(';', $this->strPalette);
-            //var_dump($this->strPalette );
-            $legends = array();
+				$this->reload();
+			}
+		}
 
-            if (!empty($boxes))
-            {
-                foreach ($boxes as $k=>$v)
-                {
-                   
-                    $eCount = 1;
-                    $boxes[$k] = StringUtil::trimsplit(',', $v);
+		$objVersions->initialize();
+		$intLatestVersion = $objVersions->getLatestVersion();
 
-                    foreach ($boxes[$k] as $kk=>$vv)
-                    {
-                       
-                        if (preg_match('/^\[.*]$/', $vv))
-                        {
-                            ++$eCount;
-                            continue;
-                        }
+		$this->strPalette = $this->getPalette();
+		$boxes = System::getContainer()->get('contao.data_container.palette_builder')->getBoxes($this->strPalette, $this->strTable);
 
-                        if (preg_match('/^{.*}$/', $vv))
-                        {
-                            $legends[$k] = substr($vv, 1, -1);
-                            unset($boxes[$k][$kk]);
-                        }
-                        elseif (!\is_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$vv] ?? null) || (DataContainer::isFieldExcluded($this->strTable, $vv) && !$security->isGranted(ContaoCorePermissions::USER_CAN_EDIT_FIELD_OF_TABLE, $this->strTable . '::' . $vv)))
-                        {
-                           // unset($boxes[$k][$kk]);
-                        }
-                          
-                    }
+		if (!empty($boxes))
+		{
+			$class = 'tl_tbox';
 
-                    // Unset a box if it does not contain any fields
-                    if (\count($boxes[$k]) < $eCount)
-                    {
-                        unset($boxes[$k]);
-                    }
-                }
+			// Render boxes
+			foreach ($boxes as $box)
+			{
+				$arrAjax = array();
+				$blnAjax = false;
+				$key = $box['key'];
+				$legend = '';
 
-                $objSessionBag = System::getContainer()->get('request_stack')->getSession()->getBag('contao_backend');
+				if ($key)
+				{
+					$legend = "\n" . '<legend><button type="button" data-action="contao--toggle-fieldset#toggle">' . ($GLOBALS['TL_LANG'][$this->strTable][$key] ?? $key) . '</button></legend>';
 
-                $class = 'tl_tbox';
-                $fs = $objSessionBag->get('fieldset_states');
+					if ($box['class'])
+					{
+						$class .= ' ' . $box['class'];
+					}
+				}
 
-                // Render boxes
-                foreach ($boxes as $k=>$v)
-                {
-                    
-                   
-                    $arrAjax = array();
-                    $blnAjax = false;
-                    $key = '';
-                    $cls = '';
-                    $legend = '';
+				$return .= "\n\n" . '<fieldset id="pal_' . $key . '" class="' . $class . ($legend ? '' : ' nolegend') . '" data-controller="contao--toggle-fieldset" data-contao--toggle-fieldset-id-value="' . $key . '" data-contao--toggle-fieldset-table-value="' . $this->strTable . '" data-contao--toggle-fieldset-collapsed-class="collapsed" data-contao--jump-targets-target="section" data-contao--jump-targets-label-value="' . ($GLOBALS['TL_LANG'][$this->strTable][$key] ?? $key) . '" data-action="contao--jump-targets:scrollto->contao--toggle-fieldset#open">' . $legend . "\n" . '<div class="widget-group">';
+				$thisId = '';
 
-                    if (isset($legends[$k]))
-                    {
-                        list($key, $cls) = explode(':', $legends[$k]) + array(null, null);
+				// Build rows of the current box
+				foreach ($box['fields'] as $vv)
+				{
+					if ($vv == '[EOF]')
+					{
+						if ($blnAjax && Environment::get('isAjaxRequest'))
+						{
+							if ($ajaxId == $thisId)
+							{
+								if (($intLatestVersion = $objVersions->getLatestVersion()) !== null)
+								{
+									$arrAjax[$thisId] .= '<input type="hidden" name="VERSION_NUMBER" value="' . $intLatestVersion . '">';
+								}
 
-                        $legend = "\n" . '<legend><button type="button" data-action="contao--toggle-fieldset#toggle">' . ($GLOBALS['TL_LANG'][$this->strTable][$key] ?? $key) . '</button></legend>';
-                    }
+								return $arrAjax[$thisId];
+							}
 
-                    if ($legend)
-                    {
-                        if (isset($fs[$this->strTable][$key]))
-                        {
-                            $class .= ($fs[$this->strTable][$key] ? '' : ' collapsed');
-                        }
-                        elseif ($cls)
-                        {
-                            // Convert the ":hide" suffix from the DCA
-                            if ($cls == 'hide')
-                            {
-                                $cls = 'collapsed';
-                            }
+							if (\count($arrAjax) > 1)
+							{
+								$current = "\n" . '<div id="' . $thisId . '" class="subpal widget-group">' . $arrAjax[$thisId] . '</div>';
+								unset($arrAjax[$thisId]);
+								end($arrAjax);
+								$thisId = key($arrAjax);
+								$arrAjax[$thisId] .= $current;
+							}
+						}
 
-                            $class .= ' ' . $cls;
-                        }
-                    }
+						$return .= "\n" . '</div>';
 
-                    $return .= "\n\n" . '<fieldset class="' . $class . ($legend ? '' : ' nolegend') . '" data-controller="contao--toggle-fieldset" data-contao--toggle-fieldset-id-value="' . $key . '" data-contao--toggle-fieldset-table-value="' . $this->strTable . '" data-contao--toggle-fieldset-collapsed-class="collapsed" data-contao--jump-targets-target="section" data-contao--jump-targets-label-value="' . ($GLOBALS['TL_LANG'][$this->strTable][$key] ?? $key) . '" data-action="contao--jump-targets:scrollto->contao--toggle-fieldset#open">' . $legend . "\n" . '<div class="widget-group">';
-                    $thisId = '';
+						continue;
+					}
 
-                    // Build rows of the current box
-                    foreach ($v as $vv)
-                    {
-                       
-                        if ($vv == '[EOF]')
-                        {
-                            if ($blnAjax && Environment::get('isAjaxRequest'))
-                            {
-                                if ($ajaxId == $thisId)
-                                {
-                                    if (($intLatestVersion = $objVersions->getLatestVersion()) !== null)
-                                    {
-                                        $arrAjax[$thisId] .= '<input type="hidden" name="VERSION_NUMBER" value="' . $intLatestVersion . '">';
-                                    }
+					if (preg_match('/^\[.*]$/', $vv))
+					{
+						$thisId = 'sub_' . substr($vv, 1, -1);
+						$arrAjax[$thisId] = '';
+						$blnAjax = ($ajaxId == $thisId && Environment::get('isAjaxRequest')) ? true : $blnAjax;
+						$return .= "\n" . '<div id="' . $thisId . '" class="subpal widget-group">';
 
-                                    return $arrAjax[$thisId];
-                                }
+						continue;
+					}
 
-                                if (\count($arrAjax) > 1)
-                                {
-                                    $current = "\n" . '<div id="' . $thisId . '" class="subpal widget-group">' . $arrAjax[$thisId] . '</div>';
-                                    unset($arrAjax[$thisId]);
-                                    end($arrAjax);
-                                    $thisId = key($arrAjax);
-                                    $arrAjax[$thisId] .= $current;
-                                }
-                            }
+					$this->strField = $vv;
+					$this->strInputName = $vv;
+					$this->varValue = $currentRecord[$vv] ?? null;
 
-                            $return .= "\n" . '</div>';
+					// Convert CSV fields (see #2890)
+					if (($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['multiple'] ?? null) && isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['csv']))
+					{
+						$this->varValue = StringUtil::trimsplit($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['csv'], $this->varValue);
+					}
 
-                            continue;
-                        }
+					// Call load_callback
+					if (\is_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['load_callback'] ?? null))
+					{
+						foreach ($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['load_callback'] as $callback)
+						{
+							if (\is_array($callback))
+							{
+								$this->varValue = System::importStatic($callback[0])->{$callback[1]}($this->varValue, $this);
+							}
+							elseif (\is_callable($callback))
+							{
+								$this->varValue = $callback($this->varValue, $this);
+							}
+						}
+					}
 
-                        if (preg_match('/^\[.*]$/', $vv))
-                        {
-                            $thisId = 'sub_' . substr($vv, 1, -1);
-                            $arrAjax[$thisId] = '';
-                            $blnAjax = ($ajaxId == $thisId && Environment::get('isAjaxRequest')) ? true : $blnAjax;
-                            $return .= "\n" . '<div id="' . $thisId . '" class="subpal widget-group">';
+					// Re-set the current value
+					$this->objActiveRecord->{$this->strField} = $this->varValue;
 
-                            continue;
-                        }
+					// Build the row and pass the current palette string (thanks to Tristan Lins)
+					$blnAjax ? $arrAjax[$thisId] .= $this->row() : $return .= $this->row();
+				}
 
-                        $this->strField = $vv;
-                        $this->strInputName = $vv;
-                        $this->varValue = $currentRecord[$vv] ?? null;
+				$class = 'tl_box';
+				$return .= "\n</div>\n</fieldset>";
+			}
 
-                        // Convert CSV fields (see #2890)
-                        if (($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['multiple'] ?? null) && isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['csv']))
-                        {
-                            $this->varValue = StringUtil::trimsplit($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['csv'], $this->varValue);
-                        }
+			$this->submit();
+		}
 
-                        // Call load_callback
-                        if (\is_array($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['load_callback'] ?? null))
-                        {
-                            foreach ($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['load_callback'] as $callback)
-                            {
-                                if (\is_array($callback))
-                                {
-                                    $this->varValue = System::importStatic($callback[0])->{$callback[1]}($this->varValue, $this);
-                                }
-                                elseif (\is_callable($callback))
-                                {
-                                    $this->varValue = $callback($this->varValue, $this);
-                                }
-                            }
-                        }
-
-                        // Re-set the current value
-                        $this->objActiveRecord->{$this->strField} = $this->varValue;
-
-                        // Build the row and pass the current palette string (thanks to Tristan Lins)
-                        $blnAjax ? $arrAjax[$thisId] .= $this->row() : $return .= $this->row();
-                    }
-
-                    $class = 'tl_box';
-                    $return .= "\n</div>\n</fieldset>";
-                   // return $return;
-                }
-                
-//var_dump($this->objActiveRecord->ptable,$currentRecord);exit;
-                $this->submit();
-            }
-            // Reload the page to prevent _POST variables from being sent twice
+		// Reload the page to prevent _POST variables from being sent twice
 		if (!$this->noReload && Input::post('FORM_SUBMIT') == $this->strTable)
 		{
 			// Show a warning if the record has been saved by another user (see #8412)
@@ -872,12 +806,14 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
 			$version = '';
 		}
 
+		$security = System::getContainer()->get('security.helper');
+
 		$strButtons = System::getContainer()
 			->get('contao.data_container.buttons_builder')
 			->generateEditButtons(
 				$this->strTable,
 				(bool) $this->ptable,
-				$security->isGranted(ContaoCorePermissions::DC_PREFIX . $this->strTable, new CreateAction($this->strTable,[ 'test'])),
+				true,//$security->isGranted(ContaoCorePermissions::DC_PREFIX . $this->strTable, new CreateAction($this->strTable, $this->addDynamicPtable(array('pid' => $this->intCurrentPid)))),
 				$security->isGranted(ContaoCorePermissions::DC_PREFIX . $this->strTable, new CreateAction($this->strTable, array_replace($currentRecord, array('id' => null, 'sorting' => null)))),
 				$this
 			);
@@ -902,20 +838,11 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
 		if ((string) $currentRecord['tstamp'] === '0')
 		{
 			$strBackUrl = preg_replace('/&(?:amp;)?revise=[^&]+|$/', '&amp;revise=' . $this->strTable . '.' . ((int) $this->intId), $strBackUrl, 1);
-
-			$return .= '
-<script>
-  history.pushState({}, "");
-  window.addEventListener("popstate", () => fetch(document.querySelector(".header_back").href).then(() => history.back()));
-</script>';
 		}
 
 		// Begin the form (-> DO NOT CHANGE THIS ORDER -> this way the onsubmit attribute of the form can be changed by a field)
 		$return = $version . Message::generate() . ($this->noReload ? '
-<p class="tl_error">' . $GLOBALS['TL_LANG']['ERR']['submit'] . '</p>' : '') . (Input::get('nb') ? '' : '
-<div id="tl_buttons">
-' . DataContainerOperationsBuilder::generateBackButton($strBackUrl) . '
-</div>') . '
+<p class="tl_error">' . $GLOBALS['TL_LANG']['ERR']['submit'] . '</p>' : '') . (Input::get('nb') ? '' : System::getContainer()->get('contao.data_container.global_operations_builder')->initialize($this->strTable)->addBackButton($strBackUrl)) . '
 <form id="' . $this->strTable . '" class="tl_form tl_edit_form" method="post" enctype="' . ($this->blnUploadable ? 'multipart/form-data' : 'application/x-www-form-urlencoded') . '"' . (!empty($this->onsubmit) ? ' onsubmit="' . implode(' ', $this->onsubmit) . '"' : '') . '>
 <div class="tl_formbody_edit">
 <input type="hidden" name="FORM_SUBMIT" value="' . $this->strTable . '">
@@ -928,9 +855,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
 </div>';
 
 		return $return;
-            
-            
-        }
+	}
     }
     
 

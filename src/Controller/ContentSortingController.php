@@ -40,8 +40,9 @@ class ContentSortingController extends AbstractController
                 }
 
                 $this->connection
-                    ->prepare('UPDATE tl_content SET sorting = ?, inColumn = ? WHERE id = ?')
-                    ->executeQuery([$item['sorting'], $item['inColumn'], $item['id']]);
+                    ->update('tl_content' ,['sorting' => $item['sorting'], 
+                    'inColumn' =>$item['inColumn']],
+['id' =>$item['id']]);
             }
 
             return new JsonResponse(['success' => true]);

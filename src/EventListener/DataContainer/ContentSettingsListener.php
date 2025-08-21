@@ -57,17 +57,15 @@ class ContentSettingsListener
                 
                         if(!isset($GLOBALS['TL_DCA']['tl_content']['config']['notCreatable'])){
                             $GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['add_content_element'] = [
-                                'label'      => ['Neues Element einfügen', ''],
-                                'href'       => 'op_add=add_content_element&act=create',
-                                'class'      => 'header_new_element',
-                                'icon'       => '',
-                                'button_callback' => ['\Bits\FlyUxBundle\Driver\DC_ContentOperations', 'addElementButton'],
-                            ];
+                                
+                                
+                               
+                             ];
                             
                         }
                         
 
-                        $GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['drag_drop_mode'] = [
+                        $GLOBALS['TL_DCA']['tl_content']['list']['global_oper0ations']['drag_drop_mode'] = [
                             'label'      => ['Drag & Drop Modus', ''],
                             'href'       => 'op_dd=drag_drop_mode',
                             'class'      => 'header_drag_drop',
@@ -75,7 +73,7 @@ class ContentSettingsListener
                             'button_callback' => ['\Bits\FlyUxBundle\Driver\DC_ContentOperations', 'dragDropButton'],
                         ];
 
-                        $GLOBALS['TL_DCA']['tl_content']['list']['global_operations']['drag_drop_disable'] = [
+                        $GLOBALS['TL_DCA']['tl_content']['list']['global_oper0ations']['drag_drop_disable'] = [
                             'label'      => ['Drag & Drop Deaktivieren', ''],
                             'href'       => 'op_dd=drag_drop_mode',
                             'class'      => 'header_drag_drop_disable',

@@ -64,7 +64,7 @@ class InstallFlyUx extends AbstractMigration
         $updatedCount = 0;
 
         // 🔁 Inhalte anpassen
-        foreach ($articles as $article) {
+        foreach ($articles as $n => $article) {
             $articleId = (int) $article['id'];
             $pageId = (int) $article['pid'];
             $column = $article['inColumn'];
@@ -74,7 +74,7 @@ class InstallFlyUx extends AbstractMigration
                 [$articleId]
             );
 
-            foreach ($contentItems as $item) {
+            foreach ($contentItems as $key => $item) {
                 $this->connection->update(
                     'tl_content',
                     [

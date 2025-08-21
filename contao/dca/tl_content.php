@@ -1,15 +1,8 @@
 <?php
-use Bits\FlyUxBundle\Driver\DC_Content;
-use Contao\DataContainer;
+
 
 $this->loadDataContainer('tl_page');
 
-    $GLOBALS['TL_DCA']['tl_content']['config']['sql']['keys']['parentTable'] = 'index';
-
-    $GLOBALS['TL_DCA']['tl_content']['fields']['parentTable'] = array
-            (
-                'sql'                     => "varchar(64) COLLATE ascii_bin NOT NULL default 'tl_page'"
-            );
     $GLOBALS['TL_DCA']['tl_content']['fields']['ptable'] = array
             (
                 'sql'                     => "varchar(64) COLLATE ascii_bin NOT NULL default ''"
