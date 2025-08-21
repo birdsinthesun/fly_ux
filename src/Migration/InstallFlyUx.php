@@ -9,10 +9,13 @@ use Doctrine\DBAL\Connection;
 class InstallFlyUx extends AbstractMigration
 {
     private Connection $connection;
+    
+    private $run;
 
     public function __construct(Connection $connection)
     {
         $this->connection = $connection;
+        $this->run = false;
     }
 
     public function getName(): string
@@ -91,7 +94,7 @@ class InstallFlyUx extends AbstractMigration
 
         // 🧹 Artikel-Tabelle leeren
         $this->connection->executeStatement('TRUNCATE tl_article');
-
+        $this->run = true;
         return $this->createResult(true, "$updatedCount Inhalte migriert und tl_article geleert.");
     }
 
@@ -108,7 +111,7 @@ class InstallFlyUx extends AbstractMigration
     {
         $run = false;
         if($this->tableExists('tl_article')){
-            if(!empty($this->connection->fetchAllAssociative('SELECT id FROM tl_article'))){
+            if(!empty($this->connection->fetchAllAssociative('SELECT id FROM tl_article'))&&$this->run===false){
                  $run = true;
             }
             
