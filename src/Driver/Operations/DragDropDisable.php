@@ -42,7 +42,7 @@ class DragDropDisable
 
     public function getLabel(): string
     {
-        return 'Drag & Drop';
+        return 'Drag & Drop deaktivieren';
     }
 
     public function getIcon(): ?string
