@@ -16,8 +16,9 @@ class DragDrop
     {
        
         return sprintf(
-            '<a href="'.$this->getHref().'" class="header_drag_drop" title="%s">%s</a> ',
+            '<a href="'.$this->getHref().'" class="header_drag_drop" title="%s" %s>%s</a> ',
             StringUtil::specialchars($this->getLabel()),
+            'data-turbo="false"',
             $this->getLabel()
         );
     }
