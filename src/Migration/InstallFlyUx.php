@@ -45,11 +45,7 @@ class InstallFlyUx extends AbstractMigration
                 "ALTER TABLE tl_content ADD ptable VARCHAR(64) COLLATE ascii_bin NOT NULL DEFAULT 'tl_content'"
             );
         }
-        if (!array_key_exists('inColumn', $columns)) {
-            $this->connection->executeStatement(
-                "ALTER TABLE tl_content ADD inColumn VARCHAR(32) NOT NULL DEFAULT 'main'"
-            );
-        }
+
        
 
         // 🧪 Prüfen ob tl_article existiert

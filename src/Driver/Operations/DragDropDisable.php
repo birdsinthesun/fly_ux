@@ -35,8 +35,10 @@ class DragDropDisable
 
     public function getHref(): string
     {
-       
-        return $this->getCurrentUrl(true).'/contao?do='.Input::get('do'). '&id='.Input::get('id').'&mode='.Input::get('mode').'&table=tl_content&rt='.$this->getToken();
+        $href = (Input::get('mode')!=='plus')?'':'&pid='.Input::get('pid').'&el='.Input::get('el').'&plus='.Input::get('plus');
+        
+        return $this->getCurrentUrl(true).'/contao?do='.Input::get('do').
+    $href . '&id='.Input::get('id').'&mode='.Input::get('mode').'&table=tl_content&rt='.$this->getToken();
     
     }
 

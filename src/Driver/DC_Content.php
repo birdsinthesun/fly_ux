@@ -179,11 +179,12 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
 
                     if($k ==='parentTable'){
                   
-                           $this->set[$k] = $pTable;
+                          unset($this->set[$k]);// = $pTable;
                            
                     }
                 }
                     $this->set['ptable'] = $pTable;
+                     unset($this->set['parentTable']);
                 // Set passed values
                 if (!empty($set) && \is_array($set))
                 {
@@ -915,7 +916,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
             }
            
             $pasteRecord['ptable'] = Input::get('ptable');
-            $pasteRecord['parentTable'] = Input::get('ptable');
+          //  $pasteRecord['parentTable'] = Input::get('ptable');
             
               //  var_dump($pasteRecord);exit;
             $pasteRecord['`groups`'] = $pasteRecord['groups'];
@@ -940,7 +941,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
                      unset($childRecord['id']);
                     $childRecord['pid'] = $newElementId;
                     $childRecord['ptable'] = Input::get('table');
-                    $childRecord['parentTable'] = Input::get('table');
+                   // $childRecord['parentTable'] = Input::get('table');
                     $childRecord['`groups`'] = $childRecord['groups'];
                     unset($childRecord['groups']);
                     $this->container->get('database_connection')->insert($this->strTable, $childRecord);

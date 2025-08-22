@@ -14,7 +14,7 @@ use Contao\PageModel;
 use Contao\StringUtil;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
 
-#[AsCallback('tl_content','fields.inColumn.options')]
+#[AsCallback(table: 'tl_content', target: 'fields.inColumn.options')]
 class InColumnContentCallback
 {
 
@@ -22,14 +22,14 @@ class InColumnContentCallback
 	{
 		$arrSections = array();
         $session = System::getContainer()->get('request_stack')->getSession()->getBag('contao_backend');
-        $pid = $dc->__get('pid');//$dc->activeRecord->pid;//$session->get('OP_ADD_PID');
+        $pid = $session->get('OP_ADD_PID');
         
-        $ptable = $dc->__get('ptable');//$session->get('OP_ADD_PTABLE');
+        $ptable = $dc->__get('parentTable');//$session->get('OP_ADD_PTABLE');
         $mode = $session->get('OP_ADD_MODE');
         
         
-        //$typePlus = (array_key_exists($dc->activeRecord->type,$GLOBALS['TL_CTE']['plus']));
-       // var_dump($typePlus,$mode,$ptable);exit;
+       // $typePlus = (array_key_exists($dc->activeRecord->type,$GLOBALS['TL_CTE']['plus']));
+       // var_dump($pid,$typePlus,$mode,$ptable);exit;
         if($mode === 'layout' || $mode === null){
             
             
@@ -85,16 +85,14 @@ class InColumnContentCallback
                                             'id' => (int) $pid
                                         ]
                                     );
-               
+             
              for ($i = 0; $i < $parentRecord[0]['el_count']; $i++) {
-                            $arrSections[] = $parentRecord[0]['type'].'-el-'.$i+1;
+                            $arrSections[$parentRecord[0]['type'].'-el-'.$i+1] = $parentRecord[0]['type'].'-el-'.$i+1;
                         }
             
         }
 
-		
-
-		return Backend::convertLayoutSectionIdsToAssociativeArray($arrSections);
+		return $arrSections;
 	}
     
   

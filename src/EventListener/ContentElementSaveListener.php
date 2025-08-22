@@ -20,7 +20,7 @@ class ContentElementSaveListener
         
             //$record['id'] = Input::get('id');
            // $record['pid'] = $pid;
-            $record['parentTable'] = $ptable;
+           // $record['parentTable'] = $ptable;
             $record['ptable'] = $ptable;
             
             return $record;
