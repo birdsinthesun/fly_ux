@@ -16,7 +16,7 @@ use Contao\PageModel;
 use Contao\StringUtil;
 use Contao\CoreBundle\DataContainer\DataContainerOperation;
 
-#[AsHook('loadDataContainer','__invoke',210)]
+#[AsHook('loadDataContainer','__invoke',260)] 
 class ContentDriverConfigLoaderListener
 {
     public function __invoke(string $table): void
