@@ -9,8 +9,8 @@ class MakeListenerPublicPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        if ($container->hasDefinition('Bits\FlyUxBundle\Security\Voter\ContentVoter')) {
-            $definition = $container->getDefinition('Bits\FlyUxBundle\Security\Voter\ContentVoter');
+        if ($container->hasDefinition('Bits\FlyUxBundle\Security\Voter\ContentParentVoter')) {
+            $definition = $container->getDefinition('Bits\FlyUxBundle\Security\Voter\ContentParentVoter');
             $definition->setPublic(true);
             $definition->addTag('security.voter', [
                 'priority' => 105,

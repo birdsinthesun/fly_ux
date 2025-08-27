@@ -2,38 +2,43 @@
 
 namespace Bits\FlyUxBundle\Security\Voter;
 
-use Contao\CoreBundle\Security\ContaoCorePermissions;
-use Contao\CoreBundle\Security\DataContainer\CreateAction;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Contao\Input;
+use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
+use Contao\BackendUser;
+use Contao\ContentModel;
 
-class ContentVoter extends Voter
+class ContentVoter implements VoterInterface
 {
-    protected function supports(string $attribute, mixed $subject): bool
+    public function supportsAttribute(string $attribute): bool
     {
-        return
-            $attribute === ContaoCorePermissions::DC_PREFIX . 'tl_content'
-            && $subject instanceof CreateAction;
+        return $attribute === 'edit_content';
     }
 
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
+    public function supportsClass(string $class): bool
     {
-        /** @var CreateAction $subject */
+        return true;
+    }
 
-        if ($subject->getDataSource() !== 'tl_content'||Input::get('do')==='undo') {
-            return true;
+    public function vote(TokenInterface $token, $subject, array $attributes): int
+    {
+        $user = $token->getUser();
+        if (!$user instanceof BackendUser) {
+            return VoterInterface::ACCESS_DENIED;
         }
-        
-        if(in_array(Input::get('ptable'),$GLOBALS['BE_FLY_UX']['content'][Input::get('do')]['config']['relations'])){
-            return true;
+
+        // Prüfe Artikel-Recht
+        if (!$user->hasAccess('article', 'modules')) {
+            return VoterInterface::ACCESS_DENIED;
+        }
+
+        // Prüfe Inhaltselement-Typ
+        if ($subject instanceof ContentModel) {
+            $type = $subject->type;
+            if (\is_array($user->elements) && !\in_array($type, $user->elements, true)) {
+                return VoterInterface::ACCESS_DENIED;
             }
-        // PTable == tl_content erlauben (z.B. Nested Elements)
-        if ((Input::get('ptable') ?? null) === 'tl_content') {
-            return true;
         }
 
-        // Weitere Spezialfälle erlauben? Dann hier ergänzen
-        return true; // alle anderen Fälle dem nächsten Voter überlassen
+        return VoterInterface::ACCESS_GRANTED;
     }
 }

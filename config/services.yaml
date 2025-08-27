@@ -14,9 +14,20 @@ services:
         alias: Bits\FlyUxBundle\Service\Backend\ConfigService
         public: true
     
-    Bits\FlyUxBundle\Security\Voter\ContentVoter:
+    Bits\FlyUxBundle\Security\Voter\ContentParentVoter:
         tags:
             - { name: security.voter, priority: 105 }
+            
+    Bits\FlyUxBundle\Security\Voter\ArticleVoter:
+        class: 'Bits\FlyUxBundle\Security\Voter\ArticleVoter'
+        tags:
+            - { name: security.voter }
+
+    Bits\FlyUxBundle\Security\Voter\ContentVoter:
+        class: 'Bits\FlyUxBundle\Security\Voter\ContentVoter'
+        tags:
+            - { name: security.voter }
+ 
         
     Bits\FlyUxBundle\EventListener\AddBackendAssetsListener:
         arguments:
@@ -54,6 +65,6 @@ services:
         
     Bits\FlyUxBundle\:
         resource: '../src/*'
-        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php,Security}'
 
    
