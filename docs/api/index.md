@@ -6,7 +6,7 @@ Beispiel für contao/calendar-bundle
 
 
 
-´$GLOBALS['BE_FLY_UX']['content']['calendar']['config']  = [
+´$GLOBALS['BE_FLY_UX']['calendar']['config']  = [
                 'driver' => 'fly_ux',
                 'relations' => [
                     'tl_calendar', 

@@ -13,7 +13,7 @@ class Children extends Backend
         $container = System::getContainer();
         $tokenManager = $container->get('contao.csrf.token_manager');
         $token = $tokenManager->getToken('contao.csrf.token')->getValue();
-        $showBtn = $GLOBALS['BE_FLY_UX']['content'][Input::get('do')]['showBtn'];
+        $showBtn = $GLOBALS['BE_FLY_UX'][Input::get('do')]['showBtn'];
         $do = (Input::get('do')==='page')?'content':Input::get('do');
         if($showBtn){
           
