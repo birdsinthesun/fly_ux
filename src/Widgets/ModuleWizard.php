@@ -82,6 +82,30 @@ class ModuleWizard extends Widget
 			$modules[$k] = $v;
 		}
 
+
+        // Get all content elements of the current theme
+		$elements = $db
+			->prepare("SELECT * FROM tl_content WHERE ptable=? AND pid=(SELECT pid FROM " . $this->strTable . " WHERE id=?)")
+			->execute('tl_theme', $this->currentRecord)
+			->fetchAllAssoc()
+		;
+
+		$recordLabeler = System::getContainer()->get('contao.data_container.record_labeler');
+
+		$elements = array_map(
+			static function (array $element) use ($recordLabeler) {
+				return array(
+					'id' => 'content-' . $element['id'],
+					'title' => $recordLabeler->getLabel('contao.db.tl_content.' . $element['id'], $element),
+					'type' => $GLOBALS['TL_LANG']['CTE'][$element['type']][0] ?? $element['type'],
+				);
+			},
+			$elements
+		);
+
+		usort($elements, static function (array $a, array $b) {
+			return strcmp($a['title'], $b['title']);
+		});
 		$objRow = $db
 			->prepare("SELECT * FROM " . $this->strTable . " WHERE id=?")
 			->limit(1)
@@ -174,6 +198,17 @@ class ModuleWizard extends Widget
 		// Compile rows
 		foreach ($this->varValue as $value)
 		{
+            $elementOptions = array();
+
+			foreach ($elements as $v)
+			{
+				$elementOptions[] = array(
+					'value' => self::specialcharsValue($v['id']),
+					'label' => $v['title'] . ' [' . $v['type'] . ']',
+					'selected' => '' !== static::optionSelected($v['id'], $value['mod'] ?? null),
+				);
+			}
+
 			$moduleOptions = array();
 
 			foreach ($modules as $v)
@@ -197,11 +232,15 @@ class ModuleWizard extends Widget
 					'selected' => '' !== static::optionSelected($k, $value['col'] ?? null),
 				);
 			}
-
+            
+            $id = $value['mod'] ?? null;
+			$isContentElement = str_starts_with((string) $id, 'content-');
+			$id = (int) str_replace('content-', '', $id);
+            
 			$rows[] = array(
 				'id' => $value['mod'] ?? null,
-                'is_content_element' => false,
-				'element_options' => [],
+                'is_content_element' => $isContentElement,
+				'element_options' => $elementOptions,
 				'module_options' => $moduleOptions,
 				'layout_options' => $layoutOptions,
 				'controls' => array(
