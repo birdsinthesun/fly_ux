@@ -22,7 +22,7 @@ class ContentParentVoter extends Voter
         /** @var CreateAction $subject */
 
         if ($subject->getDataSource() !== 'tl_content'||Input::get('do')==='undo') {
-            return true;
+            return false;
         }
         
         if(in_array(Input::get('ptable'),$GLOBALS['BE_FLY_UX']['content'][Input::get('do')]['config']['relations'])){
