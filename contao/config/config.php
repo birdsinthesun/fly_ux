@@ -18,7 +18,7 @@ use Bits\FlyUxBundle\Content\ContentModule;
     $GLOBALS['TL_DCA']['tl_content']['config']['dataContainer'] = DC_Content::class;
                    
     $GLOBALS['BE_MOD']['content']['page']['tables'] = ['tl_page','tl_content'];
-    $GLOBALS['BE_FLY_UX']['content']['page']['config']  = [
+    $GLOBALS['BE_FLY_UX']['page']['config']  = [
                   'driver' => 'fly_ux',
                   'relations' => [
                     'tl_page', 
@@ -30,7 +30,8 @@ use Bits\FlyUxBundle\Content\ContentModule;
                   ]
     ];
     $GLOBALS['BE_MOD']['content']['content']['tables'] = ['tl_content'];
-    $GLOBALS['BE_FLY_UX']['content']['content']['config'] = [ 
+    
+    $GLOBALS['BE_FLY_UX']['content']['config'] = [ 
                   'driver' => 'fly_ux',
                   'relations' => [
                     'tl_page', 
@@ -41,7 +42,7 @@ use Bits\FlyUxBundle\Content\ContentModule;
                   
                   ]
   ];
-    $GLOBALS['BE_FLY_UX']['content']['calendar']['config']  = [
+    $GLOBALS['BE_FLY_UX']['calendar']['config']  = [
                 'driver' => 'fly_ux',
                 'relations' => [
                     'tl_calendar', 
@@ -53,7 +54,7 @@ use Bits\FlyUxBundle\Content\ContentModule;
                   
                   ]
   ];
-    $GLOBALS['BE_FLY_UX']['content']['news']['config']  = [
+    $GLOBALS['BE_FLY_UX']['news']['config']  = [
                  'driver' => 'fly_ux',
                 'relations' => [
                     'tl_news_archive',
@@ -62,6 +63,17 @@ use Bits\FlyUxBundle\Content\ContentModule;
                         ],
                   'callbacks' => [
                     'view_settings' => ['Bits\FlyUxBundle\EventListener\View\ContentLayoutModeNewsListener', 'getSettings']
+                  
+                  ]
+  ];
+    $GLOBALS['BE_FLY_UX']['themes']['config']  = [
+                 'driver' => 'fly_ux',
+                'relations' => [
+                    'tl_theme', 
+                    'tl_content'
+                        ],
+                  'callbacks' => [
+                    'view_settings' => ['Bits\FlyUxBundle\EventListener\View\ContentLayoutModeThemesListener', 'getSettings']
                   
                   ]
   ];

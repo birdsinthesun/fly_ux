@@ -20,12 +20,15 @@ class ContentParentVoter extends Voter
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         /** @var CreateAction $subject */
-
+         if (Input::get('do')==='themes') {
+            return true;
+        }
+        
         if ($subject->getDataSource() !== 'tl_content'||Input::get('do')==='undo') {
             return false;
         }
         
-        if(in_array(Input::get('ptable'),$GLOBALS['BE_FLY_UX']['content'][Input::get('do')]['config']['relations'])){
+        if(in_array(Input::get('ptable'),$GLOBALS['BE_FLY_UX'][Input::get('do')]['config']['relations'])){
             return true;
             }
         // PTable == tl_content erlauben (z.B. Nested Elements)

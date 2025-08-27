@@ -233,7 +233,7 @@ class DC_Content extends DC_Table implements EditableDataContainerInterface
     {
         
   
-            if(!$this->configService ->useflyUxDriver()){
+            if(!$this->configService->useflyUxDriver()){
             
                 return 'Bitte die API-Doku auf Github lesen. (https://github.com/birdsinthesun/fly_ux)';
                    
