@@ -71,9 +71,13 @@ class InColumnContentCallback
                             }
                         }
                     }
-            }elseif($ptable !== 'tl_content'){
+            }elseif($ptable === 'tl_theme'){
+                        $arrSections[] = 'main';
+                        //Todo: add all sections
+                }elseif($ptable !== 'tl_content'){
                         $arrSections[] = 'main';
                 }
+            
         }
 		elseif($ptable === 'tl_content'){
               $parentRecord = System::getContainer()->get('database_connection')

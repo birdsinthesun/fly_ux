@@ -153,7 +153,7 @@ class MyPageRegular extends Frontend
             }
     
 		
-
+           // var_dump($arrModules);exit;
 			foreach ($arrModules as $arrModule)
 			{
 
@@ -183,13 +183,20 @@ class MyPageRegular extends Frontend
                         
                     if($arrModule['mod'] === '0'){
                         
-                        $this->Template->{$arrModule['col']} .= $this->getContentElements($objPage->id, $arrModule['col']);
+                        $this->Template->{$arrModule['col']} .= $this->getContentElements($objPage->id,'tl_page', $arrModule['col']);
 			
                         }else{
-                        
-                        $this->Template->{$arrModule['col']} .= $this->getFrontendModule($arrModulesById[$arrModule['mod']], $arrModule['col']);
-			  
-                    }
+                            $isContentElement = str_starts_with((string) $arrModule['mod'], 'content-');
+                            $id = (int) str_replace('content-', '', (string) $arrModule['mod']);
+                            if($isContentElement){
+   
+                                $this->Template->{$arrModule['col']} .= $this->getContentElements($id,'tl_theme', $arrModule['col'],true);
+                
+                                }else{
+                            
+                                    $this->Template->{$arrModule['col']} .= $this->getFrontendModule($arrModulesById[$arrModule['mod']], $arrModule['col']);
+                            }
+                        }
                         
 				}		
 				else
@@ -198,19 +205,25 @@ class MyPageRegular extends Frontend
 					{
 						$arrCustomSections[$arrModule['col']] = '';
 					}
-                    if($arrModule['mod'] == 0){
-                            $arrCustomSections[$arrModule['col']] .= $this->getContentElements($objPage->id, $arrModule['col']);
+                    if($arrModule['mod'] === 0){
+                            $arrCustomSections[$arrModule['col']] .= $this->getContentElements($objPage->id,'tl_page', $arrModule['col']);
 				
                     }else{
+                        $isContentElement = str_starts_with((string) $arrModule['mod'], 'content-');
+                        $id = (int) str_replace('content-', '', (string) $arrModule['mod']);
+                        if($isContentElement){
+                            $this->Template->{$arrModule['col']} .= $this->getContentElements($id,'tl_theme', $arrModule['col'],true);
+			
+                            }else{
                         
-                          $arrCustomSections[$arrModule['col']] .= $this->getFrontendModule($arrModulesById[$arrModule['mod']], $arrModule['col']);
-				
-                        
+                                $this->Template->{$arrModule['col']} .= $this->getFrontendModule($arrModulesById[$arrModule['mod']], $arrModule['col']);
+                            }
+                        }
                     }
                 
                 
                 
-                }
+                
 			}
 		
 
@@ -313,21 +326,30 @@ class MyPageRegular extends Frontend
 		return $objLayout;
 	}
     
-    protected function getContentElements($objPageId,$strColumn){
+    protected function getContentElements($pId,$pTable,$strColumn,$findOne = false){
         
        
         
         $objTemplate = new FrontendTemplate('mod_content');
         
-        $objTemplate->id = 'page-content-' . $objPageId;
+        $objTemplate->id = 'page-content-' . $pId;
 
 		$arrElements = [];
+        if(!$findOne){
+                $objCte = ContentModel::findBy(
+            ['pid = ?', 'ptable = ?'],
+            [(int) $pId, (string) $pTable],
+            ['order' => 'pid ASC, sorting ASC']
+            );
         
-		$objCte = ContentModel::findBy(
-    ['pid = ?', 'ptable = ?'],
-    [(int) $objPageId, (string) 'tl_page'],
-    ['order' => 'pid ASC, sorting ASC']
-);
+        }else{
+            $objCte = ContentModel::findBy(
+            ['id = ?', 'ptable = ?'],
+            [(int) $pId, (string) $pTable],
+            ['order' => 'pid ASC, sorting ASC']
+            );
+            
+        }
 
 		 if ($objCte !== null) {
         while ($objCte->next()) {
@@ -337,7 +359,7 @@ class MyPageRegular extends Frontend
             if ($row->type && $row->inColumn === $strColumn) {
                 
                 
-                if ($row->type !== 'module'&&$row->type !== 'form') {
+                if ($row->type !== 'module'&&$row->type !== 'form' || $pTable === 'tl_theme') {
                     $strClass = 'Contao\\Content' . ucfirst($row->type);
                 }elseif($row->type === 'module'){
                      $strClass = 'Bits\\FlyUxBundle\\Content\\Content' . ucfirst($row->type);
@@ -367,11 +389,6 @@ class MyPageRegular extends Frontend
 
     $objTemplate->elements = implode('',$arrElements);
     return $objTemplate->parse();
-	
-        
-        
-        
-        
         
         
     }
