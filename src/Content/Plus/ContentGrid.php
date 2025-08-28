@@ -39,8 +39,8 @@ class ContentGrid extends ContentElement
        
        $objContentPlus = new ContentPlus($this->objElement->id);
 
-       $cssId = StringUtil::deserialize($this->objElement->cssId, true);
-       $headline = StringUtil::deserialize($this->objElement->cssId, true);
+       $cssId = StringUtil::deserialize($this->objElement->cssID, true);
+       $headline = StringUtil::deserialize($this->objElement->headline, true);
        
        
        $elementPlus = $this->container->get('twig')->render(
