@@ -205,7 +205,7 @@ class MyPageRegular extends Frontend
 					{
 						$arrCustomSections[$arrModule['col']] = '';
 					}
-                    if($arrModule['mod'] === 0){
+                    if($arrModule['mod'] == 0){
                             $arrCustomSections[$arrModule['col']] .= $this->getContentElements($objPage->id,'tl_page', $arrModule['col']);
 				
                     }else{
