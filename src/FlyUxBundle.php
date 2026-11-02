@@ -21,9 +21,7 @@ class FlyUxBundle extends AbstractBundle
         $projectDir = $container->getParameter('kernel.project_dir').'/vendor/birdsinthesun/fly_ux';
         $loader = new YamlFileLoader($container, new FileLocator($projectDir.'/config')); 
         $loader->load('services.yaml');
-        $loader2 = new PhpFileLoader($container, new FileLocator($projectDir. '/config'));
-       
-        $loader2->load('bundles.php');
+        
         parent::build($container);
 
         $container->addCompilerPass(new RemoveContaoCallbackPass(),PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);

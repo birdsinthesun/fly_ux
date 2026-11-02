@@ -65,6 +65,6 @@ services:
         
     Bits\FlyUxBundle\:
         resource: '../src/*'
-        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php,Security}'
+        exclude: '../src/{DependencyInjection,Controller,Entity,Migrations,Tests,Kernel.php,Security}'
 
    
